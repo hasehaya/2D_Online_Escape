@@ -6,27 +6,32 @@ namespace Photon
 {
     public class PunConnector : MonoBehaviourPunCallbacks
     {
+        [SerializeField] private string playerNamePrefix = "Player";
+        
         void Start()
         {
-            PhotonNetwork.ConnectUsingSettings();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
+            // プレイヤー名を設定（ランダムな数字を追加）
+            if (string.IsNullOrEmpty(PhotonNetwork.NickName))
+            {
+                PhotonNetwork.NickName = playerNamePrefix + Random.Range(1000, 9999);
+            }
             
+            // Photonに接続
+            if (!PhotonNetwork.IsConnected)
+            {
+                Debug.Log("Photonに接続中...");
+                PhotonNetwork.ConnectUsingSettings();
+            }
         }
 
         public override void OnConnectedToMaster()
         {
-            Debug.Log("Connected to Photon Master Server");
-            PhotonNetwork.JoinOrCreateRoom("TestRoom", new RoomOptions { MaxPlayers = 2 }, TypedLobby.Default);
+            Debug.Log($"Photon Master Serverに接続しました。プレイヤー名: {PhotonNetwork.NickName}");
         }
-    
-        public override void OnJoinedRoom()
+        
+        public override void OnDisconnected(DisconnectCause cause)
         {
-            Debug.Log("Joined Room: " + PhotonNetwork.CurrentRoom.Name);
-            PhotonNetwork.Instantiate("NetworkObject", Vector3.zero, Quaternion.identity);
+            Debug.LogError($"Photonから切断されました: {cause}");
         }
     }
 }
