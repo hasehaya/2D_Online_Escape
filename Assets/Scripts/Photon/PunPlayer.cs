@@ -37,7 +37,7 @@ public class PunPlayer : MonoBehaviourPunCallbacks, IPunObservable
             // 自分のデータを送信
             stream.SendNext(transform.position);
         }
-        else
+        if (stream.IsReading)
         {
             // 他人のデータを受信
             transform.position = (Vector3)stream.ReceiveNext();
