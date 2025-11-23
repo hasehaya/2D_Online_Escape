@@ -180,7 +180,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -429,9 +429,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5834317108850118483, guid: a7b406bafb78e654da5f050d606f8ab1, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8208759062261622717, guid: a7b406bafb78e654da5f050d606f8ab1, type: 3}
       propertyPath: m_Name
       value: NetworkObject
+      objectReference: {fileID: 0}
+    - target: {fileID: 8208759062261622717, guid: a7b406bafb78e654da5f050d606f8ab1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8566335737354577337, guid: a7b406bafb78e654da5f050d606f8ab1, type: 3}
       propertyPath: m_LocalPosition.x
