@@ -4,26 +4,36 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 
+/// <summary>
+/// タイトル画面の制御を行うクラス。
+/// Photonサーバーへの接続、部屋（ルーム）の作成、および既存の部屋への参加処理を担当する。
+/// アプリケーションのエントリーポイントとしての役割を持つ。
+/// </summary>
 public class TitleController : MonoBehaviourPunCallbacks
 {
     [Header("UI References")]
-    [SerializeField] private TMP_InputField roomNameInputField;
+    [SerializeField] private TMP_InputField roomIdInputField; // 部屋ID入力用
     [SerializeField] private Button createRoomButton;
     [SerializeField] private Button joinRoomButton;
+    [SerializeField] private Button settingsButton;
     [SerializeField] private TextMeshProUGUI statusText;
     [SerializeField] private GameObject connectingPanel;
+    [SerializeField] private SettingsController settingsController;
 
     private void Start()
     {
-        // ボタンのイベント設定
         createRoomButton.onClick.AddListener(OnCreateRoomClicked);
         joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
         
-        // 初期状態
+        if (settingsButton != null && settingsController != null)
+        {
+            settingsButton.onClick.AddListener(settingsController.OpenSettings);
+        }
+        
         SetInteractable(false);
         statusText.text = "Photonに接続中...";
         
-        // Photonに接続
+        // サーバーへの接続がまだ確立されていない場合のみ接続処理を行う
         if (!PhotonNetwork.IsConnected)
         {
             PhotonNetwork.ConnectUsingSettings();
@@ -37,7 +47,7 @@ public class TitleController : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Photon Master Serverに接続しました");
-        statusText.text = "部屋名を入力してください";
+        statusText.text = "部屋を作成するか、IDを入力して参加してください";
         SetInteractable(true);
         
         if (connectingPanel != null)
@@ -55,22 +65,17 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void OnCreateRoomClicked()
     {
-        string roomName = roomNameInputField.text.Trim();
-        
-        if (string.IsNullOrEmpty(roomName))
-        {
-            statusText.text = "部屋名を入力してください";
-            return;
-        }
+        // ユーザーが入力を省略できるよう、ランダムな4桁の数字を自動生成して部屋名とする
+        string roomName = Random.Range(1000, 9999).ToString();
 
         statusText.text = $"部屋「{roomName}」を作成中...";
         SetInteractable(false);
 
-        // 2人専用の部屋を作成
+        // 特定の相手とだけ遊ぶ想定のため、ロビー一覧には表示せずID入力でのみ参加可能にする
         RoomOptions roomOptions = new RoomOptions
         {
             MaxPlayers = 2,
-            IsVisible = true,
+            IsVisible = false,
             IsOpen = true
         };
 
@@ -79,12 +84,19 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void OnJoinRoomClicked()
     {
-        string roomName = roomNameInputField.text.Trim();
+        string roomName = roomIdInputField.text.Trim();
         
         if (string.IsNullOrEmpty(roomName))
         {
-            statusText.text = "部屋名を入力してください";
+            statusText.text = "部屋IDを入力してください";
             return;
+        }
+
+        // IDは必ず4桁の数字であるため、事前チェックで無駄な通信を防ぐ
+        if (roomName.Length != 4)
+        {
+             statusText.text = "部屋IDは4桁の数字です";
+             return;
         }
 
         statusText.text = $"部屋「{roomName}」に参加中...";
@@ -98,21 +110,22 @@ public class TitleController : MonoBehaviourPunCallbacks
         Debug.Log($"部屋に参加しました: {PhotonNetwork.CurrentRoom.Name}");
         statusText.text = "部屋に参加しました！マッチングルームに移動中...";
         
-        // マッチングルームシーンに移動
+        // 部屋に入れた時点でマッチング待機画面へ遷移する
         PhotonNetwork.LoadLevel("MatchingRoom");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Debug.LogError($"部屋作成失敗: {message}");
-        statusText.text = $"部屋作成失敗: {message}\n（部屋名が既に使われている可能性があります）";
+        // ランダム生成したIDが偶然重複した場合などが考えられる
+        statusText.text = "部屋作成に失敗しました。もう一度お試しください。";
         SetInteractable(true);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Debug.LogError($"部屋参加失敗: {message}");
-        statusText.text = $"部屋参加失敗: {message}\n（部屋が存在しないか、満員です）";
+        statusText.text = $"部屋参加失敗: {message}\n（IDが間違っているか、満員です）";
         SetInteractable(true);
     }
 
@@ -124,8 +137,11 @@ public class TitleController : MonoBehaviourPunCallbacks
         if (joinRoomButton != null)
             joinRoomButton.interactable = interactable;
         
-        if (roomNameInputField != null)
-            roomNameInputField.interactable = interactable;
+        if (roomIdInputField != null)
+            roomIdInputField.interactable = interactable;
+            
+        if (settingsButton != null)
+            settingsButton.interactable = interactable;
     }
 }
 
