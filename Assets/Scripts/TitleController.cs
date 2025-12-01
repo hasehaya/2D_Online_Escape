@@ -65,8 +65,8 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void OnCreateRoomClicked()
     {
-        // ユーザーが入力を省略できるよう、ランダムな4桁の数字を自動生成して部屋名とする
-        string roomName = Random.Range(1000, 9999).ToString();
+        // ユーザーが入力を省略できるよう、ランダムな6桁の数字を自動生成して部屋名とする
+        string roomName = Random.Range(100000, 999999).ToString();
 
         statusText.text = $"部屋「{roomName}」を作成中...";
         SetInteractable(false);
@@ -92,10 +92,10 @@ public class TitleController : MonoBehaviourPunCallbacks
             return;
         }
 
-        // IDは必ず4桁の数字であるため、事前チェックで無駄な通信を防ぐ
-        if (roomName.Length != 4)
+        // IDは必ず6桁の数字であるため、事前チェックで無駄な通信を防ぐ
+        if (roomName.Length != 6)
         {
-             statusText.text = "部屋IDは4桁の数字です";
+             statusText.text = "部屋IDは6桁の数字です";
              return;
         }
 

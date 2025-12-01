@@ -120,7 +120,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
             {
                 Debug.Log("全員準備完了！ゲームシーンをロードします");
                 PhotonNetwork.CurrentRoom.IsOpen = false; // 途中参加を防ぐため部屋を閉じる
-                PhotonNetwork.LoadLevel("GameScene");
+                PhotonNetwork.LoadLevel("Game");
             }
         }
     }
