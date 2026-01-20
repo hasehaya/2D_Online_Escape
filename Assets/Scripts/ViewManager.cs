@@ -5,23 +5,23 @@ using UnityEngine.UI;
 /// <summary>
 /// ゲーム内の視点（カメラワーク）を管理するシングルトンクラス。
 /// 4方向（東西南北）の壁の切り替えと、特定のオブジェクトへの「拡大（ズーム）」および「戻る」遷移をスタック構造で管理する。
+/// ViewPointのGameObjectをSetActiveで切り替えることで、内部オブジェクトの状態を維持する。
 /// </summary>
 public class ViewManager : MonoBehaviour
 {
     public static ViewManager Instance { get; private set; }
 
-    [Header("Initial View")]
-    [SerializeField] private ViewData initialView;
+    [Header("Views")]
+    [SerializeField] private ViewPoint initialView;
+    [SerializeField] private ViewPoint[] allViews; // 管理する全てのViewPoint
 
     [Header("UI References")]
     [SerializeField] private Button leftButton;
     [SerializeField] private Button rightButton;
     [SerializeField] private Button backButton;
-    [SerializeField] private Transform viewContainer; // Prefabを生成する親オブジェクト
 
-    private Stack<ViewData> viewStack = new Stack<ViewData>();
-    private ViewData currentViewData;
-    private GameObject currentViewInstance; // 現在表示中のPrefabのインスタンス
+    private Stack<ViewPoint> viewStack = new Stack<ViewPoint>();
+    private ViewPoint _currentViewPoint;
 
     private void Awake()
     {
@@ -41,26 +41,43 @@ public class ViewManager : MonoBehaviour
         if (rightButton != null) rightButton.onClick.AddListener(TurnRight);
         if (backButton != null) backButton.onClick.AddListener(Return);
 
+        // 全てのViewを非表示にする
+        InitializeAllViews();
+
         if (initialView != null)
         {
             ShowView(initialView);
         }
     }
 
-    private void ShowView(ViewData viewData)
+    /// <summary>
+    /// 全てのViewを非表示に初期化する
+    /// </summary>
+    private void InitializeAllViews()
     {
-        // 現在の表示を削除（または非表示）
-        if (currentViewInstance != null)
+        foreach (var view in allViews)
         {
-            Destroy(currentViewInstance); // シンプルにするため毎回生成・破棄する
+            if (view != null)
+            {
+                view.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void ShowView(ViewPoint viewPoint)
+    {
+        // 現在のViewを非表示にする
+        if (_currentViewPoint != null)
+        {
+            _currentViewPoint.gameObject.SetActive(false);
         }
 
-        currentViewData = viewData;
+        _currentViewPoint = viewPoint;
 
-        // 新しいViewを生成
-        if (viewData != null && viewData.viewPrefab != null)
+        // 新しいViewを表示
+        if (viewPoint != null)
         {
-            currentViewInstance = Instantiate(viewData.viewPrefab, viewContainer);
+            viewPoint.gameObject.SetActive(true);
         }
 
         UpdateUI();
@@ -68,35 +85,35 @@ public class ViewManager : MonoBehaviour
 
     public void TurnRight()
     {
-        if (currentViewData != null && currentViewData.rightView != null)
+        if (_currentViewPoint != null && _currentViewPoint.rightView != null)
         {
-            ShowView(currentViewData.rightView);
+            ShowView(_currentViewPoint.rightView);
         }
     }
 
     public void TurnLeft()
     {
-        if (currentViewData != null && currentViewData.leftView != null)
+        if (_currentViewPoint != null && _currentViewPoint.leftView != null)
         {
-            ShowView(currentViewData.leftView);
+            ShowView(_currentViewPoint.leftView);
         }
     }
 
-    public void ZoomIn(ViewData viewData)
+    public void ZoomIn(ViewPoint viewPoint)
     {
-        if (currentViewData != null)
+        if (_currentViewPoint != null)
         {
-            viewStack.Push(currentViewData);
+            viewStack.Push(_currentViewPoint);
         }
 
-        ShowView(viewData);
+        ShowView(viewPoint);
     }
 
     public void Return()
     {
         if (viewStack.Count > 0)
         {
-            ViewData previousView = viewStack.Pop();
+            ViewPoint previousView = viewStack.Pop();
             ShowView(previousView);
         }
     }
@@ -108,10 +125,10 @@ public class ViewManager : MonoBehaviour
         // ViewDataに移動先が設定されているかどうかで判定するのがより柔軟だが、
         // 今回は仕様通り「拡大中は戻るボタン」とする。
         
-        bool isZoomed = currentViewData != null && currentViewData.isZoomView;
+        bool isZoomed = _currentViewPoint != null && _currentViewPoint.isZoomView;
         
-        if (leftButton != null) leftButton.gameObject.SetActive(!isZoomed && currentViewData?.leftView != null);
-        if (rightButton != null) rightButton.gameObject.SetActive(!isZoomed && currentViewData?.rightView != null);
+        if (leftButton != null) leftButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.leftView != null);
+        if (rightButton != null) rightButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.rightView != null);
         if (backButton != null) backButton.gameObject.SetActive(isZoomed);
     }
 }
