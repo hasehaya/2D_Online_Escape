@@ -6,14 +6,14 @@ namespace Photon
 {
     public class PunConnector : MonoBehaviourPunCallbacks
     {
-        [SerializeField] private string playerNamePrefix = "Player";
+        [SerializeField] private string _playerNamePrefix = "Player";
         
         void Start()
         {
             // プレイヤー名を設定（ランダムな数字を追加）
             if (string.IsNullOrEmpty(PhotonNetwork.NickName))
             {
-                PhotonNetwork.NickName = playerNamePrefix + Random.Range(1000, 9999);
+                PhotonNetwork.NickName = _playerNamePrefix + Random.Range(1000, 9999);
             }
             
             // Photonに接続

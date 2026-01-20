@@ -12,28 +12,28 @@ using System.Collections.Generic;
 public class MatchingRoomController : MonoBehaviourPunCallbacks
 {
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI roomNameText;
-    [SerializeField] private TextMeshProUGUI player1NameText;
-    [SerializeField] private TextMeshProUGUI player2NameText;
-    [SerializeField] private GameObject player1ReadyIcon;
-    [SerializeField] private GameObject player2ReadyIcon;
-    [SerializeField] private Button readyButton;
-    [SerializeField] private TextMeshProUGUI readyButtonText;
-    [SerializeField] private Button leaveRoomButton;
-    [SerializeField] private TextMeshProUGUI statusText;
+    [SerializeField] private TextMeshProUGUI _roomNameText;
+    [SerializeField] private TextMeshProUGUI _player1NameText;
+    [SerializeField] private TextMeshProUGUI _player2NameText;
+    [SerializeField] private GameObject _player1ReadyIcon;
+    [SerializeField] private GameObject _player2ReadyIcon;
+    [SerializeField] private Button _readyButton;
+    [SerializeField] private TextMeshProUGUI _readyButtonText;
+    [SerializeField] private Button _leaveRoomButton;
+    [SerializeField] private TextMeshProUGUI _statusText;
 
-    private bool isReady = false;
-    private Dictionary<int, bool> playerReadyStatus = new Dictionary<int, bool>();
+    private bool _isReady = false;
+    private Dictionary<int, bool> _playerReadyStatus = new Dictionary<int, bool>();
 
     private void Start()
     {
-        readyButton.onClick.AddListener(OnReadyButtonClicked);
-        leaveRoomButton.onClick.AddListener(OnLeaveRoomClicked);
+        _readyButton.onClick.AddListener(OnReadyButtonClicked);
+        _leaveRoomButton.onClick.AddListener(OnLeaveRoomClicked);
 
         // プレイヤーが自分の部屋IDを確認できるように表示する
-        if (roomNameText != null)
+        if (_roomNameText != null)
         {
-            roomNameText.text = $"部屋ID: {PhotonNetwork.CurrentRoom.Name}";
+            _roomNameText.text = $"部屋ID: {PhotonNetwork.CurrentRoom.Name}";
         }
 
         UpdatePlayerList();
@@ -47,7 +47,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
-            statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
+            _statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
         }
     }
 
@@ -56,37 +56,37 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         Debug.Log($"プレイヤーが退室しました: {otherPlayer.NickName}");
         
         // 退室したプレイヤーの準備完了状態が残っていると、再入室時に不整合が起きるためリセットする
-        if (playerReadyStatus.ContainsKey(otherPlayer.ActorNumber))
+        if (_playerReadyStatus.ContainsKey(otherPlayer.ActorNumber))
         {
-            playerReadyStatus.Remove(otherPlayer.ActorNumber);
+            _playerReadyStatus.Remove(otherPlayer.ActorNumber);
         }
         
         UpdatePlayerList();
-        statusText.text = "プレイヤーが退室しました。新しいプレイヤーを待っています...";
+        _statusText.text = "プレイヤーが退室しました。新しいプレイヤーを待っています...";
         
         // 相手がいなくなったため、自分の準備完了状態も解除して再確認を促す
-        if (isReady)
+        if (_isReady)
         {
-            isReady = false;
+            _isReady = false;
             UpdateReadyButton();
         }
     }
 
     private void OnReadyButtonClicked()
     {
-        isReady = !isReady;
+        _isReady = !_isReady;
         
         // 自分の準備状態を変更し、他のプレイヤーにも同期する
-        photonView.RPC("UpdatePlayerReady", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, isReady);
+        photonView.RPC("UpdatePlayerReady", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.ActorNumber, _isReady);
         
         UpdateReadyButton();
-        Debug.Log($"準備状態を変更: {isReady}");
+        Debug.Log($"準備状態を変更: {_isReady}");
     }
 
     [PunRPC]
     private void UpdatePlayerReady(int actorNumber, bool ready)
     {
-        playerReadyStatus[actorNumber] = ready;
+        _playerReadyStatus[actorNumber] = ready;
         UpdateReadyStatus();
         
         // 全員の準備状況が変わるたびに、ゲーム開始条件を満たしたか確認する
@@ -104,7 +104,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         bool allReady = true;
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            if (!playerReadyStatus.ContainsKey(player.ActorNumber) || !playerReadyStatus[player.ActorNumber])
+            if (!_playerReadyStatus.ContainsKey(player.ActorNumber) || !_playerReadyStatus[player.ActorNumber])
             {
                 allReady = false;
                 break;
@@ -113,7 +113,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
 
         if (allReady)
         {
-            statusText.text = "ゲームを開始します...";
+            _statusText.text = "ゲームを開始します...";
             
             // シーン遷移はマスタークライアントが一括で管理・実行する
             if (PhotonNetwork.IsMasterClient)
@@ -132,34 +132,34 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         // プレイヤー1（ホスト）の表示更新
         if (players.Length > 0)
         {
-            player1NameText.text = players[0].NickName;
-            player1NameText.gameObject.SetActive(true);
+            _player1NameText.text = players[0].NickName;
+            _player1NameText.gameObject.SetActive(true);
         }
         else
         {
-            player1NameText.text = "待機中...";
-            player1NameText.gameObject.SetActive(true);
+            _player1NameText.text = "待機中...";
+            _player1NameText.gameObject.SetActive(true);
         }
 
         // プレイヤー2（ゲスト）の表示更新
         if (players.Length > 1)
         {
-            player2NameText.text = players[1].NickName;
-            player2NameText.gameObject.SetActive(true);
+            _player2NameText.text = players[1].NickName;
+            _player2NameText.gameObject.SetActive(true);
         }
         else
         {
-            player2NameText.text = "待機中...";
-            player2NameText.gameObject.SetActive(true);
+            _player2NameText.text = "待機中...";
+            _player2NameText.gameObject.SetActive(true);
         }
 
         if (players.Length < 2)
         {
-            statusText.text = $"プレイヤーを待っています... ({players.Length}/2)";
+            _statusText.text = $"プレイヤーを待っています... ({players.Length}/2)";
         }
         else
         {
-            statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
+            _statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
         }
     }
 
@@ -167,35 +167,35 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     {
         Player[] players = PhotonNetwork.PlayerList;
         
-        if (players.Length > 0 && player1ReadyIcon != null)
+        if (players.Length > 0 && _player1ReadyIcon != null)
         {
-            bool ready = playerReadyStatus.ContainsKey(players[0].ActorNumber) && 
-                        playerReadyStatus[players[0].ActorNumber];
-            player1ReadyIcon.SetActive(ready);
+            bool ready = _playerReadyStatus.ContainsKey(players[0].ActorNumber) && 
+                        _playerReadyStatus[players[0].ActorNumber];
+            _player1ReadyIcon.SetActive(ready);
         }
 
-        if (players.Length > 1 && player2ReadyIcon != null)
+        if (players.Length > 1 && _player2ReadyIcon != null)
         {
-            bool ready = playerReadyStatus.ContainsKey(players[1].ActorNumber) && 
-                        playerReadyStatus[players[1].ActorNumber];
-            player2ReadyIcon.SetActive(ready);
+            bool ready = _playerReadyStatus.ContainsKey(players[1].ActorNumber) && 
+                        _playerReadyStatus[players[1].ActorNumber];
+            _player2ReadyIcon.SetActive(ready);
         }
     }
 
     private void UpdateReadyButton()
     {
-        if (readyButtonText != null)
+        if (_readyButtonText != null)
         {
-            readyButtonText.text = isReady ? "キャンセル" : "OK";
+            _readyButtonText.text = _isReady ? "キャンセル" : "OK";
         }
         
         // 相手がいない状態で準備完了できてしまうと混乱を招くため無効化する
-        readyButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
+        _readyButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
     }
 
     private void OnLeaveRoomClicked()
     {
-        statusText.text = "部屋から退出中...";
+        _statusText.text = "部屋から退出中...";
         PhotonNetwork.LeaveRoom();
     }
 
@@ -209,9 +209,9 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     private void Update()
     {
         // プレイヤー人数の変動に合わせてボタンの有効状態を常時監視する
-        if (readyButton != null)
+        if (_readyButton != null)
         {
-            readyButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
+            _readyButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
         }
     }
 }

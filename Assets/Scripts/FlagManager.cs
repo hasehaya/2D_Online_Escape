@@ -12,10 +12,10 @@ public class FlagManager : MonoBehaviourPunCallbacks
     public static FlagManager Instance { get; private set; }
 
     // 自分自身のフラグ状態
-    private Dictionary<FlagType, bool> localFlags = new Dictionary<FlagType, bool>();
+    private Dictionary<FlagType, bool> _localFlags = new Dictionary<FlagType, bool>();
 
     // 相手プレイヤーのフラグ状態
-    private Dictionary<FlagType, bool> remoteFlags = new Dictionary<FlagType, bool>();
+    private Dictionary<FlagType, bool> _remoteFlags = new Dictionary<FlagType, bool>();
 
     // フラグ変更イベント (flag, newValue, isLocal)
     public event Action<FlagType, bool, bool> OnFlagChanged;
@@ -40,9 +40,9 @@ public class FlagManager : MonoBehaviourPunCallbacks
         if (flag == FlagType.None) return;
 
         // ローカル辞書を更新
-        if (!localFlags.ContainsKey(flag) || localFlags[flag] != value)
+        if (!_localFlags.ContainsKey(flag) || _localFlags[flag] != value)
         {
-            localFlags[flag] = value;
+            _localFlags[flag] = value;
             OnFlagChanged?.Invoke(flag, value, true);
             Debug.Log($"[Local] Flag Set: {flag} = {value}");
 
@@ -56,9 +56,9 @@ public class FlagManager : MonoBehaviourPunCallbacks
     /// </summary>
     public bool GetLocalFlag(FlagType flag)
     {
-        if (localFlags.ContainsKey(flag))
+        if (_localFlags.ContainsKey(flag))
         {
-            return localFlags[flag];
+            return _localFlags[flag];
         }
         return false;
     }
@@ -68,9 +68,9 @@ public class FlagManager : MonoBehaviourPunCallbacks
     /// </summary>
     public bool GetRemoteFlag(FlagType flag)
     {
-        if (remoteFlags.ContainsKey(flag))
+        if (_remoteFlags.ContainsKey(flag))
         {
-            return remoteFlags[flag];
+            return _remoteFlags[flag];
         }
         return false;
     }
@@ -81,9 +81,9 @@ public class FlagManager : MonoBehaviourPunCallbacks
         FlagType flag = (FlagType)flagId;
 
         // 相手から送られてきたフラグは「相手のフラグ」として保存する
-        if (!remoteFlags.ContainsKey(flag) || remoteFlags[flag] != value)
+        if (!_remoteFlags.ContainsKey(flag) || _remoteFlags[flag] != value)
         {
-            remoteFlags[flag] = value;
+            _remoteFlags[flag] = value;
             OnFlagChanged?.Invoke(flag, value, false);
             Debug.Log($"[Remote] Flag Updated: {flag} = {value}");
         }

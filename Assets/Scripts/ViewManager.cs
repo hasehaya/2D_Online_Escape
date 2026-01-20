@@ -12,15 +12,15 @@ public class ViewManager : MonoBehaviour
     public static ViewManager Instance { get; private set; }
 
     [Header("Views")]
-    [SerializeField] private ViewPoint initialView;
-    [SerializeField] private ViewPoint[] allViews; // 管理する全てのViewPoint
+    [SerializeField] private ViewPoint _initialView;
+    [SerializeField] private ViewPoint[] _allViews; // 管理する全てのViewPoint
 
     [Header("UI References")]
-    [SerializeField] private Button leftButton;
-    [SerializeField] private Button rightButton;
-    [SerializeField] private Button backButton;
+    [SerializeField] private Button _leftButton;
+    [SerializeField] private Button _rightButton;
+    [SerializeField] private Button _backButton;
 
-    private Stack<ViewPoint> viewStack = new Stack<ViewPoint>();
+    private Stack<ViewPoint> _viewStack = new Stack<ViewPoint>();
     private ViewPoint _currentViewPoint;
 
     private void Awake()
@@ -37,16 +37,16 @@ public class ViewManager : MonoBehaviour
 
     private void Start()
     {
-        if (leftButton != null) leftButton.onClick.AddListener(TurnLeft);
-        if (rightButton != null) rightButton.onClick.AddListener(TurnRight);
-        if (backButton != null) backButton.onClick.AddListener(Return);
+        if (_leftButton != null) _leftButton.onClick.AddListener(TurnLeft);
+        if (_rightButton != null) _rightButton.onClick.AddListener(TurnRight);
+        if (_backButton != null) _backButton.onClick.AddListener(Return);
 
         // 全てのViewを非表示にする
         InitializeAllViews();
 
-        if (initialView != null)
+        if (_initialView != null)
         {
-            ShowView(initialView);
+            ShowView(_initialView);
         }
     }
 
@@ -55,7 +55,7 @@ public class ViewManager : MonoBehaviour
     /// </summary>
     private void InitializeAllViews()
     {
-        foreach (var view in allViews)
+        foreach (var view in _allViews)
         {
             if (view != null)
             {
@@ -103,7 +103,7 @@ public class ViewManager : MonoBehaviour
     {
         if (_currentViewPoint != null)
         {
-            viewStack.Push(_currentViewPoint);
+            _viewStack.Push(_currentViewPoint);
         }
 
         ShowView(viewPoint);
@@ -111,9 +111,9 @@ public class ViewManager : MonoBehaviour
 
     public void Return()
     {
-        if (viewStack.Count > 0)
+        if (_viewStack.Count > 0)
         {
-            ViewPoint previousView = viewStack.Pop();
+            ViewPoint previousView = _viewStack.Pop();
             ShowView(previousView);
         }
     }
@@ -127,8 +127,8 @@ public class ViewManager : MonoBehaviour
         
         bool isZoomed = _currentViewPoint != null && _currentViewPoint.isZoomView;
         
-        if (leftButton != null) leftButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.leftView != null);
-        if (rightButton != null) rightButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.rightView != null);
-        if (backButton != null) backButton.gameObject.SetActive(isZoomed);
+        if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.leftView != null);
+        if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.rightView != null);
+        if (_backButton != null) _backButton.gameObject.SetActive(isZoomed);
     }
 }

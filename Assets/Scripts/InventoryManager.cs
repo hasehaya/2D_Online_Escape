@@ -10,7 +10,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
 
-    private List<ItemData> items = new List<ItemData>();
+    private List<ItemData> _items = new List<ItemData>();
     
     // UI側で表示を更新するために、インベントリの変更を通知するイベント
     public event Action OnInventoryChanged;
@@ -30,9 +30,9 @@ public class InventoryManager : MonoBehaviour
     public void AddItem(ItemData item)
     {
         // 重複取得を防ぐ
-        if (!items.Contains(item))
+        if (!_items.Contains(item))
         {
-            items.Add(item);
+            _items.Add(item);
             OnInventoryChanged?.Invoke();
             Debug.Log($"Item added: {item.itemName}");
         }
@@ -40,9 +40,9 @@ public class InventoryManager : MonoBehaviour
 
     public void RemoveItem(ItemData item)
     {
-        if (items.Contains(item))
+        if (_items.Contains(item))
         {
-            items.Remove(item);
+            _items.Remove(item);
             OnInventoryChanged?.Invoke();
             Debug.Log($"Item removed: {item.itemName}");
         }
@@ -50,11 +50,11 @@ public class InventoryManager : MonoBehaviour
 
     public bool HasItem(ItemData item)
     {
-        return items.Contains(item);
+        return _items.Contains(item);
     }
 
     public List<ItemData> GetItems()
     {
-        return items;
+        return _items;
     }
 }

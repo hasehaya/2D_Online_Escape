@@ -9,45 +9,45 @@ using TMPro;
 public class SettingsController : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private Slider bgmSlider;
-    [SerializeField] private Slider seSlider;
-    [SerializeField] private TMP_Dropdown languageDropdown;
-    [SerializeField] private Button closeButton;
+    [SerializeField] private GameObject _settingsPanel;
+    [SerializeField] private Slider _bgmSlider;
+    [SerializeField] private Slider _seSlider;
+    [SerializeField] private TMP_Dropdown _languageDropdown;
+    [SerializeField] private Button _closeButton;
 
     private void Start()
     {
         // 現在の音量設定をUIに反映させる
         if (AudioManager.Instance != null)
         {
-            bgmSlider.value = AudioManager.Instance.GetBGMVolume();
-            seSlider.value = AudioManager.Instance.GetSEVolume();
+            _bgmSlider.value = AudioManager.Instance.GetBGMVolume();
+            _seSlider.value = AudioManager.Instance.GetSEVolume();
         }
 
-        bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
-        seSlider.onValueChanged.AddListener(OnSEVolumeChanged);
-        languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
-        closeButton.onClick.AddListener(CloseSettings);
+        _bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        _seSlider.onValueChanged.AddListener(OnSEVolumeChanged);
+        _languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
+        _closeButton.onClick.AddListener(CloseSettings);
 
         // ゲーム開始時は設定画面を隠しておく
-        settingsPanel.SetActive(false);
+        _settingsPanel.SetActive(false);
     }
 
     public void OpenSettings()
     {
-        settingsPanel.SetActive(true);
+        _settingsPanel.SetActive(true);
         
         // 他の場所で音量が変更された可能性を考慮し、開くたびにスライダーの値を最新化する
         if (AudioManager.Instance != null)
         {
-            bgmSlider.value = AudioManager.Instance.GetBGMVolume();
-            seSlider.value = AudioManager.Instance.GetSEVolume();
+            _bgmSlider.value = AudioManager.Instance.GetBGMVolume();
+            _seSlider.value = AudioManager.Instance.GetSEVolume();
         }
     }
 
     public void CloseSettings()
     {
-        settingsPanel.SetActive(false);
+        _settingsPanel.SetActive(false);
         PlayerPrefs.Save(); // 設定変更を確実にディスクに書き込む
     }
 

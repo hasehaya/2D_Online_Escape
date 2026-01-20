@@ -16,16 +16,16 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
     }
 
     [Header("Interaction Settings")]
-    [SerializeField] private InteractionType interactionType = InteractionType.None;
+    [SerializeField] private InteractionType _interactionType = InteractionType.None;
     
     [Header("Zoom Settings")]
-    [SerializeField] private ViewPoint zoomViewPoint;
+    [SerializeField] private ViewPoint _zoomViewPoint;
 
     [Header("Pickup Settings")]
-    [SerializeField] private ItemData itemToPickup;
+    [SerializeField] private ItemData _itemToPickup;
 
     [Header("Message Settings")]
-    [TextArea] [SerializeField] private string messageText;
+    [TextArea] [SerializeField] private string _messageText;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -46,25 +46,25 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
     {
         Debug.Log($"Interacted with {gameObject.name}");
 
-        switch (interactionType)
+        switch (_interactionType)
         {
             case InteractionType.Zoom:
-                if (zoomViewPoint != null)
+                if (_zoomViewPoint != null)
                 {
-                    ViewManager.Instance.ZoomIn(zoomViewPoint);
+                    ViewManager.Instance.ZoomIn(_zoomViewPoint);
                 }
                 break;
 
             case InteractionType.Pickup:
-                if (itemToPickup != null)
+                if (_itemToPickup != null)
                 {
-                    InventoryManager.Instance.AddItem(itemToPickup);
+                    InventoryManager.Instance.AddItem(_itemToPickup);
                     gameObject.SetActive(false); // 取得したアイテムはシーンから消す
                 }
                 break;
 
             case InteractionType.Message:
-                Debug.Log($"Message: {messageText}");
+                Debug.Log($"Message: {_messageText}");
                 // TODO: UIにメッセージを表示する処理を実装する
                 break;
         }

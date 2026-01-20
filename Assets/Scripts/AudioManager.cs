@@ -11,12 +11,12 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource bgmSource;
-    [SerializeField] private AudioSource seSource;
+    [SerializeField] private AudioSource _bgmSource;
+    [SerializeField] private AudioSource _seSource;
 
     [Header("Volume Settings (0.0 - 1.0)")]
-    private float bgmVolume = 1.0f;
-    private float seVolume = 1.0f;
+    private float _bgmVolume = 1.0f;
+    private float _seVolume = 1.0f;
 
     private const string BGM_VOLUME_KEY = "BGM_Volume";
     private const string SE_VOLUME_KEY = "SE_Volume";
@@ -38,49 +38,49 @@ public class AudioManager : MonoBehaviour
 
     private void LoadVolumeSettings()
     {
-        bgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 0.5f);
-        seVolume = PlayerPrefs.GetFloat(SE_VOLUME_KEY, 0.5f);
+        _bgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 0.5f);
+        _seVolume = PlayerPrefs.GetFloat(SE_VOLUME_KEY, 0.5f);
 
         ApplyVolume();
     }
 
     public void SetBGMVolume(float volume)
     {
-        bgmVolume = Mathf.Clamp01(volume);
-        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, bgmVolume);
+        _bgmVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, _bgmVolume);
         ApplyVolume();
     }
 
     public void SetSEVolume(float volume)
     {
-        seVolume = Mathf.Clamp01(volume);
-        PlayerPrefs.SetFloat(SE_VOLUME_KEY, seVolume);
+        _seVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat(SE_VOLUME_KEY, _seVolume);
         ApplyVolume();
     }
 
-    public float GetBGMVolume() => bgmVolume;
-    public float GetSEVolume() => seVolume;
+    public float GetBGMVolume() => _bgmVolume;
+    public float GetSEVolume() => _seVolume;
 
     private void ApplyVolume()
     {
-        if (bgmSource != null) bgmSource.volume = bgmVolume;
-        if (seSource != null) seSource.volume = seVolume;
+        if (_bgmSource != null) _bgmSource.volume = _bgmVolume;
+        if (_seSource != null) _seSource.volume = _seVolume;
     }
 
     public void PlayBGM(AudioClip clip)
     {
-        if (bgmSource == null) return;
+        if (_bgmSource == null) return;
 
         // 同じ曲が既に流れている場合は、曲の頭出しを避けるために何もしない
-        if (bgmSource.clip == clip && bgmSource.isPlaying) return;
+        if (_bgmSource.clip == clip && _bgmSource.isPlaying) return;
 
-        bgmSource.clip = clip;
-        bgmSource.Play();
+        _bgmSource.clip = clip;
+        _bgmSource.Play();
     }
 
     public void PlaySE(AudioClip clip)
     {
-        if (seSource == null || clip == null) return;
-        seSource.PlayOneShot(clip, seVolume);
+        if (_seSource == null || clip == null) return;
+        _seSource.PlayOneShot(clip, _seVolume);
     }
 }

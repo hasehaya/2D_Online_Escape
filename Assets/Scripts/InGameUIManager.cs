@@ -9,8 +9,8 @@ using UnityEngine.UI;
 public class InGameUIManager : MonoBehaviour
 {
     [Header("Inventory UI")]
-    [SerializeField] private Transform itemSlotContainer;
-    [SerializeField] private GameObject itemSlotPrefab;
+    [SerializeField] private Transform _itemSlotContainer;
+    [SerializeField] private GameObject _itemSlotPrefab;
 
     private void Start()
     {
@@ -33,7 +33,7 @@ public class InGameUIManager : MonoBehaviour
     private void UpdateInventoryUI()
     {
         // 既存のスロットを全て削除して作り直す（アイテム数が少ないため、プーリングせずシンプルな実装とする）
-        foreach (Transform child in itemSlotContainer)
+        foreach (Transform child in _itemSlotContainer)
         {
             Destroy(child.gameObject);
         }
@@ -42,7 +42,7 @@ public class InGameUIManager : MonoBehaviour
         List<ItemData> items = InventoryManager.Instance.GetItems();
         foreach (ItemData item in items)
         {
-            GameObject slot = Instantiate(itemSlotPrefab, itemSlotContainer);
+            GameObject slot = Instantiate(_itemSlotPrefab, _itemSlotContainer);
             Image iconImage = slot.transform.Find("Icon").GetComponent<Image>();
             if (iconImage != null)
             {

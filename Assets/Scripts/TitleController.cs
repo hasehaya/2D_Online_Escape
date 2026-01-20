@@ -12,26 +12,26 @@ using Photon.Realtime;
 public class TitleController : MonoBehaviourPunCallbacks
 {
     [Header("UI References")]
-    [SerializeField] private TMP_InputField roomIdInputField; // 部屋ID入力用
-    [SerializeField] private Button createRoomButton;
-    [SerializeField] private Button joinRoomButton;
-    [SerializeField] private Button settingsButton;
-    [SerializeField] private TextMeshProUGUI statusText;
-    [SerializeField] private GameObject connectingPanel;
-    [SerializeField] private SettingsController settingsController;
+    [SerializeField] private TMP_InputField _roomIdInputField; // 部屋ID入力用
+    [SerializeField] private Button _createRoomButton;
+    [SerializeField] private Button _joinRoomButton;
+    [SerializeField] private Button _settingsButton;
+    [SerializeField] private TextMeshProUGUI _statusText;
+    [SerializeField] private GameObject _connectingPanel;
+    [SerializeField] private SettingsController _settingsController;
 
     private void Start()
     {
-        createRoomButton.onClick.AddListener(OnCreateRoomClicked);
-        joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
+        _createRoomButton.onClick.AddListener(OnCreateRoomClicked);
+        _joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
         
-        if (settingsButton != null && settingsController != null)
+        if (_settingsButton != null && _settingsController != null)
         {
-            settingsButton.onClick.AddListener(settingsController.OpenSettings);
+            _settingsButton.onClick.AddListener(_settingsController.OpenSettings);
         }
         
         SetInteractable(false);
-        statusText.text = "Photonに接続中...";
+        _statusText.text = "Photonに接続中...";
         
         // サーバーへの接続がまだ確立されていない場合のみ接続処理を行う
         if (!PhotonNetwork.IsConnected)
@@ -47,19 +47,19 @@ public class TitleController : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Photon Master Serverに接続しました");
-        statusText.text = "部屋を作成するか、IDを入力して参加してください";
+        _statusText.text = "部屋を作成するか、IDを入力して参加してください";
         SetInteractable(true);
         
-        if (connectingPanel != null)
+        if (_connectingPanel != null)
         {
-            connectingPanel.SetActive(false);
+            _connectingPanel.SetActive(false);
         }
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
         Debug.LogError($"Photonから切断されました: {cause}");
-        statusText.text = $"接続エラー: {cause}";
+        _statusText.text = $"接続エラー: {cause}";
         SetInteractable(false);
     }
 
@@ -68,7 +68,7 @@ public class TitleController : MonoBehaviourPunCallbacks
         // ユーザーが入力を省略できるよう、ランダムな6桁の数字を自動生成して部屋名とする
         string roomName = Random.Range(100000, 999999).ToString();
 
-        statusText.text = $"部屋「{roomName}」を作成中...";
+        _statusText.text = $"部屋「{roomName}」を作成中...";
         SetInteractable(false);
 
         // 特定の相手とだけ遊ぶ想定のため、ロビー一覧には表示せずID入力でのみ参加可能にする
@@ -84,22 +84,22 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void OnJoinRoomClicked()
     {
-        string roomName = roomIdInputField.text.Trim();
+        string roomName = _roomIdInputField.text.Trim();
         
         if (string.IsNullOrEmpty(roomName))
         {
-            statusText.text = "部屋IDを入力してください";
+            _statusText.text = "部屋IDを入力してください";
             return;
         }
 
         // IDは必ず6桁の数字であるため、事前チェックで無駄な通信を防ぐ
         if (roomName.Length != 6)
         {
-             statusText.text = "部屋IDは6桁の数字です";
+             _statusText.text = "部屋IDは6桁の数字です";
              return;
         }
 
-        statusText.text = $"部屋「{roomName}」に参加中...";
+        _statusText.text = $"部屋「{roomName}」に参加中...";
         SetInteractable(false);
 
         PhotonNetwork.JoinRoom(roomName);
@@ -108,7 +108,7 @@ public class TitleController : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log($"部屋に参加しました: {PhotonNetwork.CurrentRoom.Name}");
-        statusText.text = "部屋に参加しました！マッチングルームに移動中...";
+        _statusText.text = "部屋に参加しました！マッチングルームに移動中...";
         
         // 部屋に入れた時点でマッチング待機画面へ遷移する
         PhotonNetwork.LoadLevel("MatchingRoom");
@@ -118,30 +118,30 @@ public class TitleController : MonoBehaviourPunCallbacks
     {
         Debug.LogError($"部屋作成失敗: {message}");
         // ランダム生成したIDが偶然重複した場合などが考えられる
-        statusText.text = "部屋作成に失敗しました。もう一度お試しください。";
+        _statusText.text = "部屋作成に失敗しました。もう一度お試しください。";
         SetInteractable(true);
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Debug.LogError($"部屋参加失敗: {message}");
-        statusText.text = $"部屋参加失敗: {message}\n（IDが間違っているか、満員です）";
+        _statusText.text = $"部屋参加失敗: {message}\n（IDが間違っているか、満員です）";
         SetInteractable(true);
     }
 
     private void SetInteractable(bool interactable)
     {
-        if (createRoomButton != null)
-            createRoomButton.interactable = interactable;
+        if (_createRoomButton != null)
+            _createRoomButton.interactable = interactable;
         
-        if (joinRoomButton != null)
-            joinRoomButton.interactable = interactable;
+        if (_joinRoomButton != null)
+            _joinRoomButton.interactable = interactable;
         
-        if (roomIdInputField != null)
-            roomIdInputField.interactable = interactable;
+        if (_roomIdInputField != null)
+            _roomIdInputField.interactable = interactable;
             
-        if (settingsButton != null)
-            settingsButton.interactable = interactable;
+        if (_settingsButton != null)
+            _settingsButton.interactable = interactable;
     }
 }
 

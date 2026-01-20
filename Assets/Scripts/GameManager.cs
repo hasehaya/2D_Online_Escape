@@ -5,9 +5,9 @@ using Photon.Realtime;
 public class GameManager : MonoBehaviourPunCallbacks
 {
     [Header("Spawn Settings")]
-    [SerializeField] private Transform player1SpawnPoint;
-    [SerializeField] private Transform player2SpawnPoint;
-    [SerializeField] private string playerPrefabName = "NetworkObject";
+    [SerializeField] private Transform _player1SpawnPoint;
+    [SerializeField] private Transform _player2SpawnPoint;
+    [SerializeField] private string _playerPrefabName = "NetworkObject";
 
     void Start()
     {
@@ -27,13 +27,13 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             if (players[i].ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
             {
-                if (i == 0 && player1SpawnPoint != null)
+                if (i == 0 && _player1SpawnPoint != null)
                 {
-                    spawnPosition = player1SpawnPoint.position;
+                    spawnPosition = _player1SpawnPoint.position;
                 }
-                else if (i == 1 && player2SpawnPoint != null)
+                else if (i == 1 && _player2SpawnPoint != null)
                 {
-                    spawnPosition = player2SpawnPoint.position;
+                    spawnPosition = _player2SpawnPoint.position;
                 }
                 else
                 {
@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         
         Debug.Log($"プレイヤーをスポーン: {spawnPosition}");
-        PhotonNetwork.Instantiate(playerPrefabName, spawnPosition, Quaternion.identity);
+        PhotonNetwork.Instantiate(_playerPrefabName, spawnPosition, Quaternion.identity);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
