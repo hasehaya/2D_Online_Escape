@@ -5,23 +5,24 @@ using UnityEngine.UI;
 /// <summary>
 /// ゲーム内の視点（カメラワーク）を管理するシングルトンクラス。
 /// 4方向（東西南北）の壁の切り替えと、特定のオブジェクトへの「拡大（ズーム）」および「戻る」遷移をスタック構造で管理する。
-/// ViewPointのGameObjectをSetActiveで切り替えることで、内部オブジェクトの状態を維持する。
+/// カメラの位置を各ViewPointの位置に移動させることで視点を切り替える。
 /// </summary>
 public class ViewManager : MonoBehaviour
 {
     public static ViewManager Instance { get; private set; }
 
     [Header("Views")]
-    [SerializeField] private ViewPoint _initialView;
-    [SerializeField] private ViewPoint[] _allViews; // 管理する全てのViewPoint
+    [SerializeField] private ViewNode _initialView;
+    [SerializeField] private ViewNode[] _allViews; // 管理する全てのViewPoint
 
     [Header("UI References")]
     [SerializeField] private Button _leftButton;
     [SerializeField] private Button _rightButton;
     [SerializeField] private Button _backButton;
 
-    private Stack<ViewPoint> _viewStack = new Stack<ViewPoint>();
-    private ViewPoint _currentViewPoint;
+    private Stack<ViewNode> _viewStack = new Stack<ViewNode>();
+    private ViewNode _currentViewNode;
+    private Camera _mainCamera;
 
     private void Awake()
     {
@@ -37,11 +38,13 @@ public class ViewManager : MonoBehaviour
 
     private void Start()
     {
+        _mainCamera = Camera.main;
+
         if (_leftButton != null) _leftButton.onClick.AddListener(TurnLeft);
         if (_rightButton != null) _rightButton.onClick.AddListener(TurnRight);
         if (_backButton != null) _backButton.onClick.AddListener(Return);
 
-        // 全てのViewを非表示にする
+        // 全てのViewをアクティブにする
         InitializeAllViews();
 
         if (_initialView != null)
@@ -51,7 +54,7 @@ public class ViewManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 全てのViewを非表示に初期化する
+    /// 全てのViewをアクティブ状態に初期化する
     /// </summary>
     private void InitializeAllViews()
     {
@@ -59,25 +62,21 @@ public class ViewManager : MonoBehaviour
         {
             if (view != null)
             {
-                view.gameObject.SetActive(false);
+                view.gameObject.SetActive(true);
             }
         }
     }
 
-    private void ShowView(ViewPoint viewPoint)
+    private void ShowView(ViewNode viewNode)
     {
-        // 現在のViewを非表示にする
-        if (_currentViewPoint != null)
-        {
-            _currentViewPoint.gameObject.SetActive(false);
-        }
+        _currentViewNode = viewNode;
 
-        _currentViewPoint = viewPoint;
-
-        // 新しいViewを表示
-        if (viewPoint != null)
+        // カメラをViewPointの位置に移動（Z座標は維持してRectTransformへの影響を回避）
+        if (viewNode != null && _mainCamera != null)
         {
-            viewPoint.gameObject.SetActive(true);
+            Vector3 targetPosition = viewNode.transform.position;
+            Vector3 cameraPosition = _mainCamera.transform.position;
+            _mainCamera.transform.position = new Vector3(targetPosition.x, targetPosition.y, cameraPosition.z);
         }
 
         UpdateUI();
@@ -85,35 +84,35 @@ public class ViewManager : MonoBehaviour
 
     public void TurnRight()
     {
-        if (_currentViewPoint != null && _currentViewPoint.rightView != null)
+        if (_currentViewNode != null && _currentViewNode.rightView != null)
         {
-            ShowView(_currentViewPoint.rightView);
+            ShowView(_currentViewNode.rightView);
         }
     }
 
     public void TurnLeft()
     {
-        if (_currentViewPoint != null && _currentViewPoint.leftView != null)
+        if (_currentViewNode != null && _currentViewNode.leftView != null)
         {
-            ShowView(_currentViewPoint.leftView);
+            ShowView(_currentViewNode.leftView);
         }
     }
 
-    public void ZoomIn(ViewPoint viewPoint)
+    public void ZoomIn(ViewNode viewNode)
     {
-        if (_currentViewPoint != null)
+        if (_currentViewNode != null)
         {
-            _viewStack.Push(_currentViewPoint);
+            _viewStack.Push(_currentViewNode);
         }
 
-        ShowView(viewPoint);
+        ShowView(viewNode);
     }
 
     public void Return()
     {
         if (_viewStack.Count > 0)
         {
-            ViewPoint previousView = _viewStack.Pop();
+            ViewNode previousView = _viewStack.Pop();
             ShowView(previousView);
         }
     }
@@ -125,10 +124,10 @@ public class ViewManager : MonoBehaviour
         // ViewDataに移動先が設定されているかどうかで判定するのがより柔軟だが、
         // 今回は仕様通り「拡大中は戻るボタン」とする。
         
-        bool isZoomed = _currentViewPoint != null && _currentViewPoint.isZoomView;
+        bool isZoomed = _currentViewNode != null && _currentViewNode.isZoomView;
         
-        if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.leftView != null);
-        if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewPoint?.rightView != null);
+        if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewNode?.leftView != null);
+        if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewNode?.rightView != null);
         if (_backButton != null) _backButton.gameObject.SetActive(isZoomed);
     }
 }

@@ -19,7 +19,7 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
     [SerializeField] private InteractionType _interactionType = InteractionType.None;
     
     [Header("Zoom Settings")]
-    [SerializeField] private ViewPoint _zoomViewPoint;
+    [SerializeField] private ViewNode _zoomViewNode;
 
     [Header("Pickup Settings")]
     [SerializeField] private ItemData _itemToPickup;
@@ -49,9 +49,9 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
         switch (_interactionType)
         {
             case InteractionType.Zoom:
-                if (_zoomViewPoint != null)
+                if (_zoomViewNode != null)
                 {
-                    ViewManager.Instance.ZoomIn(_zoomViewPoint);
+                    ViewManager.Instance.ZoomIn(_zoomViewNode);
                 }
                 break;
 
