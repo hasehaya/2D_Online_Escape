@@ -5,13 +5,10 @@
 public enum FlagType
 {
     None = 0,
-    
-    // テスト用
-    TestFlag_A,
-    TestFlag_B,
 
-    // ここにゲーム固有のフラグを追加していく
-    // 例:
-    // Room1_DoorOpen,
-    // Room1_SwitchOn,
+    // Wake - レーザーギミック
+    Wake_LaserTarget1,
+    Wake_LaserTarget2,
+    Wake_LaserTarget3,
+    Wake_LaserCompleted,
 }
