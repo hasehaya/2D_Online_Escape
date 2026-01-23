@@ -142,8 +142,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Player1Name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
-  m_sharedMaterial: {fileID: 925720580476335798, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
+  m_sharedMaterial: {fileID: 925720580476335798, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -178,6 +178,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

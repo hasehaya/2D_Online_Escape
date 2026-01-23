@@ -178,8 +178,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ready
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
-  m_sharedMaterial: {fileID: 925720580476335798, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
+  m_sharedMaterial: {fileID: 925720580476335798, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -214,6 +214,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -281,14 +282,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 231027553}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -365,17 +366,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Version: 3
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
-  m_LightLayerMask: 1
-  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
-  m_ShadowLayerMask: 1
-  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &362248841
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,8 +442,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u30D7\u30EC\u30A4\u30E4\u30FC\u5F85\u6A5F\u4E2D"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
-  m_sharedMaterial: {fileID: 925720580476335798, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
+  m_sharedMaterial: {fileID: 925720580476335798, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -471,6 +478,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -742,15 +750,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c87b85f69984810ac8ebaa75af1f4fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomNameText: {fileID: 2100803487}
-  player1NameText: {fileID: 3137064318065589284}
-  player2NameText: {fileID: 1819762207}
-  player1ReadyIcon: {fileID: 3137064318065589283}
-  player2ReadyIcon: {fileID: 1819762206}
-  readyButton: {fileID: 1414755552}
-  readyButtonText: {fileID: 116027487}
-  leaveRoomButton: {fileID: 1029463973}
-  statusText: {fileID: 362248843}
+  _roomNameText: {fileID: 2100803487}
+  _player1NameText: {fileID: 3137064318065589284}
+  _player2NameText: {fileID: 1819762207}
+  _player1ReadyIcon: {fileID: 3137064318065589283}
+  _player2ReadyIcon: {fileID: 1819762206}
+  _readyButton: {fileID: 1414755552}
+  _readyButtonText: {fileID: 116027487}
+  _leaveRoomButton: {fileID: 1029463973}
+  _statusText: {fileID: 362248843}
 --- !u!4 &1154018497
 Transform:
   m_ObjectHideFlags: 0
@@ -968,8 +976,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: X
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
-  m_sharedMaterial: {fileID: 925720580476335798, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
+  m_sharedMaterial: {fileID: 925720580476335798, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1004,6 +1012,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1497,8 +1506,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u90E8\u5C4BID: 123456"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
-  m_sharedMaterial: {fileID: 925720580476335798, guid: b1a927b5ce64de840885fd50ec6ffdad, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
+  m_sharedMaterial: {fileID: 925720580476335798, guid: da9892322f5f6e44fb159ab05c163b8b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1533,6 +1542,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

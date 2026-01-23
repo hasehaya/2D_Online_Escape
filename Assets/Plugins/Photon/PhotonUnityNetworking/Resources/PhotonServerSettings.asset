@@ -42,6 +42,7 @@ MonoBehaviour:
   - UpdatePlayerReady
   - RPC_SetFlag
   - RPC_UpdateRemoteFlag
+  - LoadGameScene
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
