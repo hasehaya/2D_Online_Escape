@@ -213,6 +213,9 @@ namespace A
 
             // GameStateServiceを使って設定
             GameStateService.Instance.SetFloat(_distanceRatioKey, ratio);
+
+            // 送信ログ
+            Debug.Log($"[GimmickLaser] 距離割合を送信: Key={_distanceRatioKey}, Ratio={ratio:F3}, Distance={distance:F1}");
         }
 
         private IEnumerator TriggerCompletionEvent()

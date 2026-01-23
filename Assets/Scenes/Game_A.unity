@@ -1351,7 +1351,7 @@ PrefabInstance:
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _initialView
       value: 
-      objectReference: {fileID: 2027743889}
+      objectReference: {fileID: 1745184731}
     - target: {fileID: 1693884960966730675, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: m_Name
       value: Manager

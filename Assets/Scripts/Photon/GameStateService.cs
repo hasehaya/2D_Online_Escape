@@ -1,6 +1,7 @@
 ﻿using System;
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 
 /// <summary>
@@ -8,25 +9,39 @@ using UnityEngine;
 /// Float、Bool、Enum値をネットワーク越しに同期する。
 /// 旧FlagManagerの機能も統合。
 /// </summary>
-public class GameStateService : MonoBehaviourPunCallbacks
+public class GameStateService : IInRoomCallbacks
 {
-    public static GameStateService Instance { get; private set; }
+    private static GameStateService _instance;
+
+    public static GameStateService Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new GameStateService();
+            }
+
+            return _instance;
+        }
+    }
 
     // 値変更イベント
     public event Action<string, object> OnPropertyChanged;
     public event Action<FlagType, bool> OnFlagChanged;
 
-    private void Awake()
+    private GameStateService()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        // コールバックを登録
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    /// <summary>
+    /// サービスを破棄する際に呼び出す
+    /// </summary>
+    public void Dispose()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
     }
 
     #region Float値の管理
@@ -258,12 +273,12 @@ public class GameStateService : MonoBehaviourPunCallbacks
 
     #endregion
 
-    #region Photonコールバック
+    #region IInRoomCallbacksの実装
 
     /// <summary>
     /// Room Custom Propertiesが変更されたときに呼ばれる
     /// </summary>
-    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
         foreach (var key in propertiesThatChanged.Keys)
         {
@@ -284,6 +299,23 @@ public class GameStateService : MonoBehaviourPunCallbacks
                 }
             }
         }
+    }
+
+    // IInRoomCallbacksの他のメソッド（未使用）
+    public void OnPlayerEnteredRoom(Player newPlayer)
+    {
+    }
+
+    public void OnPlayerLeftRoom(Player otherPlayer)
+    {
+    }
+
+    public void OnMasterClientSwitched(Player newMasterClient)
+    {
+    }
+
+    public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
     }
 
     #endregion

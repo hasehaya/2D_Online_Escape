@@ -14,11 +14,12 @@ namespace B
         [SerializeField] private float _maxHeartRate = 120f;
 
         [Header("心電図波形")] [SerializeField] private LineRenderer _lineRenderer;
+        [SerializeField] private RectTransform _rectTransform; // RectTransformの参照
         [SerializeField] private int _waveformPoints = 100; // 波形の点の数
-        [SerializeField] private float _waveformWidth = 10f; // 波形の幅
-        [SerializeField] private float _baseAmplitude = 0.5f; // 基本振幅
-        [SerializeField] private float _maxAmplitude = 2f; // 最大振幅
+        [SerializeField] private float _baseAmplitudeRatio = 0.2f; // 基本振幅の比率（高さに対する）
+        [SerializeField] private float _maxAmplitudeRatio = 0.4f; // 最大振幅の比率（高さに対する）
         [SerializeField] private float _waveSpeed = 2f; // 波形のスクロール速度
+        [SerializeField] private float _lineWidthRatio = 0.01f; // 線の太さの比率（高さに対する）
 
         [Header("Photon設定")] [SerializeField]
         private string _distanceRatioKey = "LaserDistanceRatio"; // Room Custom Propertyのキー
@@ -31,12 +32,23 @@ namespace B
 
         private void Start()
         {
+            // RectTransformが設定されていない場合、自動で取得
+            if (_rectTransform == null)
+            {
+                _rectTransform = GetComponent<RectTransform>();
+            }
+
             InitializeLineRenderer();
 
             // GameStateServiceから初期値を読み取る
             if (GameStateService.Instance != null && GameStateService.Instance.HasFloat(_distanceRatioKey))
             {
                 _currentRatio = GameStateService.Instance.GetFloat(_distanceRatioKey);
+                Debug.Log($"[Electrocardiogram] 初期値を受信: Key={_distanceRatioKey}, Ratio={_currentRatio:F3}");
+            }
+            else
+            {
+                Debug.Log($"[Electrocardiogram] 初期値が見つかりません: Key={_distanceRatioKey}");
             }
 
             UpdateHeartRateDisplay();
@@ -47,7 +59,15 @@ namespace B
             // GameStateServiceから割合を取得して心拍数を更新
             if (GameStateService.Instance != null && GameStateService.Instance.HasFloat(_distanceRatioKey))
             {
-                _currentRatio = GameStateService.Instance.GetFloat(_distanceRatioKey);
+                float newRatio = GameStateService.Instance.GetFloat(_distanceRatioKey);
+
+                // 値が変わった場合のみログを出力
+                if (Mathf.Abs(newRatio - _currentRatio) > 0.001f)
+                {
+                    Debug.Log($"[Electrocardiogram] Update内で距離割合を受信: Key={_distanceRatioKey}, Ratio={newRatio:F3}");
+                    _currentRatio = newRatio;
+                }
+
                 float heartRate = ConvertRatioToHeartRate(_currentRatio);
                 _currentHeartRate = Mathf.Clamp(heartRate, 0f, _maxHeartRate);
                 UpdateHeartRateDisplay();
@@ -83,9 +103,40 @@ namespace B
             _lineRenderer.positionCount = _waveformPoints;
             _lineRenderer.useWorldSpace = false;
 
-            // 線の見た目を設定（必要に応じて調整）
-            _lineRenderer.startWidth = 0.05f;
-            _lineRenderer.endWidth = 0.05f;
+            // World空間でのRectTransformのサイズに基づいて線の太さを設定
+            UpdateLineWidth();
+        }
+
+        /// <summary>
+        /// World空間でのRectTransformのサイズを取得
+        /// </summary>
+        private Vector2 GetWorldSize()
+        {
+            if (_rectTransform == null) return Vector2.one * 10f;
+
+            // RectTransformの四隅を取得
+            Vector3[] corners = new Vector3[4];
+            _rectTransform.GetWorldCorners(corners);
+
+            // 幅と高さを計算
+            float width = Vector3.Distance(corners[0], corners[3]);
+            float height = Vector3.Distance(corners[0], corners[1]);
+
+            return new Vector2(width, height);
+        }
+
+        /// <summary>
+        /// 線の太さを更新
+        /// </summary>
+        private void UpdateLineWidth()
+        {
+            if (_lineRenderer == null) return;
+
+            Vector2 worldSize = GetWorldSize();
+            float lineWidth = worldSize.y * _lineWidthRatio;
+
+            _lineRenderer.startWidth = lineWidth;
+            _lineRenderer.endWidth = lineWidth;
         }
 
         /// <summary>
@@ -116,8 +167,15 @@ namespace B
         {
             if (_lineRenderer == null) return;
 
+            // World空間でのRectTransformのサイズを取得
+            Vector2 worldSize = GetWorldSize();
+            float waveformWidth = worldSize.x;
+            float waveformHeight = worldSize.y;
+
             // 心拍数に基づいて振幅を計算（心拍数が高いほど振幅が大きくなる）
-            float amplitudeMultiplier = Mathf.Lerp(_baseAmplitude, _maxAmplitude, _currentHeartRate / _maxHeartRate);
+            float baseAmplitude = waveformHeight * _baseAmplitudeRatio;
+            float maxAmplitude = waveformHeight * _maxAmplitudeRatio;
+            float amplitudeMultiplier = Mathf.Lerp(baseAmplitude, maxAmplitude, _currentHeartRate / _maxHeartRate);
 
             // 心拍数に基づいて周波数を計算（心拍数が高いほど波形が密になる）
             float frequency = Mathf.Lerp(1f, 4f, _currentHeartRate / _maxHeartRate);
@@ -125,7 +183,7 @@ namespace B
             for (int i = 0; i < _waveformPoints; i++)
             {
                 float t = (float)i / (_waveformPoints - 1);
-                float x = t * _waveformWidth - _waveformWidth / 2f;
+                float x = t * waveformWidth - waveformWidth / 2f;
 
                 // 心電図の波形を生成（QRS波を模擬）
                 float phase = (t * frequency * Mathf.PI * 4f) + _timeOffset;
@@ -142,29 +200,28 @@ namespace B
         /// <returns>波形の高さ</returns>
         private float GenerateECGWave(float phase)
         {
-            // 位相を0-2πの範囲に正規化
-            float normalizedPhase = phase % (Mathf.PI * 2f);
+            float t = (phase % (Mathf.PI * 2f)) / (Mathf.PI * 2f); // 0-1に正規化
 
-            // P波、QRS波、T波を模擬した波形
-            float wave = 0f;
-
-            // QRS複合体（鋭いピーク）
-            if (normalizedPhase < 0.3f)
+            // QRS波（鋭いピーク）- より細かく滑らかに
+            if (t < 0.15f)
             {
-                wave = Mathf.Sin(normalizedPhase * 10f) * 1.5f;
+                float qrsPhase = t / 0.15f; // 0-1に正規化
+                return Mathf.Sin(qrsPhase * Mathf.PI) * 1.5f;
             }
             // T波（なだらかな波）
-            else if (normalizedPhase > 1.5f && normalizedPhase < 3f)
+            else if (t > 0.3f && t < 0.6f)
             {
-                wave = Mathf.Sin((normalizedPhase - 1.5f) * 2f) * 0.3f;
+                float tPhase = (t - 0.3f) / 0.3f;
+                return Mathf.Sin(tPhase * Mathf.PI) * 0.3f;
             }
             // P波（小さな波）
-            else if (normalizedPhase > 5f && normalizedPhase < 5.8f)
+            else if (t > 0.8f)
             {
-                wave = Mathf.Sin((normalizedPhase - 5f) * 8f) * 0.2f;
+                float pPhase = (t - 0.8f) / 0.2f;
+                return Mathf.Sin(pPhase * Mathf.PI) * 0.2f;
             }
 
-            return wave;
+            return 0f;
         }
 
         private void OnEnable()
@@ -193,6 +250,7 @@ namespace B
             // 距離割合が更新された場合、即座に反映
             if (key == _distanceRatioKey && value is float floatValue)
             {
+                Debug.Log($"[Electrocardiogram] OnPropertyChangedで距離割合を受信: Key={key}, Ratio={floatValue:F3}");
                 _currentRatio = floatValue;
                 float heartRate = ConvertRatioToHeartRate(_currentRatio);
                 _currentHeartRate = Mathf.Clamp(heartRate, 0f, _maxHeartRate);
