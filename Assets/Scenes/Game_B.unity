@@ -671,15 +671,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::B.Electrocardiogram
   _heartRateText: {fileID: 147521830}
   _maxHeartRate: 120
+  _minHeartRate: 60
   _lineRenderer: {fileID: 181841000}
   _rectTransform: {fileID: 181840999}
-  _waveformPoints: 100
-  _baseAmplitudeRatio: 0.2
-  _maxAmplitudeRatio: 0.4
-  _waveSpeed: 2
+  _waveformPoints: 500
+  _scrollSpeed: 230
+  _waveDuration: 0.4
+  _baseAmplitudeRatio: 0
+  _maxAmplitudeRatio: 0.9
   _lineWidthRatio: 0.01
   _distanceRatioKey: LaserDistanceRatio
-  _minHeartRate: 60
 --- !u!1 &521550540
 GameObject:
   m_ObjectHideFlags: 0
