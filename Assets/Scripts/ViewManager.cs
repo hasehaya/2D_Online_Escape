@@ -11,12 +11,12 @@ public class ViewManager : MonoBehaviour
 {
     public static ViewManager Instance { get; private set; }
 
-    [Header("Views")]
-    [SerializeField] private ViewNode _initialView;
+    [Header("Views")] [SerializeField] private ViewNode _initialView;
     [SerializeField] private ViewNode[] _allViews; // 管理する全てのViewPoint
 
-    [Header("UI References")]
-    [SerializeField] private Button _leftButton;
+    [Header("UI References")] [SerializeField]
+    private Button _leftButton;
+
     [SerializeField] private Button _rightButton;
     [SerializeField] private Button _backButton;
 
@@ -67,7 +67,7 @@ public class ViewManager : MonoBehaviour
         }
     }
 
-    private void ShowView(ViewNode viewNode)
+    public void ShowView(ViewNode viewNode)
     {
         _currentViewNode = viewNode;
 
@@ -82,7 +82,7 @@ public class ViewManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void TurnRight()
+    private void TurnRight()
     {
         if (_currentViewNode != null && _currentViewNode.rightView != null)
         {
@@ -90,7 +90,7 @@ public class ViewManager : MonoBehaviour
         }
     }
 
-    public void TurnLeft()
+    private void TurnLeft()
     {
         if (_currentViewNode != null && _currentViewNode.leftView != null)
         {
@@ -108,7 +108,7 @@ public class ViewManager : MonoBehaviour
         ShowView(viewNode);
     }
 
-    public void Return()
+    private void Return()
     {
         if (_viewStack.Count > 0)
         {
@@ -123,9 +123,9 @@ public class ViewManager : MonoBehaviour
         // ただし、拡大画面でも左右移動できるケース（机の引き出しの左右など）も考えられるため、
         // ViewDataに移動先が設定されているかどうかで判定するのがより柔軟だが、
         // 今回は仕様通り「拡大中は戻るボタン」とする。
-        
+
         bool isZoomed = _currentViewNode != null && _currentViewNode.isZoomView;
-        
+
         if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewNode?.leftView != null);
         if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewNode?.rightView != null);
         if (_backButton != null) _backButton.gameObject.SetActive(isZoomed);

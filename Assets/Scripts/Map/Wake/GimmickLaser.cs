@@ -22,8 +22,10 @@ namespace A
         [Header("Target Correct Sprite")] [SerializeField]
         private Sprite _targetCorrectSprite;
 
-        [Header("Settings")] [SerializeField] private float _correctThreshold = 50f;
-        [SerializeField] private float _eventDelaySeconds = 1f;
+        [Header("View Node")] [SerializeField] private ViewNode _targetViewNode;
+
+        [Header("Settings")] [SerializeField] private float _correctRatioThreshold = 0.91f; // 91%まで近づいたら正解
+        [SerializeField] private float _maxDistance = 1000f; // 最大距離（距離割合の計算に使用）
 
         [Header("Events")] [SerializeField] private UnityEvent _onAllCorrect;
 
@@ -37,6 +39,7 @@ namespace A
         private bool[] _isCorrect;
         private bool _isCompleted;
         private float _distanceUpdateTimer;
+        private int _nextTargetIndex; // 次に正解にするターゲットのインデックス（順番制御用）
 
         private void Awake()
         {
@@ -48,6 +51,7 @@ namespace A
             };
             _completedFlag = FlagType.Wake_LaserCompleted;
             _isCorrect = new bool[3];
+            _nextTargetIndex = 0; // 最初のターゲット（インデックス0）から開始
         }
 
         private void Start()
@@ -80,49 +84,60 @@ namespace A
 
         private void CheckAllTargets()
         {
-            int correctCount = 0;
-
-            for (int i = 0; i < _targetPoints.Length; i++)
+            // 既に全て完了している場合は何もしない
+            if (_nextTargetIndex >= _targetPoints.Length)
             {
-                float distance = GetDistanceToTarget(i);
-                bool isNowCorrect = distance >= 0 && distance <= _correctThreshold;
-
-                if (isNowCorrect && !_isCorrect[i])
-                {
-                    // 新たに正解になった
-                    _isCorrect[i] = true;
-
-                    // スプライトを正解用に変更
-                    if (_targetImages[i] != null && _targetCorrectSprite != null)
-                    {
-                        _targetImages[i].sprite = _targetCorrectSprite;
-                    }
-
-                    // フラグを設定
-                    if (_targetFlags[i] != FlagType.None && GameStateService.Instance != null)
-                    {
-                        GameStateService.Instance.SetFlag(_targetFlags[i], true);
-                    }
-                }
-
-                if (_isCorrect[i])
-                {
-                    correctCount++;
-                }
+                return;
             }
 
-            // 3つ全て正解したらイベント発火
-            if (correctCount >= 3 && !_isCompleted)
-            {
-                _isCompleted = true;
+            // 次に正解にするべきターゲットをチェック
+            int targetIndex = _nextTargetIndex;
+            float distance = GetDistanceToTarget(targetIndex);
 
-                // 完了フラグを設定
-                if (_completedFlag != FlagType.None && GameStateService.Instance != null)
+            if (distance < 0)
+            {
+                return; // 無効な距離の場合は何もしない
+            }
+
+            // 距離を0-1の割合に変換（近い=1、遠い=0）
+            float ratio = Mathf.Clamp01(1f - (distance / _maxDistance));
+
+            // 93%以上近づいたら正解
+            if (ratio >= _correctRatioThreshold && !_isCorrect[targetIndex])
+            {
+                // ランプを正解にする
+                _isCorrect[targetIndex] = true;
+
+                // スプライトを正解用に変更
+                if (_targetImages[targetIndex] != null && _targetCorrectSprite != null)
                 {
-                    GameStateService.Instance.SetFlag(_completedFlag, true);
+                    _targetImages[targetIndex].sprite = _targetCorrectSprite;
                 }
 
-                StartCoroutine(TriggerCompletionEvent());
+                // 対応する番号のフラグを設定
+                if (_targetFlags[targetIndex] != FlagType.None && GameStateService.Instance != null)
+                {
+                    GameStateService.Instance.SetFlag(_targetFlags[targetIndex], true);
+                    Debug.Log(
+                        $"[GimmickLaser] ターゲット{targetIndex + 1}を正解に設定: Flag={_targetFlags[targetIndex]}, Ratio={ratio:F3}");
+                }
+
+                // 次のターゲットに進む
+                _nextTargetIndex++;
+
+                // 全て正解したかチェック
+                if (_nextTargetIndex >= _targetPoints.Length && !_isCompleted)
+                {
+                    _isCompleted = true;
+
+                    // 完了フラグを設定
+                    if (_completedFlag != FlagType.None && GameStateService.Instance != null)
+                    {
+                        GameStateService.Instance.SetFlag(_completedFlag, true);
+                    }
+
+                    StartCoroutine(TriggerCompletionEvent());
+                }
             }
         }
 
@@ -164,28 +179,19 @@ namespace A
         }
 
         /// <summary>
-        /// 現在有効なTargetのうち一番近いものの距離を返す
+        /// 現在有効なTarget（次に正解にするべきTarget）の距離を返す
         /// </summary>
-        /// <returns>有効なTargetまでの最小距離。有効なTargetがない場合は-1を返す</returns>
+        /// <returns>有効なTargetまでの距離。有効なTargetがない場合は-1を返す</returns>
         public float GetClosestActiveTargetDistance()
         {
-            float closestDistance = float.MaxValue;
-            bool hasValidTarget = false;
-
-            for (int i = 0; i < _targetPoints.Length; i++)
+            // 全て正解済みの場合
+            if (_nextTargetIndex >= _targetPoints.Length)
             {
-                if (!_isCorrect[i])
-                {
-                    float distance = GetDistanceToTarget(i);
-                    if (distance >= 0 && distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        hasValidTarget = true;
-                    }
-                }
+                return -1f;
             }
 
-            return hasValidTarget ? closestDistance : -1f;
+            // 次に正解にするべきターゲットの距離を返す
+            return GetDistanceToTarget(_nextTargetIndex);
         }
 
         /// <summary>
@@ -198,8 +204,6 @@ namespace A
             float distance = GetClosestActiveTargetDistance();
 
             // 距離を0-1の割合に変換（近い=1、遠い=0）
-            // ここでは500を最大距離として使用
-            float maxDistance = 500f;
             float ratio;
 
             if (distance < 0)
@@ -208,7 +212,7 @@ namespace A
             }
             else
             {
-                ratio = Mathf.Clamp01(1f - (distance / maxDistance));
+                ratio = Mathf.Clamp01(1f - (distance / _maxDistance));
             }
 
             // GameStateServiceを使って設定
@@ -220,8 +224,14 @@ namespace A
 
         private IEnumerator TriggerCompletionEvent()
         {
-            yield return new WaitForSeconds(_eventDelaySeconds);
-            _onAllCorrect?.Invoke();
+            yield return new WaitForSeconds(1f);
+
+            // ViewNodeに移動
+            if (_targetViewNode != null && ViewManager.Instance != null)
+            {
+                ViewManager.Instance.ShowView(_targetViewNode);
+                _onAllCorrect?.Invoke();
+            }
         }
     }
 }
