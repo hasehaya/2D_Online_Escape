@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// クリック可能なオブジェクトの基底クラス。
 /// プレイヤーのクリック操作を検知し、「拡大表示」「アイテム取得」「メッセージ表示」などの具体的なアクションを実行する役割を持つ。
+/// このコンポーネントをアタッチするだけで、UIオブジェクトの場合は自動的にImageコンポーネントが追加されます。
 /// </summary>
 public class InteractableObject : MonoBehaviour, IPointerClickHandler
 {
@@ -31,6 +33,44 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
     private bool _showClickArea = true;
 
     [SerializeField] private Color _gizmoColor = new Color(0f, 1f, 0f, 0.3f);
+
+    // エディタでコンポーネントをアタッチした時に自動実行
+    private void Reset()
+    {
+        SetupUIComponents();
+    }
+
+    // 実行時に必要なコンポーネントを確認・追加
+    private void Awake()
+    {
+        SetupUIComponents();
+    }
+
+    /// <summary>
+    /// UIオブジェクトの場合、クリック判定に必要なImageコンポーネントを自動追加
+    /// </summary>
+    private void SetupUIComponents()
+    {
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        if (rectTransform != null)
+        {
+            // UIオブジェクトの場合、Imageコンポーネントが必要
+            Image image = GetComponent<Image>();
+            if (image == null)
+            {
+                image = gameObject.AddComponent<Image>();
+                image.color = new Color(1f, 1f, 1f, 0.01f); // ほぼ透明（完全に0だとクリック判定が取れない場合がある）
+                image.raycastTarget = true;
+                Debug.Log($"[InteractableObject] {gameObject.name} に透明なImageを自動追加しました");
+            }
+            else if (!image.raycastTarget)
+            {
+                // Imageはあるがraycastが無効の場合、有効にする
+                image.raycastTarget = true;
+                Debug.Log($"[InteractableObject] {gameObject.name} のImage.raycastTargetを有効にしました");
+            }
+        }
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
