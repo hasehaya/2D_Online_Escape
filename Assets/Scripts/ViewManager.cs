@@ -13,6 +13,7 @@ public class ViewManager : MonoBehaviour
 
     [Header("Views")] [SerializeField] private ViewNode _initialView;
     [SerializeField] private ViewNode[] _allViews; // 管理する全てのViewPoint
+    [SerializeField] private StillNode[] _allStills; // 管理する全てのStillNode
 
     [Header("UI References")] [SerializeField]
     private Button _leftButton;
@@ -20,8 +21,9 @@ public class ViewManager : MonoBehaviour
     [SerializeField] private Button _rightButton;
     [SerializeField] private Button _backButton;
 
-    private Stack<ViewNode> _viewStack = new Stack<ViewNode>();
-    private ViewNode _currentViewNode;
+    private Stack<IViewable> _viewStack = new Stack<IViewable>();
+    private IViewable _currentViewable;
+    private ViewNode _currentViewNode; // ViewNode固有の操作用
     private Camera _mainCamera;
 
     private void Awake()
@@ -54,7 +56,7 @@ public class ViewManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 全てのViewをアクティブ状態に初期化する
+    /// 全てのViewとStillをアクティブ状態に初期化する
     /// </summary>
     private void InitializeAllViews()
     {
@@ -65,19 +67,45 @@ public class ViewManager : MonoBehaviour
                 view.gameObject.SetActive(true);
             }
         }
+
+        foreach (var still in _allStills)
+        {
+            if (still != null)
+            {
+                still.gameObject.SetActive(true);
+            }
+        }
     }
 
     public void ShowView(ViewNode viewNode)
     {
-        _currentViewNode = viewNode;
+        ShowViewable(viewNode);
+    }
 
-        // カメラをViewPointの位置に移動（Z座標は維持してRectTransformへの影響を回避）
-        if (viewNode != null && _mainCamera != null)
+    /// <summary>
+    /// IViewableを表示する汎用メソッド
+    /// </summary>
+    public void ShowViewable(IViewable viewable)
+    {
+        // 前のViewableのOnExitを呼ぶ
+        _currentViewable?.OnExit();
+
+        _currentViewable = viewable;
+
+        // ViewNodeの場合は_currentViewNodeにも保持
+        _currentViewNode = viewable as ViewNode;
+
+        // カメラをViewableの位置に移動
+        if (viewable != null && _mainCamera != null)
         {
-            Vector3 targetPosition = viewNode.transform.position;
+            Transform viewTransform = viewable.GetTransform();
+            Vector3 targetPosition = viewTransform.position;
             Vector3 cameraPosition = _mainCamera.transform.position;
             _mainCamera.transform.position = new Vector3(targetPosition.x, targetPosition.y, cameraPosition.z);
         }
+
+        // 新しいViewableのOnEnterを呼ぶ
+        _currentViewable?.OnEnter();
 
         UpdateUI();
     }
@@ -100,20 +128,42 @@ public class ViewManager : MonoBehaviour
 
     public void ZoomIn(ViewNode viewNode)
     {
-        if (_currentViewNode != null)
+        if (_currentViewable != null)
         {
-            _viewStack.Push(_currentViewNode);
+            _viewStack.Push(_currentViewable);
         }
 
         ShowView(viewNode);
+    }
+
+    /// <summary>
+    /// StillNodeへの遷移（スタックに現在のViewableを保存）
+    /// </summary>
+    public void ShowStill(StillNode stillNode)
+    {
+        if (_currentViewable != null)
+        {
+            _viewStack.Push(_currentViewable);
+        }
+
+        ShowViewable(stillNode);
     }
 
     private void Return()
     {
         if (_viewStack.Count > 0)
         {
-            ViewNode previousView = _viewStack.Pop();
-            ShowView(previousView);
+            IViewable previousView = _viewStack.Pop();
+
+            // ViewNodeの場合はShowView、それ以外はShowViewableを呼ぶ
+            if (previousView is ViewNode viewNode)
+            {
+                ShowView(viewNode);
+            }
+            else
+            {
+                ShowViewable(previousView);
+            }
         }
     }
 

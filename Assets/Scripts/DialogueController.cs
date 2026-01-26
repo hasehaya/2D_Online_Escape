@@ -1,0 +1,180 @@
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+/// <summary>
+/// ADVシステムのダイアログUI表示を管理するコンポーネント。
+/// StillNodeで定義されたダイアログを順番に表示し、ユーザーの入力で進行する。
+/// </summary>
+public class DialogueController : MonoBehaviour
+{
+    [Header("UI References")] [SerializeField]
+    private GameObject _dialoguePanel;
+
+    [SerializeField] private Text _characterNameText;
+    [SerializeField] private Text _dialogueText;
+    [SerializeField] private Button _nextButton;
+
+    [Header("Settings")] [SerializeField] private float _textSpeed = 0.05f; // 1文字あたりの表示速度(秒)
+    [SerializeField] private bool _autoAdvance; // 自動で次のダイアログに進むか
+
+    private DialogueEntry[] _currentDialogues;
+    private int _currentDialogueIndex;
+    private bool _isTyping;
+    private Coroutine _typingCoroutine;
+    private StillNode _currentStillNode;
+
+    private void Start()
+    {
+        if (_nextButton != null)
+        {
+            _nextButton.onClick.AddListener(OnNextButtonClicked);
+        }
+
+        HideDialogue();
+    }
+
+    /// <summary>
+    /// StillNodeのダイアログを開始する
+    /// </summary>
+    public void StartDialogue(StillNode stillNode)
+    {
+        _currentStillNode = stillNode;
+        _currentDialogues = stillNode.dialogues;
+        _currentDialogueIndex = 0;
+
+        if (_currentDialogues != null && _currentDialogues.Length > 0)
+        {
+            ShowDialogue();
+            DisplayCurrentDialogue();
+        }
+    }
+
+    /// <summary>
+    /// 現在のダイアログを表示する
+    /// </summary>
+    private void DisplayCurrentDialogue()
+    {
+        if (_currentDialogues == null || _currentDialogueIndex >= _currentDialogues.Length)
+        {
+            EndDialogue();
+            return;
+        }
+
+        DialogueEntry entry = _currentDialogues[_currentDialogueIndex];
+
+        // キャラクター名を表示
+        if (_characterNameText != null)
+        {
+            _characterNameText.text = string.IsNullOrEmpty(entry.CharacterName) ? "" : entry.CharacterName;
+        }
+
+        // テキストをタイピング表示
+        if (_typingCoroutine != null)
+        {
+            StopCoroutine(_typingCoroutine);
+        }
+
+        _typingCoroutine = StartCoroutine(TypeText(entry.Text));
+    }
+
+    /// <summary>
+    /// テキストを1文字ずつ表示するコルーチン
+    /// </summary>
+    private IEnumerator TypeText(string text)
+    {
+        _isTyping = true;
+        _dialogueText.text = "";
+
+        foreach (char c in text)
+        {
+            _dialogueText.text += c;
+            yield return new WaitForSeconds(_textSpeed);
+        }
+
+        _isTyping = false;
+
+        if (_autoAdvance)
+        {
+            yield return new WaitForSeconds(1.0f);
+            OnNextButtonClicked();
+        }
+    }
+
+    /// <summary>
+    /// 次へボタンがクリックされた時の処理
+    /// </summary>
+    private void OnNextButtonClicked()
+    {
+        if (_isTyping)
+        {
+            // タイピング中の場合は即座に全文表示
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+
+            _dialogueText.text = _currentDialogues[_currentDialogueIndex].Text;
+            _isTyping = false;
+        }
+        else
+        {
+            // 次のダイアログへ進む
+            _currentDialogueIndex++;
+            DisplayCurrentDialogue();
+        }
+    }
+
+    /// <summary>
+    /// ダイアログを終了して次のViewableへ遷移
+    /// </summary>
+    private void EndDialogue()
+    {
+        HideDialogue();
+
+        if (_currentStillNode != null)
+        {
+            IViewable nextView = _currentStillNode.GetNextViewable();
+            if (nextView != null && ViewManager.Instance != null)
+            {
+                ViewManager.Instance.ShowViewable(nextView);
+            }
+        }
+    }
+
+    /// <summary>
+    /// ダイアログUIを表示
+    /// </summary>
+    private void ShowDialogue()
+    {
+        if (_dialoguePanel != null)
+        {
+            _dialoguePanel.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// ダイアログUIを非表示
+    /// </summary>
+    private void HideDialogue()
+    {
+        if (_dialoguePanel != null)
+        {
+            _dialoguePanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Update is called once per frame (スペースキーでも進められるようにする)
+    /// </summary>
+    private void Update()
+    {
+        if (_dialoguePanel != null && _dialoguePanel.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                OnNextButtonClicked();
+            }
+        }
+    }
+}
