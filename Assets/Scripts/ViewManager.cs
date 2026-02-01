@@ -12,8 +12,6 @@ public class ViewManager : MonoBehaviour
     public static ViewManager Instance { get; private set; }
 
     [Header("Views")] [SerializeField] private ViewNode _initialView;
-    [SerializeField] private ViewNode[] _allViews; // 管理する全てのViewPoint
-    [SerializeField] private StillNode[] _allStills; // 管理する全てのStillNode
 
     [Header("UI References")] [SerializeField]
     private Button _leftButton;
@@ -46,34 +44,9 @@ public class ViewManager : MonoBehaviour
         if (_rightButton != null) _rightButton.onClick.AddListener(TurnRight);
         if (_backButton != null) _backButton.onClick.AddListener(Return);
 
-        // 全てのViewをアクティブにする
-        InitializeAllViews();
-
         if (_initialView != null)
         {
             ShowView(_initialView);
-        }
-    }
-
-    /// <summary>
-    /// 全てのViewとStillをアクティブ状態に初期化する
-    /// </summary>
-    private void InitializeAllViews()
-    {
-        foreach (var view in _allViews)
-        {
-            if (view != null)
-            {
-                view.gameObject.SetActive(true);
-            }
-        }
-
-        foreach (var still in _allStills)
-        {
-            if (still != null)
-            {
-                still.gameObject.SetActive(true);
-            }
         }
     }
 
