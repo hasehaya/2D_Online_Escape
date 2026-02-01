@@ -227,9 +227,9 @@ namespace A
             yield return new WaitForSeconds(1f);
 
             // ViewNodeに移動
-            if (_targetViewNode != null && ViewManager.Instance != null)
+            if (_targetViewNode != null && ViewController.Instance != null)
             {
-                ViewManager.Instance.ShowView(_targetViewNode);
+                ViewController.Instance.ShowView(_targetViewNode);
                 _onAllCorrect?.Invoke();
             }
         }

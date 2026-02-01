@@ -33,7 +33,7 @@ public class NoelAwakeEvent : MonoBehaviour
         yield return StartCoroutine(FadeTransition());
 
         yield return new WaitForSeconds(4f);
-        ViewManager.Instance.ShowStill(stillNode);
+        ViewController.Instance.ShowStill(stillNode);
         switchRoutine = null;
     }
 

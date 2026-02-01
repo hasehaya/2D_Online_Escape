@@ -135,9 +135,9 @@ public class DialogueController : MonoBehaviour
         if (_currentStillNode != null)
         {
             IViewable nextView = _currentStillNode.GetNextViewable();
-            if (nextView != null && ViewManager.Instance != null)
+            if (nextView != null && ViewController.Instance != null)
             {
-                ViewManager.Instance.ShowViewable(nextView);
+                ViewController.Instance.ShowViewable(nextView);
             }
         }
     }

@@ -7,9 +7,9 @@ using UnityEngine.UI;
 /// 4方向（東西南北）の壁の切り替えと、特定のオブジェクトへの「拡大（ズーム）」および「戻る」遷移をスタック構造で管理する。
 /// カメラの位置を各ViewPointの位置に移動させることで視点を切り替える。
 /// </summary>
-public class ViewManager : MonoBehaviour
+public class ViewController : MonoBehaviour
 {
-    public static ViewManager Instance { get; private set; }
+    public static ViewController Instance { get; private set; }
 
     [Header("Views")] [SerializeField] private ViewNode _initialView;
 

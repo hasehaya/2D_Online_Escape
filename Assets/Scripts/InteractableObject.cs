@@ -96,7 +96,7 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
             case InteractionType.Zoom:
                 if (_zoomViewNode != null)
                 {
-                    ViewManager.Instance.ZoomIn(_zoomViewNode);
+                    ViewController.Instance.ZoomIn(_zoomViewNode);
                 }
 
                 break;
