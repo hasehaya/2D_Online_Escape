@@ -26,6 +26,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
     private List<RoomInfo> _availableRooms = new List<RoomInfo>();
     private bool _waitingForPlayMode = false;
     private bool _isCreateRoomMode = false;
+    private bool _pendingCreateRoom = false;
 
     [MenuItem("Tools/Photon Test Window")]
     public static void ShowWindow()
@@ -221,7 +222,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
             if (_isCreateRoomMode)
             {
                 Debug.Log("[PhotonTestWindow] CreateRoomモード: 部屋を作成します");
-                CreateRoom();
+                TryCreateRoomIfReady();
             }
             else if (_isJoining)
             {
@@ -345,6 +346,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
         _isJoining = false;
         _isCreateRoomMode = false;
         _waitingForPlayMode = false;
+        _pendingCreateRoom = false;
         _roomName = null;
         _availableRooms.Clear();
 
@@ -360,6 +362,10 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
     public void OnJoinedLobby()
     {
         Debug.Log("[PhotonTestWindow] ロビーに参加しました");
+        if (_isCreateRoomMode && _pendingCreateRoom)
+        {
+            TryCreateRoomIfReady();
+        }
     }
 
     public void OnLeftLobby()
@@ -414,7 +420,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
         {
             // 部屋を作成
             Debug.Log("[PhotonTestWindow] 部屋作成処理を開始します");
-            CreateRoom();
+            TryCreateRoomIfReady();
         }
         else if (_isJoining)
         {
@@ -522,6 +528,38 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
         PhotonNetwork.CreateRoom(_roomName, roomOptions, TypedLobby.Default);
 
         _isConnecting = false;
+    }
+
+    private void TryCreateRoomIfReady()
+    {
+        if (!_isCreateRoomMode || string.IsNullOrEmpty(_roomName))
+        {
+            return;
+        }
+
+        if (!PhotonNetwork.IsConnected)
+        {
+            _pendingCreateRoom = true;
+            Debug.Log("[PhotonTestWindow] 未接続のため部屋作成を保留します");
+            return;
+        }
+
+        if (PhotonNetwork.NetworkClientState == ClientState.JoiningLobby)
+        {
+            _pendingCreateRoom = true;
+            Debug.Log("[PhotonTestWindow] ロビー参加中のため部屋作成を保留します");
+            return;
+        }
+
+        if (!PhotonNetwork.IsConnectedAndReady)
+        {
+            _pendingCreateRoom = true;
+            Debug.Log($"[PhotonTestWindow] 接続準備中のため部屋作成を保留します (State: {PhotonNetwork.NetworkClientState})");
+            return;
+        }
+
+        _pendingCreateRoom = false;
+        CreateRoom();
     }
 
     // IInRoomCallbacks実装
