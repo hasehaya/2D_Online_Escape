@@ -66,7 +66,7 @@ public class DialogueController : MonoBehaviour
         // キャラクター名を表示
         if (_characterNameText != null)
         {
-            _characterNameText.text = string.IsNullOrEmpty(entry.CharacterName) ? "" : entry.CharacterName;
+            _characterNameText.text = entry.CharacterName;
         }
 
         // テキストをタイピング表示

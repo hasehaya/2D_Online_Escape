@@ -27,14 +27,6 @@ public class ViewNode : MonoBehaviour, IViewable
     }
 
     /// <summary>
-    /// この視点から出る時の処理
-    /// </summary>
-    public void OnExit()
-    {
-        // ViewNodeから出る時の処理（必要に応じて実装）
-    }
-
-    /// <summary>
     /// このViewableのTransform（カメラ位置設定用）
     /// </summary>
     public Transform GetTransform()

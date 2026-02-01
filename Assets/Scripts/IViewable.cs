@@ -12,11 +12,6 @@ public interface IViewable
     void OnEnter();
 
     /// <summary>
-    /// この視点から出る時の処理
-    /// </summary>
-    void OnExit();
-
-    /// <summary>
     /// このViewableのTransform（カメラ位置設定用）
     /// </summary>
     Transform GetTransform();

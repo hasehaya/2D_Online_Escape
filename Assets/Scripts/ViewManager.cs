@@ -60,9 +60,6 @@ public class ViewManager : MonoBehaviour
     /// </summary>
     public void ShowViewable(IViewable viewable)
     {
-        // 前のViewableのOnExitを呼ぶ
-        _currentViewable?.OnExit();
-
         _currentViewable = viewable;
 
         // ViewNodeの場合は_currentViewNodeにも保持
