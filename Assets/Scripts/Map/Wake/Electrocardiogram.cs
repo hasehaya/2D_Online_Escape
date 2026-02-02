@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Noel
 {
@@ -29,6 +30,10 @@ namespace Noel
 
         [Header("Photon設定")] [SerializeField] private string _distanceRatioKey = "LaserDistanceRatio";
 
+        [Header("Events")] [SerializeField] private UnityEvent _onAllCorrect;
+
+        [Header("View Node")] [SerializeField] private ViewNode _targetViewNode;
+
         // 内部変数
         private float _currentHeartRate;
         private float _currentRatio;
@@ -37,6 +42,8 @@ namespace Noel
 
         // 波形生成制御用
         private float _timeSinceLastBeat = 0f; // 前回の拍動からの経過時間
+
+        private bool _hasTriggeredLookUpEvent = false; // LookUpEventが既に実行されたかどうか
 
         private void Start()
         {
@@ -245,13 +252,19 @@ namespace Noel
         private void OnEnable()
         {
             if (GameStateService.Instance != null)
+            {
                 GameStateService.Instance.OnPropertyChanged += OnPropertyChanged;
+                GameStateService.Instance.OnFlagChanged += OnFlagChanged;
+            }
         }
 
         private void OnDisable()
         {
             if (GameStateService.Instance != null)
+            {
                 GameStateService.Instance.OnPropertyChanged -= OnPropertyChanged;
+                GameStateService.Instance.OnFlagChanged -= OnFlagChanged;
+            }
         }
 
         private void OnPropertyChanged(string key, object value)
@@ -260,6 +273,16 @@ namespace Noel
             {
                 _currentRatio = floatValue;
                 UpdateHeartRateFromRatio(_currentRatio);
+            }
+        }
+
+        private void OnFlagChanged(FlagType flag, bool value)
+        {
+            if (flag == FlagType.Wake_LaserCompleted && value && !_hasTriggeredLookUpEvent)
+            {
+                _hasTriggeredLookUpEvent = true;
+                ViewController.Instance.ShowView(_targetViewNode);
+                _onAllCorrect?.Invoke();
             }
         }
     }

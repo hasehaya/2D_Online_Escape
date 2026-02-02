@@ -226,12 +226,8 @@ namespace Elias
         {
             yield return new WaitForSeconds(1f);
 
-            // ViewNodeに移動
-            if (_targetViewNode != null && ViewController.Instance != null)
-            {
-                ViewController.Instance.ShowView(_targetViewNode);
-                _onAllCorrect?.Invoke();
-            }
+            ViewController.Instance.ShowView(_targetViewNode);
+            _onAllCorrect?.Invoke();
         }
     }
 }

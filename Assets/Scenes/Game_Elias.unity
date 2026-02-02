@@ -1231,8 +1231,8 @@ MonoBehaviour:
   _onAllCorrect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2027743890}
-        m_TargetAssemblyTypeName: NoelAwakeEvent, Assembly-CSharp
+      - m_Target: {fileID: 1500520663}
+        m_TargetAssemblyTypeName: Elias.NoelAwakeEvent, Assembly-CSharp
         m_MethodName: PlayAwakeSequence
         m_Mode: 1
         m_Arguments:
@@ -1469,6 +1469,58 @@ MonoBehaviour:
   leftView: {fileID: 0}
   rightView: {fileID: 0}
   isZoomView: 0
+--- !u!1 &1500520662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1500520664}
+  - component: {fileID: 1500520663}
+  m_Layer: 5
+  m_Name: NoelAwakeEvent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1500520663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500520662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5044e77202cd46ef857b674b104ae62b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NoelAwakeEvent
+  beforeImage: {fileID: 2003865959}
+  awakeImage: {fileID: 1795049304}
+  stillNode: {fileID: 402561598}
+  fadeDuration: 1
+--- !u!224 &1500520664
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500520662}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2027743886}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1511796218
 GameObject:
   m_ObjectHideFlags: 0
@@ -2177,7 +2229,6 @@ GameObject:
   - component: {fileID: 2027743888}
   - component: {fileID: 2027743887}
   - component: {fileID: 2027743889}
-  - component: {fileID: 2027743890}
   m_Layer: 5
   m_Name: 1
   m_TagString: Untagged
@@ -2197,6 +2248,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1500520664}
   - {fileID: 2003865961}
   - {fileID: 1795049306}
   - {fileID: 1213398955}
@@ -2261,22 +2313,6 @@ MonoBehaviour:
   leftView: {fileID: 0}
   rightView: {fileID: 0}
   isZoomView: 0
---- !u!114 &2027743890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2027743885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5044e77202cd46ef857b674b104ae62b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NoelAwakeEvent
-  beforeImage: {fileID: 2003865959}
-  awakeImage: {fileID: 1795049304}
-  stillNode: {fileID: 402561598}
-  fadeDuration: 1
 --- !u!1001 &3476285794801886774
 PrefabInstance:
   m_ObjectHideFlags: 0
