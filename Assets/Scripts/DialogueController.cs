@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 /// <summary>
 /// ADVシステムのダイアログUI表示を管理するコンポーネント。
 /// StillNodeで定義されたダイアログを順番に表示し、ユーザーの入力で進行する。
 /// </summary>
-public class DialogueController : MonoBehaviour, IPointerClickHandler
+public class DialogueController : MonoBehaviour
 {
     [Header("UI References")] [SerializeField]
     private GameObject _dialoguePanel;
@@ -160,21 +159,17 @@ public class DialogueController : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// Update is called once per frame (スペースキーでも進められるようにする)
+    /// Update is called once per frame (スペースキーまたはマウス左クリックで進められるようにする)
     /// </summary>
     private void Update()
     {
-        if (_dialoguePanel.activeSelf && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            OnNextButtonClicked();
-        }
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
         if (_dialoguePanel.activeSelf)
         {
-            OnNextButtonClicked();
+            if ((Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) ||
+                (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame))
+            {
+                OnNextButtonClicked();
+            }
         }
     }
 }
