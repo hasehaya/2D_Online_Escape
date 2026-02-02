@@ -99,13 +99,13 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("マスタークライアント: Game_Aシーンをロードします");
-            PhotonNetwork.LoadLevel("Game_A");
+            Debug.Log("マスタークライアント: Game_Eliasシーンをロードします");
+            PhotonNetwork.LoadLevel("Game_Elias");
         }
         else
         {
-            Debug.Log("クライアント: Game_Bシーンをロードします");
-            PhotonNetwork.LoadLevel("Game_B");
+            Debug.Log("クライアント: Game_Noelシーンをロードします");
+            PhotonNetwork.LoadLevel("Game_Noel");
         }
     }
 

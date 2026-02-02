@@ -10,8 +10,8 @@ using UnityEngine;
 
 /// <summary>
 /// ParallelSync使用時のPhotonマッチングテスト用EditorWindow
-/// オリジナル: CreateRoomを実行してGame_Aに遷移
-/// 複製(Clone): JoinRoomを2秒��きに試行してGame_Bに遷移
+/// オリジナル: CreateRoomを実行してGame_Eliasに遷移
+/// 複製(Clone): JoinRoomを2秒ごとに試行してGame_Noelに遷移
 /// </summary>
 public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallbacks, IMatchmakingCallbacks,
     IInRoomCallbacks
@@ -292,7 +292,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
 
     private void LoadGameScene()
     {
-        string sceneName = _isClone ? "Game_B" : "Game_A";
+        string sceneName = _isClone ? "Game_Noel" : "Game_Elias";
         Debug.Log($"[PhotonTestWindow] マッチング完了！{sceneName}に遷移します");
 
         _isJoining = false;
