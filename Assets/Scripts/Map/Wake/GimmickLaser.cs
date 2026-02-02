@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace A
+namespace Elias
 {
     public class GimmickLaser : MonoBehaviour
     {

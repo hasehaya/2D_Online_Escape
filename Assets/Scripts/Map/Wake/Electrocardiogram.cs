@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace B
+namespace Noel
 {
     /// <summary>
     /// 心電図を表示するクラス。

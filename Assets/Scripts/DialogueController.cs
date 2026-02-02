@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// ADVシステムのダイアログUI表示を管理するコンポーネント。
@@ -163,7 +164,7 @@ public class DialogueController : MonoBehaviour, IPointerClickHandler
     /// </summary>
     private void Update()
     {
-        if (_dialoguePanel.activeSelf && Input.GetKeyDown(KeyCode.Space))
+        if (_dialoguePanel.activeSelf && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             OnNextButtonClicked();
         }
