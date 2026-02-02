@@ -1,19 +1,18 @@
 ﻿using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// ADVシステムのダイアログUI表示を管理するコンポーネント。
 /// StillNodeで定義されたダイアログを順番に表示し、ユーザーの入力で進行する。
 /// </summary>
-public class DialogueController : MonoBehaviour
+public class DialogueController : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI References")] [SerializeField]
     private GameObject _dialoguePanel;
 
-    [SerializeField] private Text _characterNameText;
-    [SerializeField] private Text _dialogueText;
-    [SerializeField] private Button _nextButton;
+    [SerializeField] private TMP_Text _dialogueText;
 
     [Header("Settings")] [SerializeField] private float _textSpeed = 0.05f; // 1文字あたりの表示速度(秒)
     [SerializeField] private bool _autoAdvance; // 自動で次のダイアログに進むか
@@ -26,11 +25,6 @@ public class DialogueController : MonoBehaviour
 
     private void Start()
     {
-        if (_nextButton != null)
-        {
-            _nextButton.onClick.AddListener(OnNextButtonClicked);
-        }
-
         HideDialogue();
     }
 
@@ -62,12 +56,9 @@ public class DialogueController : MonoBehaviour
         }
 
         DialogueEntry entry = _currentDialogues[_currentDialogueIndex];
-
-        // キャラクター名を表示
-        if (_characterNameText != null)
-        {
-            _characterNameText.text = entry.CharacterName;
-        }
+        string fullText = string.IsNullOrEmpty(entry.CharacterName)
+            ? entry.Text
+            : $"{entry.CharacterName}\n{entry.Text}";
 
         // テキストをタイピング表示
         if (_typingCoroutine != null)
@@ -75,7 +66,7 @@ public class DialogueController : MonoBehaviour
             StopCoroutine(_typingCoroutine);
         }
 
-        _typingCoroutine = StartCoroutine(TypeText(entry.Text));
+        _typingCoroutine = StartCoroutine(TypeText(fullText));
     }
 
     /// <summary>
@@ -114,7 +105,10 @@ public class DialogueController : MonoBehaviour
                 StopCoroutine(_typingCoroutine);
             }
 
-            _dialogueText.text = _currentDialogues[_currentDialogueIndex].Text;
+            DialogueEntry entry = _currentDialogues[_currentDialogueIndex];
+            _dialogueText.text = string.IsNullOrEmpty(entry.CharacterName)
+                ? entry.Text
+                : $"{entry.CharacterName}\n{entry.Text}";
             _isTyping = false;
         }
         else
@@ -169,12 +163,17 @@ public class DialogueController : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (_dialoguePanel != null && _dialoguePanel.activeSelf)
+        if (_dialoguePanel.activeSelf && Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-            {
-                OnNextButtonClicked();
-            }
+            OnNextButtonClicked();
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (_dialoguePanel.activeSelf)
+        {
+            OnNextButtonClicked();
         }
     }
 }
