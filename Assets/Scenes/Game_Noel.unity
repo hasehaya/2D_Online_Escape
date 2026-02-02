@@ -862,7 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 983532188}
   m_Layer: 5
-  m_Name: WakeB
+  m_Name: Wake
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -899,7 +899,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1018962774}
   m_Layer: 5
-  m_Name: PrepareB
+  m_Name: Prepare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -12,10 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/MatchingRoom.unity
     guid: 398cf55a739885a43b161de1afdcaa8b
   - enabled: 1
-    path: Assets/Scenes/Game_A.unity
+    path: Assets/Scenes/Game_Elias.unity
     guid: f3affe9c93f65824d9579d7cc434411a
   - enabled: 1
-    path: Assets/Scenes/Game_B.unity
+    path: Assets/Scenes/Game_Noel.unity
     guid: 4d63977d0ae58c4418783cb206de8d55
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
