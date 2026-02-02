@@ -34,6 +34,9 @@ namespace Elias
 
         [SerializeField] private string _distanceRatioKey = "LaserDistanceRatio"; // Room Custom Propertyのキー
 
+        [Header("Debug (Editor Only)")] [SerializeField]
+        private Button _clearAllTargetsButton;
+
         private FlagType[] _targetFlags;
         private FlagType _completedFlag;
         private bool[] _isCorrect;
@@ -61,6 +64,20 @@ namespace Elias
             {
                 _isCorrect[i] = false;
             }
+
+            // Editorモード以外ではデバッグボタンを破棄
+#if !UNITY_EDITOR
+            if (_clearAllTargetsButton != null)
+            {
+                Destroy(_clearAllTargetsButton.gameObject);
+            }
+#else
+            // Editorモードではボタンのイベントを設定
+            if (_clearAllTargetsButton != null)
+            {
+                _clearAllTargetsButton.onClick.AddListener(DebugClearAllTargets);
+            }
+#endif
         }
 
         private void Update()
@@ -229,5 +246,53 @@ namespace Elias
             ViewController.Instance.ShowView(_targetViewNode);
             _onAllCorrect?.Invoke();
         }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// デバッグ用：全てのターゲットを強制的にクリア（Editorのみ）
+        /// </summary>
+        private void DebugClearAllTargets()
+        {
+            if (_isCompleted)
+            {
+                Debug.Log("[GimmickLaser] 既に全てのターゲットがクリア済みです");
+                return;
+            }
+
+            // 全てのターゲットをクリア
+            for (int i = 0; i < _targetPoints.Length; i++)
+            {
+                if (!_isCorrect[i])
+                {
+                    _isCorrect[i] = true;
+
+                    // スプライトを正解用に変更
+                    if (_targetImages[i] != null && _targetCorrectSprite != null)
+                    {
+                        _targetImages[i].sprite = _targetCorrectSprite;
+                    }
+
+                    // 対応する番号のフラグを設定
+                    if (_targetFlags[i] != FlagType.None && GameStateService.Instance != null)
+                    {
+                        GameStateService.Instance.SetFlag(_targetFlags[i], true);
+                        Debug.Log($"[GimmickLaser] デバッグ：ターゲット{i + 1}をクリア: Flag={_targetFlags[i]}");
+                    }
+                }
+            }
+
+            // 次のターゲットインデックスを最後に設定
+            _nextTargetIndex = _targetPoints.Length;
+            _isCompleted = true;
+
+            // 完了フラグを設定
+            if (_completedFlag != FlagType.None && GameStateService.Instance != null)
+            {
+                GameStateService.Instance.SetFlag(_completedFlag, true);
+            }
+
+            StartCoroutine(TriggerCompletionEvent());
+        }
+#endif
     }
 }

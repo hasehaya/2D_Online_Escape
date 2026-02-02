@@ -1671,8 +1671,8 @@ MonoBehaviour:
   lowerEyelid: {fileID: 68317048}
   targetCamera: {fileID: 5301742024546704765}
   stillNode: {fileID: 1045319941}
-  eyelidOpenDuration: 0.5
-  eyelidOpenDistance: 100
+  eyelidOpenDuration: 0.68
+  eyelidOpenDistance: 1300
   cameraMoveDelay: 0.5
   cameraMoveDuration: 1.5
   cameraMoveDistance: 300
@@ -2050,7 +2050,7 @@ PrefabInstance:
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _initialView
       value: 
-      objectReference: {fileID: 2004994149}
+      objectReference: {fileID: 1044758919}
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _rightButton
       value: 

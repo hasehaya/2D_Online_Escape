@@ -18,7 +18,7 @@ namespace Noel
         [Header("Animation Settings")] [SerializeField]
         private float eyelidOpenDuration = 0.5f;
 
-        [SerializeField] private float eyelidOpenDistance = 100f;
+        [SerializeField] private float eyelidOpenDistance = 1000f;
         [SerializeField] private float cameraMoveDelay = 0.5f;
         [SerializeField] private float cameraMoveDuration = 1.5f;
         [SerializeField] private float cameraMoveDistance = 300f;
