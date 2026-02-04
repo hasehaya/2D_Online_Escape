@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Elias
+namespace Map.Elias.Wake
 {
     public class NoelAwakeEvent : MonoBehaviour
     {

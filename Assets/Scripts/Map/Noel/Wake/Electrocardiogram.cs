@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Noel
+namespace Map.Noel.Wake
 {
     /// <summary>
     /// 心電図を表示するクラス。

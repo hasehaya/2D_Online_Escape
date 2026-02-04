@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Elias
+namespace Map.Elias.Wake
 {
     public class GimmickLaser : MonoBehaviour
     {
