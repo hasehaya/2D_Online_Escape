@@ -13,8 +13,7 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
     {
         None,
         Zoom,
-        Pickup,
-        Message
+        Pickup
     }
 
     [Header("Interaction Settings")] [SerializeField]
@@ -25,9 +24,6 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
 
     [Header("Pickup Settings")] [SerializeField]
     private ItemData _itemToPickup;
-
-    [Header("Message Settings")] [TextArea] [SerializeField]
-    private string _messageText;
 
     [Header("Debug Settings")] [SerializeField]
     private bool _showClickArea = true;
@@ -108,11 +104,6 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
                     gameObject.SetActive(false); // 取得したアイテムはシーンから消す
                 }
 
-                break;
-
-            case InteractionType.Message:
-                Debug.Log($"Message: {_messageText}");
-                // TODO: UIにメッセージを表示する処理を実装する
                 break;
         }
     }
