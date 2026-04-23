@@ -100,8 +100,10 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
             case InteractionType.Pickup:
                 if (_itemToPickup != null)
                 {
-                    InventoryManager.Instance.AddItem(_itemToPickup);
-                    gameObject.SetActive(false); // 取得したアイテムはシーンから消す
+                    if (InventoryManager.Instance.TryAddItem(_itemToPickup))
+                    {
+                        gameObject.SetActive(false); // 取得したアイテムはシーンから消す
+                    }
                 }
 
                 break;
