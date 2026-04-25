@@ -6,16 +6,16 @@ using UnityEngine.UI;
 /// インベントリ内の1種類のアイテム状態を保持する。
 /// </summary>
 [Serializable]
-public class InventorySlot
+public class InventorySlot : MonoBehaviour
 {
     [SerializeField] private int _index;
     [SerializeField] private ItemData _item;
-
-    [NonSerialized] private Image _selectedImage;
+    [SerializeField] private Image _selectedImage;
     [NonSerialized] private Action<InventorySlot> _onTapped;
 
     public int Index => _index;
     public ItemData Item => _item;
+    public Image SelectedImage => _selectedImage;
 
     public InventorySlot(int index, ItemData item)
     {
@@ -28,9 +28,14 @@ public class InventorySlot
         _index = index;
     }
 
-    public void BindUI(Image selectedImage, Action<InventorySlot> onTapped)
+    public void BindUI(Action<InventorySlot> onTapped)
     {
-        _selectedImage = selectedImage;
+        if (_selectedImage != null)
+        {
+            _selectedImage.enabled = false;
+            _selectedImage.raycastTarget = false;
+        }
+
         _onTapped = onTapped;
     }
 

@@ -56,13 +56,20 @@ public class InGameUIManager : MonoBehaviour
         foreach (InventorySlot slotData in InventoryManager.Instance.GetSlots())
         {
             GameObject slotObject = Instantiate(_itemSlotPrefab, _itemSlotContainer);
-            Image selectedImage = EnsureSelectedImage(slotObject);
+            if (!slotObject.TryGetComponent(out InventorySlot slotView))
+            {
+                Debug.LogError("Inventory slot prefab is missing InventorySlot component.");
+                Destroy(slotObject);
+                continue;
+            }
+
             Button slotButton = EnsureSlotButton(slotObject);
 
-            slotData.BindUI(selectedImage, OnSlotTapped);
+            slotView.SetIndex(slotData.Index);
+            slotView.BindUI(OnSlotTapped);
             slotButton.onClick.RemoveAllListeners();
-            slotButton.onClick.AddListener(slotData.Tap);
-            _slotViews.Add(slotData);
+            slotButton.onClick.AddListener(slotView.Tap);
+            _slotViews.Add(slotView);
 
             Transform iconTransform = slotObject.transform.Find("Icon");
             if (iconTransform != null && iconTransform.TryGetComponent(out Image iconImage))
@@ -85,7 +92,7 @@ public class InGameUIManager : MonoBehaviour
     private void OnSlotTapped(InventorySlot tappedSlot)
     {
         InventorySlot selectedSlot = InventoryManager.Instance.GetSelectedSlot();
-        if (selectedSlot == tappedSlot)
+        if (selectedSlot != null && selectedSlot.Index == tappedSlot.Index)
         {
             OpenSelectedItemZoom();
             return;
@@ -98,7 +105,8 @@ public class InGameUIManager : MonoBehaviour
     {
         foreach (InventorySlot slotView in _slotViews)
         {
-            slotView.SetSelected(slotView == selectedSlot);
+            bool isSelected = selectedSlot != null && slotView.Index == selectedSlot.Index;
+            slotView.SetSelected(isSelected);
         }
     }
 
@@ -118,34 +126,6 @@ public class InGameUIManager : MonoBehaviour
         _itemZoomImage.sprite = selectedItem.icon;
         _itemZoomImage.enabled = true;
         _itemZoomPanel.SetActive(true);
-    }
-
-    private Image EnsureSelectedImage(GameObject slot)
-    {
-        Transform selectedTransform = slot.transform.Find("Selected");
-        if (selectedTransform != null && selectedTransform.TryGetComponent(out Image selectedImage))
-        {
-            selectedImage.enabled = false;
-            selectedImage.raycastTarget = false;
-            return selectedImage;
-        }
-
-        GameObject selectedObject =
-            new GameObject("Selected", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-        selectedObject.transform.SetParent(slot.transform, false);
-
-        RectTransform selectedRect = selectedObject.GetComponent<RectTransform>();
-        selectedRect.anchorMin = Vector2.zero;
-        selectedRect.anchorMax = Vector2.one;
-        selectedRect.offsetMin = Vector2.zero;
-        selectedRect.offsetMax = Vector2.zero;
-
-        Image createdImage = selectedObject.GetComponent<Image>();
-        createdImage.color = new Color(1f, 0.9f, 0.2f, 0.35f);
-        createdImage.enabled = false;
-        createdImage.raycastTarget = false;
-
-        return createdImage;
     }
 
     private Button EnsureSlotButton(GameObject slot)
