@@ -1,20 +1,33 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
-/// プレイヤーの所持アイテムを管理するシングルトンクラス。
-/// アイテムの追加・削除を行い、その変更をイベントを通じてUI等のリスナーに通知する役割を持つ。
+/// インベントリ機能全体を管理するシングルトンクラス。
+/// データ管理、スロットUI更新、選択、拡大表示を担当する。
 /// </summary>
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
 
-    private readonly List<InventorySlot> _slots = new List<InventorySlot>();
-    private InventorySlot _selectedSlot;
+    [Header("Inventory UI")] [SerializeField]
+    private Transform _itemSlotContainer;
 
-    public event Action OnInventoryChanged;
-    public event Action<InventorySlot> OnSelectedSlotChanged;
+    [SerializeField] private GameObject _itemSlotPrefab;
+
+    [Header("Item Zoom UI")] [SerializeField]
+    private GameObject _itemZoomPanel;
+
+    [SerializeField] private Image _itemZoomImage;
+
+    private readonly List<ItemData> _items = new List<ItemData>();
+    private readonly List<InventorySlot> _slotViews = new List<InventorySlot>();
+
+    private int _selectedIndex = -1;
+
+    public event Action OnStateChanged;
+    public event Action<int> OnSelectionChanged;
 
     private void Awake()
     {
@@ -28,39 +41,50 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        RefreshUI();
+        CloseItemZoom();
+    }
+
     public bool TryAddItem(ItemData item)
     {
-        InventorySlot newSlot = new InventorySlot(_slots.Count, item);
-        _slots.Add(newSlot);
-        NotifyInventoryChanged(newSlot);
-
+        _items.Add(item);
+        RefreshUI();
+        NotifyStateChanged(_items.Count - 1, item);
         return true;
     }
 
     public bool TryRemoveItemAt(int index)
     {
-        if (index < 0 || index >= _slots.Count)
+        if (index < 0 || index >= _items.Count)
         {
             return false;
         }
 
-        InventorySlot removedSlot = _slots[index];
-        _slots.RemoveAt(index);
-        ReindexSlots(index);
+        ItemData removedItem = _items[index];
+        _items.RemoveAt(index);
 
-        if (_selectedSlot == removedSlot)
+        if (_selectedIndex == index)
         {
-            _selectedSlot = null;
-            NotifySelectedSlotChanged();
+            _selectedIndex = -1;
+            NotifySelectionChanged();
+            CloseItemZoom();
+        }
+        else if (_selectedIndex > index)
+        {
+            _selectedIndex--;
+            NotifySelectionChanged();
         }
 
-        NotifyInventoryChanged(removedSlot);
+        RefreshUI();
+        NotifyStateChanged(index, removedItem);
         return true;
     }
 
     public bool TryRemoveItem(ItemData item)
     {
-        int index = _slots.FindIndex(slot => slot.Item == item);
+        int index = _items.FindIndex(x => x == item);
         if (index < 0)
         {
             return false;
@@ -71,82 +95,164 @@ public class InventoryManager : MonoBehaviour
 
     public bool HasItem(ItemData item)
     {
-        return _slots.Exists(slot => slot.Item == item);
+        return _items.Exists(x => x == item);
     }
 
     public bool TrySelectSlot(int index)
     {
-        if (index < 0 || index >= _slots.Count)
+        if (index < 0 || index >= _items.Count)
         {
             return false;
         }
 
-        InventorySlot newSelectedSlot = _slots[index];
-        if (_selectedSlot == newSelectedSlot)
+        if (_selectedIndex == index)
         {
             return true;
         }
 
-        _selectedSlot = newSelectedSlot;
-        NotifySelectedSlotChanged();
+        _selectedIndex = index;
+        UpdateSelectionVisual();
+        NotifySelectionChanged();
         return true;
     }
 
     public void ClearSelectedSlot()
     {
-        if (_selectedSlot == null)
+        if (_selectedIndex < 0)
         {
             return;
         }
 
-        _selectedSlot = null;
-        NotifySelectedSlotChanged();
+        _selectedIndex = -1;
+        UpdateSelectionVisual();
+        NotifySelectionChanged();
+        CloseItemZoom();
     }
 
-    public IReadOnlyList<InventorySlot> GetSlots()
+    public IReadOnlyList<ItemData> GetItems()
     {
-        return _slots;
-    }
-
-    public InventorySlot GetSelectedSlot()
-    {
-        return _selectedSlot;
+        return _items;
     }
 
     public ItemData GetSelectedItem()
     {
-        return _selectedSlot != null ? _selectedSlot.Item : null;
-    }
-
-    public bool TryGetSlot(ItemData item, out InventorySlot slot)
-    {
-        int index = _slots.FindIndex(x => x.Item == item);
-        if (index >= 0)
+        if (_selectedIndex < 0 || _selectedIndex >= _items.Count)
         {
-            slot = _slots[index];
-            return true;
+            return null;
         }
 
-        slot = null;
-        return false;
+        return _items[_selectedIndex];
     }
 
-    private void NotifyInventoryChanged(InventorySlot slot)
+    public bool TryGetItemIndex(ItemData item, out int index)
     {
-        OnInventoryChanged?.Invoke();
-        Debug.Log($"Inventory updated: [{slot.Index}] {slot.Item.itemName}");
+        index = _items.FindIndex(x => x == item);
+        return index >= 0;
     }
 
-    private void NotifySelectedSlotChanged()
+    public void CloseItemZoom()
     {
-        OnSelectedSlotChanged?.Invoke(_selectedSlot);
+        _itemZoomPanel.SetActive(false);
     }
 
-    private void ReindexSlots(int startIndex)
+    private void RefreshUI()
     {
-        for (int i = startIndex; i < _slots.Count; i++)
+        _slotViews.Clear();
+
+        foreach (Transform child in _itemSlotContainer)
         {
-            _slots[i].SetIndex(i);
+            Destroy(child.gameObject);
         }
+
+        for (int i = 0; i < _items.Count; i++)
+        {
+            ItemData item = _items[i];
+            GameObject slotObject = Instantiate(_itemSlotPrefab, _itemSlotContainer);
+            if (!slotObject.TryGetComponent(out InventorySlot slotView))
+            {
+                Debug.LogError("Inventory slot prefab is missing InventorySlot component.");
+                Destroy(slotObject);
+                continue;
+            }
+
+            slotView.SetIndex(i);
+            slotView.BindUI(OnSlotTapped);
+
+            Button slotButton = slotView.Button;
+            if (slotButton == null)
+            {
+                Debug.LogError("Inventory slot prefab is missing Button reference.");
+                Destroy(slotObject);
+                continue;
+            }
+
+            slotButton.onClick.RemoveAllListeners();
+            slotButton.onClick.AddListener(slotView.Tap);
+            _slotViews.Add(slotView);
+
+            Transform iconTransform = slotObject.transform.Find("Icon");
+            if (iconTransform != null && iconTransform.TryGetComponent(out Image iconImage))
+            {
+                iconImage.sprite = item.icon;
+                iconImage.enabled = true;
+            }
+
+            Transform countTransform = slotObject.transform.Find("CountText");
+            if (countTransform != null && countTransform.TryGetComponent(out Text countText))
+            {
+                countText.text = i.ToString();
+                countText.enabled = true;
+            }
+        }
+
+        if (_selectedIndex >= _items.Count)
+        {
+            _selectedIndex = -1;
+        }
+
+        UpdateSelectionVisual();
+    }
+
+    private void UpdateSelectionVisual()
+    {
+        foreach (InventorySlot slotView in _slotViews)
+        {
+            slotView.SetSelected(_selectedIndex >= 0 && slotView.Index == _selectedIndex);
+        }
+    }
+
+    private void OnSlotTapped(InventorySlot tappedSlot)
+    {
+        if (_selectedIndex == tappedSlot.Index)
+        {
+            OpenSelectedItemZoom();
+            return;
+        }
+
+        TrySelectSlot(tappedSlot.Index);
+    }
+
+    private void OpenSelectedItemZoom()
+    {
+        ItemData selectedItem = GetSelectedItem();
+        if (selectedItem == null)
+        {
+            return;
+        }
+
+        _itemZoomImage.sprite = selectedItem.icon;
+        _itemZoomImage.enabled = true;
+        _itemZoomPanel.SetActive(true);
+    }
+
+    private void NotifyStateChanged(int index, ItemData item)
+    {
+        OnStateChanged?.Invoke();
+        Debug.Log($"Inventory updated: [{index}] {item.itemName}");
+    }
+
+    private void NotifySelectionChanged()
+    {
+        OnSelectionChanged?.Invoke(_selectedIndex);
     }
 }

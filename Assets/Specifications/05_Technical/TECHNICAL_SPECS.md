@@ -3,7 +3,8 @@
 ## 開発環境
 - Engine: Unity
 - Language: C#
-- 主要パッケージ: `com.unity.inputsystem`, `com.unity.ugui`, `TextMeshPro`
+- 主要パッケージ: `com.unity.inputsystem`, `com.unity.ugui`, `com.unity.render-pipelines.universal`, `TextMeshPro`
+- 外部ライブラリ: Photon PUN2, DOTween（`DG.Tweening`）
 
 ## ネットワーク
 - 通信ライブラリ: **Photon PUN2**
@@ -19,10 +20,12 @@
 4. `Assets/Scenes/Game_Noel.unity`
 
 ## 音響・設定
-- `AudioManager` による BGM/SE 音量管理
-- 設定値は `PlayerPrefs` に保存
+- `AudioManager` は `TitleScene` に配置し、`DontDestroyOnLoad` で全シーン共有
+- `SettingsController` は `SettingsPanel` を制御し、必要UIを不足時に動的生成
+- 設定値は `PlayerPrefs` 保存（BGM/SE/Language）
+- `LocalizationManager` で言語インデックスを管理し、アウトゲーム文言の一部を多言語化
 
 ## 既知の未実装領域
 - Steamworks 連携
 - 統合的なリザルトシステム
-- 言語切替ロジック本体（設定UIは存在）
+- インゲーム側UIテキストの多言語化

@@ -48,7 +48,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
         {
-            _statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
+            SetStatus("matching.all_joined");
         }
     }
 
@@ -63,7 +63,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         }
 
         UpdatePlayerList();
-        _statusText.text = "プレイヤーが退室しました。新しいプレイヤーを待っています...";
+        SetStatus("matching.player_left");
 
         // 相手がいなくなったため、自分の準備完了状態も解除して再確認を促す
         if (_isReady)
@@ -129,7 +129,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
 
         if (allReady)
         {
-            _statusText.text = "ゲームを開始します...";
+            SetStatus("matching.starting");
 
             // 途中参加を防ぐため部屋を閉じる
             if (PhotonNetwork.IsMasterClient)
@@ -154,7 +154,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         }
         else
         {
-            _player1NameText.text = "待機中...";
+            _player1NameText.text = Localize("matching.waiting");
             _player1NameText.gameObject.SetActive(true);
         }
 
@@ -166,17 +166,17 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         }
         else
         {
-            _player2NameText.text = "待機中...";
+            _player2NameText.text = Localize("matching.waiting");
             _player2NameText.gameObject.SetActive(true);
         }
 
         if (players.Length < 2)
         {
-            _statusText.text = $"プレイヤーを待っています... ({players.Length}/2)";
+            SetStatus("matching.waiting_players", players.Length);
         }
         else
         {
-            _statusText.text = "全員揃いました！準備ができたらOKボタンを押してください";
+            SetStatus("matching.all_joined");
         }
     }
 
@@ -203,7 +203,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     {
         if (_readyButtonText != null)
         {
-            _readyButtonText.text = _isReady ? "キャンセル" : "OK";
+            _readyButtonText.text = _isReady ? Localize("matching.ready_cancel") : Localize("matching.ready_ok");
         }
 
         // 相手がいない状態で準備完了できてしまうと混乱を招くため無効化する
@@ -212,7 +212,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
 
     private void OnLeaveRoomClicked()
     {
-        _statusText.text = "部屋から退出中...";
+        SetStatus("matching.leave_room");
         PhotonNetwork.LeaveRoom();
     }
 
@@ -230,5 +230,16 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         {
             _readyButton.interactable = PhotonNetwork.CurrentRoom.PlayerCount == 2;
         }
+    }
+
+    private void SetStatus(string key, params object[] args)
+    {
+        string template = Localize(key);
+        _statusText.text = args == null || args.Length == 0 ? template : string.Format(template, args);
+    }
+
+    private string Localize(string key)
+    {
+        return LocalizationManager.Instance != null ? LocalizationManager.Instance.Get(key) : key;
     }
 }

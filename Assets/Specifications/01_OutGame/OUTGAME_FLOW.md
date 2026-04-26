@@ -9,7 +9,8 @@
 - Photon に接続し、部屋の作成 / 参加を行う。
 - 作成時はランダム 6 桁 ID を採番。
 - 参加時は 6 桁 ID を入力して参加。
-- 設定パネルを開くボタンを持つ。
+- 現行シーン上の主要UIは `CreateBtn` / `JoinBtn` / `RoomId` 入力欄 / 接続状態テキスト（`ConnectText`）。
+- `SettingsBtn` から設定パネル（`SettingsPanel`）を開閉可能。
 
 ### Editor とビルドの挙動差
 - Editor: ロビー経由で既存部屋への参加を補助（テスト向け）。
@@ -22,6 +23,6 @@
 - 退出ボタンで `TitleScene` へ戻る。
 
 ## 設定（Settings）
-- BGM 音量（PlayerPrefs 永続化）
-- SE 音量（PlayerPrefs 永続化）
-- 言語インデックス保存（UI文言切替の本実装は未対応）
+- `SettingsController` が設定パネルを制御し、必要な UI 要素（Slider / Dropdown / CloseButton）を不足時に動的生成する。
+- BGM / SE 音量を `AudioManager` 経由で変更し、`PlayerPrefs` に永続化。
+- 言語設定は `LocalizationManager` で管理し、日本語 / 英語の切り替えを反映。

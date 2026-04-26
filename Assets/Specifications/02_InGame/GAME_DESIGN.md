@@ -4,15 +4,19 @@
 - 操作: マウス中心（クリックでインタラクト）
 - 視点: `ViewController` で左右移動 / ズーム / 戻るを管理
 - 会話: `StillNode` + `DialogueController` で連続表示
-- アイテム: `InventoryManager` + `InGameUIManager`
+- アイテム: `InventoryManager` + `InventorySlot`
   - 取得、選択、選択中アイテムの拡大表示
+  - `InventoryManager` がデータ管理、スロットUI生成、選択処理、拡大表示UI制御を一括で担当
+  - `InventorySlot` は `ItemInventry` プレハブ上のViewコンポーネントとして、タップ通知と選択表示のみを担当
 - インタラクト: `InteractableObject`
   - Zoom 遷移
   - Pickup（取得後に対象を非表示）
 
 ## シーン構成
-- `Game_Elias`: Elias 側のギミックを担当
-- `Game_Noel`: Noel 側のギミックを担当
+- `Game_Elias`: Elias 側のギミックを担当（`WorldCanvas` + `UICanvas` + `Manager` 構成）
+- `Game_Noel`: Noel 側のギミックを担当（`GlobalMap` + `UICanvas` + `Manager` 構成）
+- 両シーンとも `Map` 配下を `Wake` / `WakeStill` / `Prepare` の3ブロックで管理
+- UIは共通して `RightArrow` / `LeftArrow` / `BackArrow` / `DialoguePanel` / `ItemBox` を持つ
 
 ## 実装済みギミック
 
