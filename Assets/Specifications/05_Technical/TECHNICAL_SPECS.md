@@ -13,6 +13,17 @@
   - `GameStateService` で Room Custom Properties を管理
   - `Float` / `Bool` / `Enum` / `FlagType` の同期に対応
 
+## セーブシステム
+- 方式: **B案（`SaveableBehaviour` 基底でID管理一元化）**
+- 基底: `SaveableBehaviour` + `ISaveable`
+  - 各保存対象オブジェクトは `saveId` を持ち、`CaptureState` / `RestoreState` を実装
+- 集約: `PairSaveCoordinator`
+  - インベントリ、`SaveableBehaviour` 状態、Room Custom Properties、現在シーン名をペア単位で保存/復元
+- 永続化: `PlayerPrefs` にペアキー単位でJSON保存
+- ペア識別: 両プレイヤーIDをソートして `pairKey` を生成
+- プレイヤーID: Steam連携前は `LocalIdentityProvider` が暫定ローカルIDを発行
+- 役割固定: 同一ペアは前回保存された Elias/Noel 割り当てを再利用。初回のみID順で決定
+
 ## ビルドシーン（EditorBuildSettings）
 1. `Assets/Scenes/TitleScene.unity`
 2. `Assets/Scenes/MatchingRoom.unity`
@@ -26,6 +37,6 @@
 - `LocalizationManager` で言語インデックスを管理し、アウトゲーム文言の一部を多言語化
 
 ## 既知の未実装領域
-- Steamworks 連携
+- Steamworks 連携（暫定ローカルIDからSteamIDへの移行）
 - 統合的なリザルトシステム
 - インゲーム側UIテキストの多言語化

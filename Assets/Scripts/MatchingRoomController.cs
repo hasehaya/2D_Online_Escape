@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
+using Save;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,9 +27,16 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
 
     private bool _isReady = false;
     private Dictionary<int, bool> _playerReadyStatus = new Dictionary<int, bool>();
+    private string _localPlayerId;
 
     private void Start()
     {
+        _localPlayerId = LocalIdentityProvider.GetOrCreateLocalPlayerId();
+        PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
+        {
+            { SaveSessionContext.PlayerIdPropertyKey, _localPlayerId }
+        });
+
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
         _leaveRoomButton.onClick.AddListener(OnLeaveRoomClicked);
 
@@ -95,18 +104,26 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    private void LoadGameScene()
+    private void LoadGameScene(string eliasPlayerId, string noelPlayerId)
     {
-        if (PhotonNetwork.IsMasterClient)
+        string localId = LocalIdentityProvider.GetOrCreateLocalPlayerId();
+
+        if (localId == eliasPlayerId)
         {
-            Debug.Log("マスタークライアント: Game_Eliasシーンをロードします");
+            Debug.Log("役割:Eliasとして Game_Elias シーンをロードします");
             PhotonNetwork.LoadLevel("Game_Elias");
+            return;
         }
-        else
+
+        if (localId == noelPlayerId)
         {
-            Debug.Log("クライアント: Game_Noelシーンをロードします");
+            Debug.Log("役割:Noelとして Game_Noel シーンをロードします");
             PhotonNetwork.LoadLevel("Game_Noel");
+            return;
         }
+
+        // 役割情報が取れないケースでは従来のフォールバックを使う
+        PhotonNetwork.LoadLevel(PhotonNetwork.IsMasterClient ? "Game_Elias" : "Game_Noel");
     }
 
     private void CheckAllPlayersReady()
@@ -131,15 +148,69 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         {
             SetStatus("matching.starting");
 
-            // 途中参加を防ぐため部屋を閉じる
             if (PhotonNetwork.IsMasterClient)
             {
                 PhotonNetwork.CurrentRoom.IsOpen = false;
-            }
 
-            // マスタークライアントとクライアントで異なるシーンに遷移させる
-            photonView.RPC("LoadGameScene", RpcTarget.All);
+                string eliasPlayerId;
+                string noelPlayerId;
+                ResolveFixedRoles(out eliasPlayerId, out noelPlayerId);
+
+                Hashtable roomProps = new Hashtable
+                {
+                    {
+                        SaveSessionContext.PairKeyRoomPropertyKey,
+                        SaveSessionContext.BuildPairKey(eliasPlayerId, noelPlayerId)
+                    },
+                    { SaveSessionContext.EliasPlayerIdRoomPropertyKey, eliasPlayerId },
+                    { SaveSessionContext.NoelPlayerIdRoomPropertyKey, noelPlayerId }
+                };
+                PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
+
+                photonView.RPC("LoadGameScene", RpcTarget.All, eliasPlayerId, noelPlayerId);
+                return;
+            }
         }
+    }
+
+    private void ResolveFixedRoles(out string eliasPlayerId, out string noelPlayerId)
+    {
+        Player[] players = PhotonNetwork.PlayerList;
+        string playerA = GetPlayerId(players[0]);
+        string playerB = GetPlayerId(players[1]);
+        string pairKey = SaveSessionContext.BuildPairKey(playerA, playerB);
+
+        PairSaveData existing;
+        if (PairSaveRepository.TryLoad(pairKey, out existing))
+        {
+            if (!string.IsNullOrEmpty(existing.eliasPlayerId) && !string.IsNullOrEmpty(existing.noelPlayerId))
+            {
+                eliasPlayerId = existing.eliasPlayerId;
+                noelPlayerId = existing.noelPlayerId;
+                return;
+            }
+        }
+
+        if (string.CompareOrdinal(playerA, playerB) <= 0)
+        {
+            eliasPlayerId = playerA;
+            noelPlayerId = playerB;
+            return;
+        }
+
+        eliasPlayerId = playerB;
+        noelPlayerId = playerA;
+    }
+
+    private string GetPlayerId(Player player)
+    {
+        object value;
+        if (player.CustomProperties.TryGetValue(SaveSessionContext.PlayerIdPropertyKey, out value))
+        {
+            return value as string ?? string.Empty;
+        }
+
+        return string.Empty;
     }
 
     private void UpdatePlayerList()

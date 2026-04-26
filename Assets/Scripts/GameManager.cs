@@ -1,18 +1,28 @@
-using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using Save;
+using UnityEngine;
 
 public class GameManager : MonoBehaviourPunCallbacks
 {
-    [Header("Spawn Settings")]
-    [SerializeField] private Transform _player1SpawnPoint;
+    [Header("Spawn Settings")] [SerializeField]
+    private Transform _player1SpawnPoint;
+
     [SerializeField] private Transform _player2SpawnPoint;
     [SerializeField] private string _playerPrefabName = "NetworkObject";
+
+    private void Awake()
+    {
+        if (!TryGetComponent(out PairSaveCoordinator _))
+        {
+            gameObject.AddComponent<PairSaveCoordinator>();
+        }
+    }
 
     void Start()
     {
         Debug.Log($"ゲーム開始！部屋: {PhotonNetwork.CurrentRoom.Name}, プレイヤー数: {PhotonNetwork.CurrentRoom.PlayerCount}");
-        
+
         // プレイヤーをスポーン
         SpawnPlayer();
     }
@@ -20,7 +30,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void SpawnPlayer()
     {
         Vector3 spawnPosition = Vector3.zero;
-        
+
         // プレイヤー番号に応じてスポーン位置を決定
         Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++)
@@ -39,10 +49,11 @@ public class GameManager : MonoBehaviourPunCallbacks
                 {
                     spawnPosition = new Vector3(i * 2, 0, 0); // デフォルトの位置
                 }
+
                 break;
             }
         }
-        
+
         Debug.Log($"プレイヤーをスポーン: {spawnPosition}");
         PhotonNetwork.Instantiate(_playerPrefabName, spawnPosition, Quaternion.identity);
     }

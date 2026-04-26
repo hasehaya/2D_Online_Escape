@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
+using Save;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,8 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        LocalIdentityProvider.GetOrCreateLocalPlayerId();
+
         _createRoomButton.onClick.AddListener(OnCreateRoomClicked);
         _joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
 

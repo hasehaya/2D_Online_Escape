@@ -8,18 +8,20 @@
 1. `TitleScene` で Photon 接続・部屋作成 / 参加
 2. `MatchingRoom` で 2人の準備完了を待機
 3. 両者 OK 後にゲーム開始  
-   - MasterClient: `Game_Elias`
-   - Client: `Game_Noel`
+   - 役割固定で `Game_Elias` / `Game_Noel` に遷移（同一ペア再マッチ時も固定）
+4. 同一ペアで再マッチした場合はセーブデータから続き再開
 
 ## 現在の仕様範囲
 - プレイ人数: 2人固定（協力専用）
 - マッチング: ルームID指定参加（6桁）
 - 設定: `TitleScene` から設定画面を開き、BGM/SE 音量と言語（日本語/英語）を変更可能
 - インゲーム: 視点切替、ズーム、インタラクト、インベントリ、会話演出（Elias/Noelの非対称進行）
+- セーブ: ペア単位で `Item` / `謎進捗(Room Properties)` / `ステージ` / `SaveableObject状態` を保存
+- ID方針: Steam導入前は暫定ローカルIDを発行し、将来SteamIDへ移行予定
 
 ## 未実装 / 今後検討
 - リザルト画面
-- Steamworks 連携（実績、招待など）
+- Steamworks 連携（実績、招待、恒久ID化）
 - 世界観・ストーリーの詳細定義
 - サウンド演出の拡張（BGM/SE素材設計）
 - インゲーム側UIテキストの多言語化拡張（現状はアウトゲーム中心）

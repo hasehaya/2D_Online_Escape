@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Save;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -52,6 +53,7 @@ public class InventoryManager : MonoBehaviour
         _items.Add(item);
         RefreshUI();
         NotifyStateChanged(_items.Count - 1, item);
+        PairSaveCoordinator.RequestSaveIfAvailable();
         return true;
     }
 
@@ -79,6 +81,7 @@ public class InventoryManager : MonoBehaviour
 
         RefreshUI();
         NotifyStateChanged(index, removedItem);
+        PairSaveCoordinator.RequestSaveIfAvailable();
         return true;
     }
 
@@ -254,5 +257,20 @@ public class InventoryManager : MonoBehaviour
     private void NotifySelectionChanged()
     {
         OnSelectionChanged?.Invoke(_selectedIndex);
+    }
+
+    public void SetItems(IReadOnlyList<ItemData> items)
+    {
+        _items.Clear();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            _items.Add(items[i]);
+        }
+
+        _selectedIndex = -1;
+        RefreshUI();
+        NotifySelectionChanged();
+        CloseItemZoom();
     }
 }

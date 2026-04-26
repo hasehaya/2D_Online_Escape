@@ -1,3 +1,5 @@
+using System;
+using Save;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,8 +9,14 @@ using UnityEngine.UI;
 /// プレイヤーのクリック操作を検知し、「拡大表示」「アイテム取得」「メッセージ表示」などの具体的なアクションを実行する役割を持つ。
 /// このコンポーネントをアタッチするだけで、UIオブジェクトの場合は自動的にImageコンポーネントが追加されます。
 /// </summary>
-public class InteractableObject : MonoBehaviour, IPointerClickHandler
+public class InteractableObject : SaveableBehaviour, IPointerClickHandler
 {
+    [Serializable]
+    private struct InteractableObjectState
+    {
+        public bool isActive;
+    }
+
     public enum InteractionType
     {
         None,
@@ -83,6 +91,18 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public bool TryGetPickupItem(out ItemData item)
+    {
+        if (_interactionType == InteractionType.Pickup && _itemToPickup != null)
+        {
+            item = _itemToPickup;
+            return true;
+        }
+
+        item = null;
+        return false;
+    }
+
     protected virtual void Interact()
     {
         Debug.Log($"Interacted with {gameObject.name}");
@@ -103,11 +123,32 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
                     if (InventoryManager.Instance.TryAddItem(_itemToPickup))
                     {
                         gameObject.SetActive(false); // 取得したアイテムはシーンから消す
+                        PairSaveCoordinator.RequestSaveIfAvailable();
                     }
                 }
 
                 break;
         }
+    }
+
+    public override string CaptureState()
+    {
+        InteractableObjectState state = new InteractableObjectState
+        {
+            isActive = gameObject.activeSelf
+        };
+        return JsonUtility.ToJson(state);
+    }
+
+    public override void RestoreState(string stateJson)
+    {
+        if (string.IsNullOrEmpty(stateJson))
+        {
+            return;
+        }
+
+        InteractableObjectState state = JsonUtility.FromJson<InteractableObjectState>(stateJson);
+        gameObject.SetActive(state.isActive);
     }
 
     private void OnDrawGizmos()
