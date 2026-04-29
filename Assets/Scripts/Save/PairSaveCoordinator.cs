@@ -198,21 +198,25 @@ namespace Save
         private Dictionary<string, ItemData> BuildSceneItemTable()
         {
             Dictionary<string, ItemData> table = new Dictionary<string, ItemData>();
-            InteractableObject[] interactables = FindObjectsOfType<InteractableObject>(true);
 
+            // 新: Saveable な Pickup コンポーネントを持つオブジェクトを先に収集
+            PickupObject[] pickupObjects = FindObjectsOfType<PickupObject>(true);
+            for (int i = 0; i < pickupObjects.Length; i++)
+            {
+                ItemData item;
+                if (!pickupObjects[i].TryGetPickupItem(out item)) continue;
+                string itemId = GetItemSaveId(item);
+                if (!table.ContainsKey(itemId)) table.Add(itemId, item);
+            }
+
+            // 従来からの InteractableObject も引き続きサポート（シーンの差し替え前互換）
+            InteractableObject[] interactables = FindObjectsOfType<InteractableObject>(true);
             for (int i = 0; i < interactables.Length; i++)
             {
                 ItemData item;
-                if (!interactables[i].TryGetPickupItem(out item))
-                {
-                    continue;
-                }
-
+                if (!interactables[i].TryGetPickupItem(out item)) continue;
                 string itemId = GetItemSaveId(item);
-                if (!table.ContainsKey(itemId))
-                {
-                    table.Add(itemId, item);
-                }
+                if (!table.ContainsKey(itemId)) table.Add(itemId, item);
             }
 
             return table;

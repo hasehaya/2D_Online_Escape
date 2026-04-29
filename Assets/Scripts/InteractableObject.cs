@@ -1,5 +1,3 @@
-using System;
-using Save;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,14 +7,8 @@ using UnityEngine.UI;
 /// プレイヤーのクリック操作を検知し、「拡大表示」「アイテム取得」「メッセージ表示」などの具体的なアクションを実行する役割を持つ。
 /// このコンポーネントをアタッチするだけで、UIオブジェクトの場合は自動的にImageコンポーネントが追加されます。
 /// </summary>
-public class InteractableObject : SaveableBehaviour, IPointerClickHandler
+public class InteractableObject : MonoBehaviour, IPointerClickHandler
 {
-    [Serializable]
-    private struct InteractableObjectState
-    {
-        public bool isActive;
-    }
-
     public enum InteractionType
     {
         None,
@@ -25,13 +17,13 @@ public class InteractableObject : SaveableBehaviour, IPointerClickHandler
     }
 
     [Header("Interaction Settings")] [SerializeField]
-    private InteractionType _interactionType = InteractionType.None;
+    protected InteractionType _interactionType = InteractionType.None;
 
     [Header("Zoom Settings")] [SerializeField]
     private ViewNode _zoomViewNode;
 
     [Header("Pickup Settings")] [SerializeField]
-    private ItemData _itemToPickup;
+    protected ItemData _itemToPickup;
 
     [Header("Debug Settings")] [SerializeField]
     private bool _showClickArea = true;
@@ -39,13 +31,13 @@ public class InteractableObject : SaveableBehaviour, IPointerClickHandler
     [SerializeField] private Color _gizmoColor = new Color(0f, 1f, 0f, 0.3f);
 
     // エディタでコンポーネントをアタッチした時に自動実行
-    private void Reset()
+    protected virtual void Reset()
     {
         SetupUIComponents();
     }
 
     // 実行時に必要なコンポーネントを確認・追加
-    private void Awake()
+    protected virtual void Awake()
     {
         SetupUIComponents();
     }
@@ -53,7 +45,7 @@ public class InteractableObject : SaveableBehaviour, IPointerClickHandler
     /// <summary>
     /// UIオブジェクトの場合、クリック判定に必要なImageコンポーネントを自動追加
     /// </summary>
-    private void SetupUIComponents()
+    protected void SetupUIComponents()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
         if (rectTransform != null)
@@ -118,37 +110,25 @@ public class InteractableObject : SaveableBehaviour, IPointerClickHandler
                 break;
 
             case InteractionType.Pickup:
-                if (_itemToPickup != null)
-                {
-                    if (InventoryManager.Instance.TryAddItem(_itemToPickup))
-                    {
-                        gameObject.SetActive(false); // 取得したアイテムはシーンから消す
-                        PairSaveCoordinator.RequestSaveIfAvailable();
-                    }
-                }
-
+                TryPickup();
                 break;
         }
     }
 
-    public override string CaptureState()
+    protected virtual bool TryPickup()
     {
-        InteractableObjectState state = new InteractableObjectState
+        if (_itemToPickup == null)
         {
-            isActive = gameObject.activeSelf
-        };
-        return JsonUtility.ToJson(state);
-    }
-
-    public override void RestoreState(string stateJson)
-    {
-        if (string.IsNullOrEmpty(stateJson))
-        {
-            return;
+            return false;
         }
 
-        InteractableObjectState state = JsonUtility.FromJson<InteractableObjectState>(stateJson);
-        gameObject.SetActive(state.isActive);
+        if (!InventoryManager.Instance.TryAddItem(_itemToPickup))
+        {
+            return false;
+        }
+
+        gameObject.SetActive(false); // 取得したアイテムはシーンから消す
+        return true;
     }
 
     private void OnDrawGizmos()
@@ -177,93 +157,6 @@ public class InteractableObject : SaveableBehaviour, IPointerClickHandler
             Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
             Gizmos.DrawCube(Vector3.zero, new Vector3(size.x, size.y, 0.01f));
             Gizmos.matrix = Matrix4x4.identity;
-        }
-        else
-        {
-            // Collider2Dの場合
-            BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
-            if (boxCollider != null)
-            {
-                Vector3 center = transform.TransformPoint(boxCollider.offset);
-                Vector3 size = new Vector3(
-                    boxCollider.size.x * transform.lossyScale.x,
-                    boxCollider.size.y * transform.lossyScale.y,
-                    0.01f
-                );
-                Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
-                Gizmos.DrawCube(Vector3.zero, size);
-                Gizmos.DrawWireCube(Vector3.zero, size);
-                Gizmos.matrix = Matrix4x4.identity;
-            }
-
-            CircleCollider2D circleCollider = GetComponent<CircleCollider2D>();
-            if (circleCollider != null)
-            {
-                Vector3 center = transform.TransformPoint(circleCollider.offset);
-                float radius = circleCollider.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
-
-                // 円を描画
-                DrawCircleGizmo(center, radius);
-            }
-
-            PolygonCollider2D polygonCollider = GetComponent<PolygonCollider2D>();
-            if (polygonCollider != null)
-            {
-                for (int i = 0; i < polygonCollider.pathCount; i++)
-                {
-                    Vector2[] points = polygonCollider.GetPath(i);
-                    for (int j = 0; j < points.Length; j++)
-                    {
-                        Vector3 p1 = transform.TransformPoint(points[j]);
-                        Vector3 p2 = transform.TransformPoint(points[(j + 1) % points.Length]);
-                        Gizmos.DrawLine(p1, p2);
-                    }
-                }
-            }
-
-            // 3D Colliderの場合
-            BoxCollider boxCollider3D = GetComponent<BoxCollider>();
-            if (boxCollider3D != null)
-            {
-                Vector3 center = transform.TransformPoint(boxCollider3D.center);
-                Vector3 size = Vector3.Scale(boxCollider3D.size, transform.lossyScale);
-                Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
-                Gizmos.DrawCube(Vector3.zero, size);
-                Gizmos.DrawWireCube(Vector3.zero, size);
-                Gizmos.matrix = Matrix4x4.identity;
-            }
-
-            SphereCollider sphereCollider = GetComponent<SphereCollider>();
-            if (sphereCollider != null)
-            {
-                Vector3 center = transform.TransformPoint(sphereCollider.center);
-                float radius = sphereCollider.radius *
-                               Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
-                Gizmos.DrawWireSphere(center, radius);
-            }
-        }
-    }
-
-    private void DrawCircleGizmo(Vector3 center, float radius)
-    {
-        int segments = 32;
-        float angle = 0f;
-        Vector3 lastPoint = center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-
-        for (int i = 1; i <= segments; i++)
-        {
-            angle = i * 2f * Mathf.PI / segments;
-            Vector3 newPoint = center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-            Gizmos.DrawLine(lastPoint, newPoint);
-            lastPoint = newPoint;
-        }
-
-        // 塗りつぶし（簡易版）
-        for (int i = 0; i < segments; i++)
-        {
-            angle = i * 2f * Mathf.PI / segments;
-            Vector3 point = center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-            Gizmos.DrawLine(center, point);
         }
     }
 }
