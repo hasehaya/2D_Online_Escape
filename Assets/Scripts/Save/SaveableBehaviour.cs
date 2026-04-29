@@ -31,7 +31,7 @@ namespace Save
 
         private void EnsureUniqueSaveIdInScene()
         {
-            SaveableBehaviour[] saveables = FindObjectsOfType<SaveableBehaviour>(true);
+            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour other = saveables[i];

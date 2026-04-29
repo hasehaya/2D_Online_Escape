@@ -24,7 +24,7 @@ public class StillNode : MonoBehaviour, IViewable
     public void OnEnter()
     {
         // ダイアログを開始
-        DialogueController dialogueController = FindObjectOfType<DialogueController>();
+        DialogueController dialogueController = FindFirstObjectByType<DialogueController>();
         if (dialogueController != null && dialogues != null && dialogues.Length > 0)
         {
             dialogueController.StartDialogue(this);

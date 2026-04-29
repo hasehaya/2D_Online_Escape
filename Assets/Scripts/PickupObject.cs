@@ -8,38 +8,62 @@ using UnityEngine;
 /// </summary>
 public class PickupObject : InteractableObject, ISaveable
 {
+    [Header("Pickup Settings")] [SerializeField]
+    protected ItemData _itemToPickup;
+
     [Header("Save")] [SerializeField] private string _saveId;
 
     public string SaveId => _saveId;
 
     protected override void Reset()
     {
-        _interactionType = InteractionType.Pickup;
         base.Reset();
     }
 
     protected override void Awake()
     {
-        _interactionType = InteractionType.Pickup;
         base.Awake();
     }
 
     private void OnValidate()
     {
-        _interactionType = InteractionType.Pickup;
         EnsureSaveId();
         EnsureUniqueSaveIdInScene();
     }
 
-    protected override bool TryPickup()
+    public bool TryGetPickupItem(out ItemData item)
     {
-        bool picked = base.TryPickup();
-        if (picked)
+        if (_itemToPickup != null)
         {
-            PairSaveCoordinator.RequestSaveIfAvailable();
+            item = _itemToPickup;
+            return true;
         }
 
-        return picked;
+        item = null;
+        return false;
+    }
+
+    protected override void Interact()
+    {
+        base.Interact();
+        TryPickup();
+    }
+
+    protected virtual bool TryPickup()
+    {
+        if (_itemToPickup == null)
+        {
+            return false;
+        }
+
+        if (!InventoryManager.Instance.TryAddItem(_itemToPickup))
+        {
+            return false;
+        }
+
+        gameObject.SetActive(false);
+        PairSaveCoordinator.RequestSaveIfAvailable();
+        return true;
     }
 
     [Serializable]

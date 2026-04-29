@@ -4,39 +4,21 @@ using UnityEngine.UI;
 
 /// <summary>
 /// クリック可能なオブジェクトの基底クラス。
-/// プレイヤーのクリック操作を検知し、「拡大表示」「アイテム取得」「メッセージ表示」などの具体的なアクションを実行する役割を持つ。
-/// このコンポーネントをアタッチするだけで、UIオブジェクトの場合は自動的にImageコンポーネントが追加されます。
+/// プレイヤーのクリック操作を検知し、派生クラスで具体的なアクションを実装する。
+/// UIオブジェクトにアタッチすると自動的にImageコンポーネントが追加されます。
 /// </summary>
 public class InteractableObject : MonoBehaviour, IPointerClickHandler
 {
-    public enum InteractionType
-    {
-        None,
-        Zoom,
-        Pickup
-    }
-
-    [Header("Interaction Settings")] [SerializeField]
-    protected InteractionType _interactionType = InteractionType.None;
-
-    [Header("Zoom Settings")] [SerializeField]
-    private ViewNode _zoomViewNode;
-
-    [Header("Pickup Settings")] [SerializeField]
-    protected ItemData _itemToPickup;
-
     [Header("Debug Settings")] [SerializeField]
     private bool _showClickArea = true;
 
     [SerializeField] private Color _gizmoColor = new Color(0f, 1f, 0f, 0.3f);
 
-    // エディタでコンポーネントをアタッチした時に自動実行
     protected virtual void Reset()
     {
         SetupUIComponents();
     }
 
-    // 実行時に必要なコンポーネントを確認・追加
     protected virtual void Awake()
     {
         SetupUIComponents();
@@ -50,7 +32,6 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
         RectTransform rectTransform = GetComponent<RectTransform>();
         if (rectTransform != null)
         {
-            // UIオブジェクトの場合、Imageコンポーネントが必要
             Image image = GetComponent<Image>();
             if (image == null)
             {
@@ -61,7 +42,6 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
             }
             else if (!image.raycastTarget)
             {
-                // Imageはあるがraycastが無効の場合、有効にする
                 image.raycastTarget = true;
                 Debug.Log($"[InteractableObject] {gameObject.name} のImage.raycastTargetを有効にしました");
             }
@@ -83,52 +63,9 @@ public class InteractableObject : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public bool TryGetPickupItem(out ItemData item)
-    {
-        if (_interactionType == InteractionType.Pickup && _itemToPickup != null)
-        {
-            item = _itemToPickup;
-            return true;
-        }
-
-        item = null;
-        return false;
-    }
-
     protected virtual void Interact()
     {
         Debug.Log($"Interacted with {gameObject.name}");
-
-        switch (_interactionType)
-        {
-            case InteractionType.Zoom:
-                if (_zoomViewNode != null)
-                {
-                    ViewController.Instance.ZoomIn(_zoomViewNode);
-                }
-
-                break;
-
-            case InteractionType.Pickup:
-                TryPickup();
-                break;
-        }
-    }
-
-    protected virtual bool TryPickup()
-    {
-        if (_itemToPickup == null)
-        {
-            return false;
-        }
-
-        if (!InventoryManager.Instance.TryAddItem(_itemToPickup))
-        {
-            return false;
-        }
-
-        gameObject.SetActive(false); // 取得したアイテムはシーンから消す
-        return true;
     }
 
     private void OnDrawGizmos()

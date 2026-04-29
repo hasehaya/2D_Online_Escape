@@ -199,22 +199,11 @@ namespace Save
         {
             Dictionary<string, ItemData> table = new Dictionary<string, ItemData>();
 
-            // 新: Saveable な Pickup コンポーネントを持つオブジェクトを先に収集
-            PickupObject[] pickupObjects = FindObjectsOfType<PickupObject>(true);
+            PickupObject[] pickupObjects = FindObjectsByType<PickupObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < pickupObjects.Length; i++)
             {
                 ItemData item;
                 if (!pickupObjects[i].TryGetPickupItem(out item)) continue;
-                string itemId = GetItemSaveId(item);
-                if (!table.ContainsKey(itemId)) table.Add(itemId, item);
-            }
-
-            // 従来からの InteractableObject も引き続きサポート（シーンの差し替え前互換）
-            InteractableObject[] interactables = FindObjectsOfType<InteractableObject>(true);
-            for (int i = 0; i < interactables.Length; i++)
-            {
-                ItemData item;
-                if (!interactables[i].TryGetPickupItem(out item)) continue;
                 string itemId = GetItemSaveId(item);
                 if (!table.ContainsKey(itemId)) table.Add(itemId, item);
             }
@@ -225,7 +214,7 @@ namespace Save
         private void CaptureSaveables(RoleSaveData roleData)
         {
             roleData.saveables.Clear();
-            SaveableBehaviour[] saveables = FindObjectsOfType<SaveableBehaviour>(true);
+            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour saveable = saveables[i];
@@ -245,7 +234,7 @@ namespace Save
                 stateMap[state.saveId] = state.stateJson;
             }
 
-            SaveableBehaviour[] saveables = FindObjectsOfType<SaveableBehaviour>(true);
+            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour saveable = saveables[i];
