@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.Audio;
 
 /// <summary>
 /// ゲーム全体の音響を管理するシングルトンクラス。
 /// BGMとSEの再生機能、および音量設定の保存・読み込み（永続化）を担当する。
+/// クリップの選択は AudioDatabase に委譲し、このクラスは再生と音量管理のみを担う。
 /// シーン遷移しても破棄されず、常に存在する。
 /// </summary>
 public class AudioManager : MonoBehaviour
@@ -13,6 +13,9 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] private AudioSource _bgmSource;
     [SerializeField] private AudioSource _seSource;
+
+    [Header("Audio Database")]
+    [SerializeField] private AudioDatabase _audioDatabase;
 
     [Header("Volume Settings (0.0 - 1.0)")]
     private float _bgmVolume = 1.0f;
@@ -67,9 +70,10 @@ public class AudioManager : MonoBehaviour
         if (_seSource != null) _seSource.volume = _seVolume;
     }
 
-    public void PlayBGM(AudioClip clip)
+    public void PlayBGM(BGMSoundType type)
     {
-        if (_bgmSource == null) return;
+        if (_bgmSource == null || _audioDatabase == null) return;
+        if (!_audioDatabase.TryGetBGMClip(type, out AudioClip clip)) return;
 
         // 同じ曲が既に流れている場合は、曲の頭出しを避けるために何もしない
         if (_bgmSource.clip == clip && _bgmSource.isPlaying) return;
@@ -78,9 +82,10 @@ public class AudioManager : MonoBehaviour
         _bgmSource.Play();
     }
 
-    public void PlaySE(AudioClip clip)
+    public void PlaySE(SESoundType type)
     {
-        if (_seSource == null || clip == null) return;
+        if (_seSource == null || _audioDatabase == null) return;
+        if (!_audioDatabase.TryGetSEClip(type, out AudioClip clip)) return;
         _seSource.PlayOneShot(clip, _seVolume);
     }
 }

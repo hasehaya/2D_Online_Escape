@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -16,7 +16,6 @@ namespace Map.Noel.Prepare
         private Component _woodBoxCloseFadeTarget;
 
         [SerializeField] private Component _woodBoxOpenFadeTarget;
-        [SerializeField] private AudioClip _correctSe;
         [SerializeField] private float _solveFadeOutDuration = 0.2f;
         [SerializeField] private float _solveFadeInDuration = 0.2f;
         [SerializeField] private Ease _solveFadeEase = Ease.Linear;
@@ -265,7 +264,7 @@ namespace Map.Noel.Prepare
         private void UnlockWoodBox()
         {
             _isSolved = true;
-            AudioManager.Instance.PlaySE(_correctSe);
+            AudioManager.Instance.PlaySE(SESoundType.Correct);
             FadeSwitchService.Switch(_woodBoxCloseFadeTarget, _woodBoxOpenFadeTarget, _solveFadeOutDuration,
                 _solveFadeInDuration, _solveFadeEase);
         }
