@@ -82,6 +82,14 @@ namespace Save
             }
         }
 
+        public static void MarkClearedAndReset()
+        {
+            if (Instance != null)
+            {
+                Instance.MarkClearedInternal();
+            }
+        }
+
         public void Load()
         {
             if (_loaded)
@@ -95,8 +103,14 @@ namespace Save
                 return;
             }
 
+            string slotKey = SaveSessionContext.GetCurrentSaveSlotKey();
+            if (string.IsNullOrEmpty(slotKey))
+            {
+                return;
+            }
+
             PairSaveData pairData;
-            if (!PairSaveRepository.TryLoad(pairKey, out pairData))
+            if (!PairSaveRepository.TryLoad(slotKey, out pairData))
             {
                 _loaded = true;
                 return;
@@ -130,8 +144,14 @@ namespace Save
                 return;
             }
 
+            string slotKey = SaveSessionContext.GetCurrentSaveSlotKey();
+            if (string.IsNullOrEmpty(slotKey))
+            {
+                return;
+            }
+
             PairSaveData pairData;
-            if (!PairSaveRepository.TryLoad(pairKey, out pairData))
+            if (!PairSaveRepository.TryLoad(slotKey, out pairData))
             {
                 pairData = new PairSaveData();
             }
@@ -139,6 +159,7 @@ namespace Save
             pairData.pairKey = pairKey;
             pairData.eliasPlayerId = SaveSessionContext.GetRoomString(SaveSessionContext.EliasPlayerIdRoomPropertyKey);
             pairData.noelPlayerId = SaveSessionContext.GetRoomString(SaveSessionContext.NoelPlayerIdRoomPropertyKey);
+            pairData.isCleared = false;
 
             SaveRole role = SaveSessionContext.GetLocalRole();
             RoleSaveData roleData = pairData.GetRoleData(role);
@@ -153,7 +174,36 @@ namespace Save
                 CaptureSharedProgress(pairData.sharedProgress);
             }
 
-            PairSaveRepository.Save(pairData);
+            PairSaveRepository.Save(slotKey, pairData);
+        }
+
+        private void MarkClearedInternal()
+        {
+            if (!PhotonNetwork.InRoom)
+            {
+                return;
+            }
+
+            string pairKey = SaveSessionContext.GetCurrentPairKey();
+            if (string.IsNullOrEmpty(pairKey))
+            {
+                return;
+            }
+
+            string slotKey = SaveSessionContext.GetCurrentSaveSlotKey();
+            if (string.IsNullOrEmpty(slotKey))
+            {
+                return;
+            }
+
+            PairSaveData pairData;
+            if (!PairSaveRepository.TryLoad(slotKey, out pairData))
+            {
+                return;
+            }
+
+            pairData.isCleared = true;
+            PairSaveRepository.Save(slotKey, pairData);
         }
 
         private void OnInventoryChanged()
@@ -199,7 +249,8 @@ namespace Save
         {
             Dictionary<string, ItemData> table = new Dictionary<string, ItemData>();
 
-            PickupObject[] pickupObjects = FindObjectsByType<PickupObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            PickupObject[] pickupObjects =
+                FindObjectsByType<PickupObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < pickupObjects.Length; i++)
             {
                 ItemData item;
@@ -214,7 +265,8 @@ namespace Save
         private void CaptureSaveables(RoleSaveData roleData)
         {
             roleData.saveables.Clear();
-            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            SaveableBehaviour[] saveables =
+                FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour saveable = saveables[i];
@@ -234,7 +286,8 @@ namespace Save
                 stateMap[state.saveId] = state.stateJson;
             }
 
-            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            SaveableBehaviour[] saveables =
+                FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour saveable = saveables[i];

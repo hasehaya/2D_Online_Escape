@@ -181,9 +181,15 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         string pairKey = SaveSessionContext.BuildPairKey(playerA, playerB);
 
         PairSaveData existing;
-        if (PairSaveRepository.TryLoad(pairKey, out existing))
+        string slotKey;
+        if (PairSaveRepository.TryLoadLatest(pairKey, out existing, out slotKey))
         {
-            if (!string.IsNullOrEmpty(existing.eliasPlayerId) && !string.IsNullOrEmpty(existing.noelPlayerId))
+            if (existing.isCleared)
+            {
+                PairSaveRepository.Delete(slotKey);
+                PairSaveRepository.ClearPairIndex(pairKey);
+            }
+            else if (!string.IsNullOrEmpty(existing.eliasPlayerId) && !string.IsNullOrEmpty(existing.noelPlayerId))
             {
                 eliasPlayerId = existing.eliasPlayerId;
                 noelPlayerId = existing.noelPlayerId;

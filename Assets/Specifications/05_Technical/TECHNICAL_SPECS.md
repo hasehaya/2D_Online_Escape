@@ -19,10 +19,13 @@
   - 各保存対象オブジェクトは `saveId` を持ち、`CaptureState` / `RestoreState` を実装
 - 集約: `PairSaveCoordinator`
   - インベントリ、`SaveableBehaviour` 状態、Room Custom Properties、現在シーン名をペア単位で保存/復元
-- 永続化: `PlayerPrefs` にペアキー単位でJSON保存
+- 永続化: `PlayerPrefs` に保存スロットキー単位でJSON保存
 - ペア識別: 両プレイヤーIDをソートして `pairKey` を生成
 - プレイヤーID: Steam連携前は `LocalIdentityProvider` が暫定ローカルIDを発行
 - 役割固定: 同一ペアは前回保存された Elias/Noel 割り当てを再利用。初回のみID順で決定
+- 保存スロット: `pairKey` と **役割割り当て** を結合したキーで管理する
+- 引き継ぎは **同一キャラのみ** 可能とする
+- キャラを変更する場合、またはクリア後の再プレイは **最初から（新規スロット）** とする
 
 ## ビルドシーン（EditorBuildSettings）
 1. `Assets/Scenes/TitleScene.unity`

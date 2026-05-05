@@ -9,6 +9,7 @@ namespace Save
         public string pairKey;
         public string eliasPlayerId;
         public string noelPlayerId;
+        public bool isCleared;
         public SharedProgressData sharedProgress = new SharedProgressData();
         public RoleSaveData elias = new RoleSaveData();
         public RoleSaveData noel = new RoleSaveData();

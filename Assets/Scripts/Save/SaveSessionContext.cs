@@ -84,5 +84,28 @@ namespace Save
 
             return string.Empty;
         }
+
+        public static string GetCurrentSaveSlotKey()
+        {
+            string pairKey = GetCurrentPairKey();
+            if (string.IsNullOrEmpty(pairKey))
+            {
+                return string.Empty;
+            }
+
+            string eliasId = GetRoomString(EliasPlayerIdRoomPropertyKey);
+            string noelId = GetRoomString(NoelPlayerIdRoomPropertyKey);
+            if (string.IsNullOrEmpty(eliasId) || string.IsNullOrEmpty(noelId))
+            {
+                return string.Empty;
+            }
+
+            return BuildSaveSlotKey(pairKey, eliasId, noelId);
+        }
+
+        public static string BuildSaveSlotKey(string pairKey, string eliasPlayerId, string noelPlayerId)
+        {
+            return pairKey + "__E_" + eliasPlayerId + "__N_" + noelPlayerId;
+        }
     }
 }
