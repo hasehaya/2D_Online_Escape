@@ -20,8 +20,7 @@ public class TreasureBoxObject : SaveableBehaviour
 
     [SerializeField] private Ease _fadeEase = Ease.Linear;
 
-    [Header("Open SE")] [SerializeField] private bool _playOpenSE = true;
-    [SerializeField] private SESoundType _openSEType = SESoundType.CorrectBoxOpen;
+    [Header("Open SE")] [SerializeField] private SESoundType _openSEType = SESoundType.CorrectBoxOpen;
 
     private bool _isOpen;
 
@@ -42,10 +41,7 @@ public class TreasureBoxObject : SaveableBehaviour
 
         _isOpen = true;
 
-        if (_playOpenSE && AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlaySE(_openSEType);
-        }
+        AudioManager.Instance.PlaySE(_openSEType);
 
         PlayOpenAnimation();
         PairSaveCoordinator.RequestSaveIfAvailable();

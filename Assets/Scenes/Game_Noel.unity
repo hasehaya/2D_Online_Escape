@@ -459,6 +459,7 @@ GameObject:
   - component: {fileID: 165491365}
   - component: {fileID: 165491367}
   - component: {fileID: 165491366}
+  - component: {fileID: 165491368}
   m_Layer: 5
   m_Name: Trankcase
   m_TagString: Untagged
@@ -523,6 +524,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165491364}
   m_CullTransparentMesh: 1
+--- !u!114 &165491368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165491364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3685d36075e81c94fb0e00ac64de5f89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreasureBoxObject
+  _saveId: 134d8c59b073460ca72fd3c7bff34ff0
+  _image: {fileID: 0}
+  _closedSprite: {fileID: 0}
+  _openSprite: {fileID: 0}
+  _fadeDuration: 0.2
+  _fadeEase: 1
+  _openSEType: 1
 --- !u!1 &171863543
 GameObject:
   m_ObjectHideFlags: 0
