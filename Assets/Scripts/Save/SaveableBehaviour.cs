@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Save
 {
@@ -11,6 +10,9 @@ namespace Save
     {
         [Header("Save")] [SerializeField] private string _saveId;
 
+        [Tooltip("チェックを入れると、シーン内で同じSaveIdの使用を許可します（他のオブジェクトと状態を同期したい場合に使用）")] [SerializeField]
+        private bool _allowSharedSaveId;
+
         public string SaveId => _saveId;
 
         protected virtual void OnValidate()
@@ -21,17 +23,21 @@ namespace Save
 
         private void EnsureSaveId()
         {
-            if (!string.IsNullOrEmpty(_saveId))
+            if (string.IsNullOrEmpty(_saveId))
             {
-                return;
+                Debug.LogWarning($"[{gameObject.name}] SaveIdが設定されていません！インスペクタから手動で設定してください。", gameObject);
             }
-
-            _saveId = Guid.NewGuid().ToString("N");
         }
 
         private void EnsureUniqueSaveIdInScene()
         {
-            SaveableBehaviour[] saveables = FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (_allowSharedSaveId || string.IsNullOrEmpty(_saveId))
+            {
+                return;
+            }
+
+            SaveableBehaviour[] saveables =
+                FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < saveables.Length; i++)
             {
                 SaveableBehaviour other = saveables[i];
@@ -40,9 +46,16 @@ namespace Save
                     continue;
                 }
 
+                if (other._allowSharedSaveId)
+                {
+                    continue;
+                }
+
                 if (other._saveId == _saveId)
                 {
-                    _saveId = Guid.NewGuid().ToString("N");
+                    Debug.LogWarning(
+                        $"[{gameObject.name}] SaveId '{_saveId}' が重複しています！(対象: {other.gameObject.name}) 意図した重複の場合は 'Allow Shared Save Id' にチェックを入れてください。",
+                        gameObject);
                     break;
                 }
             }

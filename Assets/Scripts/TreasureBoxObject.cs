@@ -11,9 +11,8 @@ using UnityEngine.UI;
 /// </summary>
 public class TreasureBoxObject : SaveableBehaviour
 {
-    [Header("Sprites")] [SerializeField] private Image _image;
-    [SerializeField] private Sprite _closedSprite;
-    [SerializeField] private Sprite _openSprite;
+    [Header("Images")] [SerializeField] private Image _closedImage;
+    [SerializeField] private Image _openImage;
 
     [Header("Open Animation")] [SerializeField]
     private float _fadeDuration = 0.2f;
@@ -28,7 +27,7 @@ public class TreasureBoxObject : SaveableBehaviour
 
     private void Start()
     {
-        ApplySprite();
+        ApplyImageState();
     }
 
     /// <summary>
@@ -49,31 +48,31 @@ public class TreasureBoxObject : SaveableBehaviour
 
     private void PlayOpenAnimation()
     {
-        if (_image == null) return;
+        if (_closedImage == null || _openImage == null) return;
 
-        _image.DOKill();
+        _closedImage.DOKill();
+        _openImage.DOKill();
 
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(_image.DOFade(0f, _fadeDuration).SetEase(_fadeEase));
-        sequence.AppendCallback(() =>
-        {
-            if (_openSprite != null)
-            {
-                _image.sprite = _openSprite;
-            }
-        });
-        sequence.Append(_image.DOFade(1f, _fadeDuration).SetEase(_fadeEase));
+        FadeSwitchService.Switch(_closedImage, _openImage, _fadeDuration, _fadeEase);
     }
 
-    private void ApplySprite()
+    private void ApplyImageState()
     {
-        if (_image == null) return;
+        if (_closedImage != null)
+        {
+            _closedImage.gameObject.SetActive(!_isOpen);
+            Color c = _closedImage.color;
+            c.a = 1f;
+            _closedImage.color = c;
+        }
 
-        _image.sprite = _isOpen ? _openSprite : _closedSprite;
-
-        Color color = _image.color;
-        color.a = 1f;
-        _image.color = color;
+        if (_openImage != null)
+        {
+            _openImage.gameObject.SetActive(_isOpen);
+            Color c = _openImage.color;
+            c.a = 1f;
+            _openImage.color = c;
+        }
     }
 
     [Serializable]
@@ -94,6 +93,6 @@ public class TreasureBoxObject : SaveableBehaviour
 
         TreasureBoxState state = JsonUtility.FromJson<TreasureBoxState>(stateJson);
         _isOpen = state.isOpen;
-        ApplySprite();
+        ApplyImageState();
     }
 }
