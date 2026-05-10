@@ -9,28 +9,33 @@ using UnityEngine.UI;
 public static class FadeSwitchService
 {
     public static Sequence Switch(Component from, Component to, float fadeOutDuration, float fadeInDuration,
-        Ease ease = Ease.Linear)
+        Ease ease = Ease.Linear, float fadeInDelay = 0f)
     {
-        return Switch(CreateTarget(from), CreateTarget(to), fadeOutDuration, fadeInDuration, ease);
+        return Switch(CreateTarget(from), CreateTarget(to), fadeOutDuration, fadeInDuration, ease, fadeInDelay);
     }
 
-    public static Sequence Switch(Image from, Image to, float fadeDuration, Ease ease = Ease.Linear)
+    public static Sequence Switch(Image from, Image to, float fadeDuration, Ease ease = Ease.Linear,
+        float fadeInDelay = 0f)
     {
-        return Switch(new ImageTarget(from), new ImageTarget(to), fadeDuration, fadeDuration, ease);
+        return Switch(new ImageTarget(from), new ImageTarget(to), fadeDuration, fadeDuration, ease, fadeInDelay);
     }
 
-    public static Sequence Switch(SpriteRenderer from, SpriteRenderer to, float fadeDuration, Ease ease = Ease.Linear)
+    public static Sequence Switch(SpriteRenderer from, SpriteRenderer to, float fadeDuration, Ease ease = Ease.Linear,
+        float fadeInDelay = 0f)
     {
-        return Switch(new SpriteRendererTarget(from), new SpriteRendererTarget(to), fadeDuration, fadeDuration, ease);
+        return Switch(new SpriteRendererTarget(from), new SpriteRendererTarget(to), fadeDuration, fadeDuration, ease,
+            fadeInDelay);
     }
 
-    public static Sequence Switch(CanvasGroup from, CanvasGroup to, float fadeDuration, Ease ease = Ease.Linear)
+    public static Sequence Switch(CanvasGroup from, CanvasGroup to, float fadeDuration, Ease ease = Ease.Linear,
+        float fadeInDelay = 0f)
     {
-        return Switch(new CanvasGroupTarget(from), new CanvasGroupTarget(to), fadeDuration, fadeDuration, ease);
+        return Switch(new CanvasGroupTarget(from), new CanvasGroupTarget(to), fadeDuration, fadeDuration, ease,
+            fadeInDelay);
     }
 
     private static Sequence Switch(IFadeTarget from, IFadeTarget to, float fadeOutDuration, float fadeInDuration,
-        Ease ease)
+        Ease ease, float fadeInDelay = 0f)
     {
         from.SetActive(true);
         to.SetActive(true);
@@ -39,7 +44,7 @@ public static class FadeSwitchService
 
         Sequence sequence = DOTween.Sequence();
         sequence.Join(from.FadeTo(0f, fadeOutDuration).SetEase(ease));
-        sequence.Join(to.FadeTo(1f, fadeInDuration).SetEase(ease));
+        sequence.Insert(fadeInDelay, to.FadeTo(1f, fadeInDuration).SetEase(ease));
         sequence.OnComplete(() =>
         {
             from.SetAlpha(0f);

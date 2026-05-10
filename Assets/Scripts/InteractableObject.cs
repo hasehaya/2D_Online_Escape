@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// プレイヤーのクリック操作を検知し、派生クラスで具体的なアクションを実装する。
 /// UIオブジェクトにアタッチすると自動的にImageコンポーネントが追加されます。
 /// </summary>
-public class InteractableObject : MonoBehaviour, IPointerClickHandler
+public abstract class InteractableObject : MonoBehaviour, IPointerClickHandler
 {
     [Header("Debug Settings")] [SerializeField]
     private bool _showClickArea = true;
