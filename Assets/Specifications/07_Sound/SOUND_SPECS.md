@@ -12,6 +12,9 @@
 |---:|---|---|
 | 0 | `Correct` | 正解時の汎用SE |
 | 1 | `CorrectBoxOpen` | 宝箱を開けたときのSE |
+| 2 | `CauldronInsert` | 釜に正解のアイテムを投入したときのSE |
+| 3 | `CauldronFail` | 釜の手順を間違えたときのSE |
+| 4 | `CauldronComplete` | 釜での調合が完了し、瓶詰めしたときのSE |
 
 ## BGMSoundType 一覧
 

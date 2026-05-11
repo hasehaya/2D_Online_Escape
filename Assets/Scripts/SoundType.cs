@@ -6,6 +6,9 @@ public enum SESoundType
 {
     Correct = 0,
     CorrectBoxOpen = 1,
+    CauldronInsert = 2,
+    CauldronFail = 3,
+    CauldronComplete = 4,
 }
 
 /// <summary>
