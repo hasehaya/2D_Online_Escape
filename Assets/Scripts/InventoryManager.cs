@@ -21,9 +21,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject _itemSlotPrefab;
 
     [Header("Item Zoom UI")] [SerializeField]
-    private GameObject _itemZoomPanel;
-
-    [SerializeField] private Image _itemZoomImage;
+    private ItemZoomPanel _itemZoomPanel;
 
     private readonly List<ItemType> _items = new List<ItemType>();
     private readonly List<InventorySlot> _slotViews = new List<InventorySlot>();
@@ -119,6 +117,7 @@ public class InventoryManager : MonoBehaviour
         _selectedIndex = index;
         UpdateSelectionVisual();
         NotifySelectionChanged();
+        CloseItemZoom();
         return true;
     }
 
@@ -158,7 +157,7 @@ public class InventoryManager : MonoBehaviour
 
     public void CloseItemZoom()
     {
-        _itemZoomPanel.SetActive(false);
+        _itemZoomPanel.Close();
     }
 
     private void RefreshUI()
@@ -258,16 +257,12 @@ public class InventoryManager : MonoBehaviour
         Sprite icon;
         if (_itemDatabase.TryGetIcon(selectedItem, out icon))
         {
-            _itemZoomImage.sprite = icon;
-            _itemZoomImage.enabled = true;
+            _itemZoomPanel.Open(icon);
         }
         else
         {
-            _itemZoomImage.sprite = null;
-            _itemZoomImage.enabled = false;
+            _itemZoomPanel.Close();
         }
-
-        _itemZoomPanel.SetActive(true);
     }
 
     private void NotifyStateChanged(int index, ItemType item)

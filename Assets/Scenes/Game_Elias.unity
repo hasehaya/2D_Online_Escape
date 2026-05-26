@@ -1460,6 +1460,7 @@ GameObject:
   - component: {fileID: 252547342}
   - component: {fileID: 252547344}
   - component: {fileID: 252547343}
+  - component: {fileID: 252547345}
   m_Layer: 5
   m_Name: Potion2
   m_TagString: Untagged
@@ -1483,7 +1484,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 432.7, y: -159.5}
+  m_AnchoredPosition: {x: 437, y: -155}
   m_SizeDelta: {x: 120, y: 119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &252547343
@@ -1524,6 +1525,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252547341}
   m_CullTransparentMesh: 1
+--- !u!114 &252547345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 252547341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc21d7869ad4e279314fd33647b41c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimmickGrowthBooster
+  _clickAreaSize: {x: 108.17, y: 119}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _actionType: 1
+  _moveDuration: 0.5
+  _actionDuration: 1
+  _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &310363347
 GameObject:
   m_ObjectHideFlags: 0
@@ -2139,6 +2161,7 @@ GameObject:
   - component: {fileID: 601655360}
   - component: {fileID: 601655362}
   - component: {fileID: 601655361}
+  - component: {fileID: 601655363}
   m_Layer: 5
   m_Name: Potion1
   m_TagString: Untagged
@@ -2155,14 +2178,14 @@ RectTransform:
   m_GameObject: {fileID: 601655359}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 743907324}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 338, y: -155}
+  m_AnchoredPosition: {x: 308, y: -155}
   m_SizeDelta: {x: 120, y: 119}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &601655361
@@ -2203,6 +2226,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 601655359}
   m_CullTransparentMesh: 1
+--- !u!114 &601655363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601655359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc21d7869ad4e279314fd33647b41c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimmickGrowthBooster
+  _clickAreaSize: {x: 110.31, y: 119}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _actionType: 0
+  _moveDuration: 0.5
+  _actionDuration: 1
+  _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &606731836
 GameObject:
   m_ObjectHideFlags: 0
@@ -3044,8 +3088,9 @@ GameObject:
   - component: {fileID: 806348986}
   - component: {fileID: 806348988}
   - component: {fileID: 806348987}
+  - component: {fileID: 806348989}
   m_Layer: 5
-  m_Name: Water
+  m_Name: Watering
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3108,6 +3153,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 806348985}
   m_CullTransparentMesh: 1
+--- !u!114 &806348989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806348985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cc21d7869ad4e279314fd33647b41c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimmickGrowthBooster
+  _clickAreaSize: {x: 265, y: 209}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _actionType: 2
+  _moveDuration: 0.5
+  _actionDuration: 1
+  _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &834335819
 GameObject:
   m_ObjectHideFlags: 0
@@ -3228,6 +3294,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 834335819}
+  m_CullTransparentMesh: 1
+--- !u!1 &841994826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 841994827}
+  - component: {fileID: 841994829}
+  - component: {fileID: 841994828}
+  m_Layer: 5
+  m_Name: Leaf
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &841994827
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841994826}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1700297249}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 58.8}
+  m_SizeDelta: {x: 255, y: 335}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &841994828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841994826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: ae25ef3072adfee4ebb692d159f8d258, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &841994829
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841994826}
   m_CullTransparentMesh: 1
 --- !u!1 &897487486
 GameObject:
@@ -4041,8 +4182,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ffcda38e51493f40af11145ddb9b1e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
-  _showClickArea: 1
-  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
 --- !u!222 &1213398957
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4873,7 +5012,7 @@ PrefabInstance:
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _initialView
       value: 
-      objectReference: {fileID: 2027743889}
+      objectReference: {fileID: 743907325}
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _rightButton
       value: 
@@ -5214,7 +5353,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 841994827}
   m_Father: {fileID: 743907324}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -5277,9 +5417,8 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _planterImage: {fileID: 1700297250}
-  _emptySprite: {fileID: 21300000, guid: 934be00af45b14740b042dfe1a80a73d, type: 3}
-  _routeData: {fileID: 0}
+  _leafImage: {fileID: 841994828}
+  _routeData: {fileID: 11400000, guid: d85a30efc0cd8104cbe81c4b00c58610, type: 2}
   _currentState: 0
   _history: 
   _currentMatchingRoute:

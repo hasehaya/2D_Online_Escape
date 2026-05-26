@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// </summary>
 public class GimmickPlanter : InteractableObject
 {
-    public enum PlantState
+    private enum PlantState
     {
         Empty,
         Growing,
@@ -17,9 +17,7 @@ public class GimmickPlanter : InteractableObject
     }
 
     [Header("UI References")] [SerializeField]
-    private Image _planterImage;
-
-    [SerializeField] private Sprite _emptySprite;
+    private Image _leafImage;
 
     [Header("Planter Settings")] [Tooltip("植物になるルートなどを設定したScriptableObject")] [SerializeField]
     private PlantRouteData _routeData;
@@ -28,9 +26,9 @@ public class GimmickPlanter : InteractableObject
     private PlantState _currentState = PlantState.Empty;
 
     [SerializeField] private List<BoosterActionType> _history = new List<BoosterActionType>();
-    [SerializeField] private PlantRoute _currentMatchingRoute = null;
+    [SerializeField] private PlantRoute _currentMatchingRoute;
 
-    private bool _isAnimating = false;
+    private bool _isAnimating;
 
     protected override void Awake()
     {
@@ -73,55 +71,12 @@ public class GimmickPlanter : InteractableObject
 
     private void ProcessGrowth(BoosterActionType actionType)
     {
-        _history.Add(actionType);
-
-        // 現在の履歴（手順）に合致するルートを検索（完全一致または前方一致）
-        List<PlantRoute> matchingRoutes = new List<PlantRoute>();
-
-        if (_routeData != null && _routeData.Routes != null)
+        if (_currentMatchingRoute == null)
         {
-            foreach (var route in _routeData.Routes)
-            {
-                if (IsMatchingHistory(route.RequiredSequence, _history))
-                {
-                    matchingRoutes.Add(route);
-                }
-            }
+            _currentMatchingRoute = FindRouteByFirstAction(actionType);
         }
 
-        if (matchingRoutes.Count > 0)
-        {
-            // 成長成功：とりあえず先頭の候補を保持（複数候補が前方一致する場合はどれかになる）
-            PlantRoute bestMatch = matchingRoutes[0];
-            _currentMatchingRoute = bestMatch;
-
-            // 履歴と手数が完全に一致したか？
-            if (_history.Count == bestMatch.RequiredSequence.Count)
-            {
-                // 成熟期へ
-                _currentState = PlantState.Mature;
-                _planterImage.sprite = bestMatch.MatureSprite;
-                Debug.Log($"[{gameObject.name}] Reached Mature state: {bestMatch.RouteName}");
-
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlaySE(SESoundType.PlanterMature);
-                }
-            }
-            else
-            {
-                // まだ成長途中
-                _currentState = PlantState.Growing;
-                _planterImage.sprite = bestMatch.GrowingSprite;
-                Debug.Log($"[{gameObject.name}] Reached Growing state: {bestMatch.RouteName}");
-
-                if (AudioManager.Instance != null)
-                {
-                    AudioManager.Instance.PlaySE(SESoundType.PlanterGrow);
-                }
-            }
-        }
-        else
+        if (_currentMatchingRoute == null)
         {
             // 失敗（枯れる）-> リセット
             Debug.Log($"[{gameObject.name}] Wrong sequence. The plant died. Resetting...");
@@ -132,21 +87,83 @@ public class GimmickPlanter : InteractableObject
             }
 
             ResetPlanter();
+            return;
+        }
+
+        if (!IsNextActionMatch(_currentMatchingRoute.RequiredSequence, _history, actionType))
+        {
+            // 失敗（枯れる）-> リセット
+            Debug.Log($"[{gameObject.name}] Wrong sequence. The plant died. Resetting...");
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySE(SESoundType.PlanterFail);
+            }
+
+            ResetPlanter();
+            return;
+        }
+
+        _history.Add(actionType);
+
+        // 1回目でルート確定。2回目で成長期、それ以降は手順が進むまで成長期を維持。
+        if (_history.Count == 1)
+        {
+            Debug.Log($"[{gameObject.name}] Route fixed: {_currentMatchingRoute.RouteName}");
+            return;
+        }
+
+        if (_history.Count == 2)
+        {
+            _currentState = PlantState.Growing;
+            _leafImage.enabled = true;
+            _leafImage.sprite = _currentMatchingRoute.GrowingSprite;
+            Debug.Log($"[{gameObject.name}] Reached Growing state: {_currentMatchingRoute.RouteName}");
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySE(SESoundType.PlanterGrow);
+            }
+
+            return;
+        }
+
+        if (_history.Count == 4)
+        {
+            _currentState = PlantState.Mature;
+            _leafImage.enabled = true;
+            _leafImage.sprite = _currentMatchingRoute.MatureSprite;
+            Debug.Log($"[{gameObject.name}] Reached Mature state: {_currentMatchingRoute.RouteName}");
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySE(SESoundType.PlanterMature);
+            }
         }
     }
 
-    private bool IsMatchingHistory(List<BoosterActionType> required, List<BoosterActionType> current)
+    private PlantRoute FindRouteByFirstAction(BoosterActionType actionType)
     {
-        // そもそも手数が多すぎたら不一致
-        if (current.Count > required.Count) return false;
+        if (_routeData == null || _routeData.Routes == null) return null;
 
-        // 現在の手数まで一致しているか
-        for (int i = 0; i < current.Count; i++)
+        foreach (var route in _routeData.Routes)
         {
-            if (required[i] != current[i]) return false;
+            if (route.RequiredSequence != null && route.RequiredSequence.Count > 0 &&
+                route.RequiredSequence[0] == actionType)
+            {
+                return route;
+            }
         }
 
-        return true;
+        return null;
+    }
+
+    private bool IsNextActionMatch(List<BoosterActionType> required, List<BoosterActionType> current,
+        BoosterActionType nextAction)
+    {
+        if (current.Count >= required.Count) return false;
+
+        return required[current.Count] == nextAction;
     }
 
     private void CollectItem()
@@ -170,9 +187,6 @@ public class GimmickPlanter : InteractableObject
         _currentState = PlantState.Empty;
         _history.Clear();
         _currentMatchingRoute = null;
-        if (_planterImage != null && _emptySprite != null)
-        {
-            _planterImage.sprite = _emptySprite;
-        }
+        _leafImage.enabled = false;
     }
 }
