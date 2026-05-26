@@ -804,6 +804,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 1653893952}
@@ -823,7 +826,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1179,6 +1182,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 729864158}
@@ -1198,7 +1204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1360,6 +1366,7 @@ GameObject:
   - component: {fileID: 241272131}
   - component: {fileID: 241272133}
   - component: {fileID: 241272132}
+  - component: {fileID: 241272134}
   m_Layer: 5
   m_Name: WoodBox
   m_TagString: Untagged
@@ -1383,8 +1390,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 672, y: -121}
-  m_SizeDelta: {x: 1261, y: 877}
+  m_AnchoredPosition: {x: 597.8, y: -241}
+  m_SizeDelta: {x: 724.4, y: 523.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &241272132
 MonoBehaviour:
@@ -1400,7 +1407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1424,6 +1431,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241272130}
   m_CullTransparentMesh: 1
+--- !u!114 &241272134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241272130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 605.1, y: 639}
+  _clickAreaOffset: {x: -155.7, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _zoomViewNode: {fileID: 0}
 --- !u!1 &252547341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1510,6 +1535,7 @@ GameObject:
   - component: {fileID: 310363348}
   - component: {fileID: 310363350}
   - component: {fileID: 310363349}
+  - component: {fileID: 310363351}
   m_Layer: 5
   m_Name: PictureFrame
   m_TagString: Untagged
@@ -1575,6 +1601,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 310363347}
   m_CullTransparentMesh: 1
+--- !u!114 &310363351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310363347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 400, y: 400}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _zoomViewNode: {fileID: 0}
 --- !u!1 &319634661
 GameObject:
   m_ObjectHideFlags: 0
@@ -1627,7 +1671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1663,6 +1707,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 1959410297}
@@ -2356,6 +2403,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 1368403039}
@@ -2375,7 +2425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2693,7 +2743,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2729,6 +2779,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 503.59, y: 543.9}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _zoomViewNode: {fileID: 1217940857}
@@ -3532,6 +3585,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 610801791}
@@ -3551,7 +3607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4412,6 +4468,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 159056041}
@@ -4431,7 +4490,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5136,6 +5195,7 @@ GameObject:
   - component: {fileID: 1700297249}
   - component: {fileID: 1700297251}
   - component: {fileID: 1700297250}
+  - component: {fileID: 1700297252}
   m_Layer: 5
   m_Name: Plant
   m_TagString: Untagged
@@ -5182,7 +5242,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9a146acc44a890342af0a0936b701bee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 934be00af45b14740b042dfe1a80a73d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5200,6 +5260,34 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1700297248}
   m_CullTransparentMesh: 1
+--- !u!114 &1700297252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700297248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2567c8f03a2045d5bc5b5864bf26b7af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimmickPlanter
+  _clickAreaSize: {x: 205, y: 180}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _planterImage: {fileID: 0}
+  _emptySprite: {fileID: 0}
+  _routeData: {fileID: 0}
+  _currentState: 0
+  _history: 
+  _currentMatchingRoute:
+    RouteName: 
+    RequiredSequence: 
+    GrowingSprite: {fileID: 0}
+    MatureSprite: {fileID: 0}
+    ResultItem: {fileID: 0}
 --- !u!1 &1723229838
 GameObject:
   m_ObjectHideFlags: 0
@@ -5656,6 +5744,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6d6c3b11534e5db9b2c344155ac4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.PianoKey
+  _clickAreaSize: {x: 133.1, y: 878.6}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _pressedObject: {fileID: 1215609996}
@@ -5675,7 +5766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.01}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
