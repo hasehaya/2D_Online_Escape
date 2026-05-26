@@ -17,14 +17,14 @@ MonoBehaviour:
     RequiredSequence: 00000000010000000000000002000000
     GrowingSprite: {fileID: 21300000, guid: 162f2f7e5d5c539419fddc9994d21838, type: 3}
     MatureSprite: {fileID: 21300000, guid: a8575e34bf27780428fab93137028167, type: 3}
-    ResultItem: 0
+    ResultItem: 1
   - RouteName: 
     RequiredSequence: 02000000000000000100000002000000
     GrowingSprite: {fileID: 21300000, guid: ae25ef3072adfee4ebb692d159f8d258, type: 3}
     MatureSprite: {fileID: 21300000, guid: 9a146acc44a890342af0a0936b701bee, type: 3}
-    ResultItem: 0
+    ResultItem: 2
   - RouteName: 
     RequiredSequence: 02000000010000000200000000000000
     GrowingSprite: {fileID: 21300000, guid: 4a9220be6aa71a7489930e88f7961179, type: 3}
     MatureSprite: {fileID: 21300000, guid: 6ae14f4f2f3342742b78bb5318ec040e, type: 3}
-    ResultItem: 0
+    ResultItem: 3

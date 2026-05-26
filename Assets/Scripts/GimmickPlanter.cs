@@ -151,7 +151,7 @@ public class GimmickPlanter : InteractableObject
 
     private void CollectItem()
     {
-        if (_currentMatchingRoute != null && _currentMatchingRoute.ResultItem != null)
+        if (_currentMatchingRoute != null && _currentMatchingRoute.ResultItem != ItemType.None)
         {
             if (InventoryManager.Instance != null)
             {

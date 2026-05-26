@@ -59,12 +59,12 @@ public class PickupObject : InteractableObject, ISaveable
     [Serializable]
     private struct PickupState
     {
-        public bool isActive;
+        public bool _isActive;
     }
 
     public string CaptureState()
     {
-        PickupState s = new PickupState { isActive = gameObject.activeSelf };
+        PickupState s = new PickupState { _isActive = gameObject.activeSelf };
         return JsonUtility.ToJson(s);
     }
 
@@ -76,7 +76,7 @@ public class PickupObject : InteractableObject, ISaveable
         }
 
         PickupState s = JsonUtility.FromJson<PickupState>(stateJson);
-        gameObject.SetActive(s.isActive);
+        gameObject.SetActive(s._isActive);
     }
 
     private void EnsureSaveId()
