@@ -219,47 +219,33 @@ namespace Save
         private void CaptureInventory(RoleSaveData roleData)
         {
             roleData.inventoryItemIds.Clear();
-            IReadOnlyList<ItemData> items = InventoryManager.Instance.GetItems();
+            IReadOnlyList<ItemType> items = InventoryManager.Instance.GetItems();
             for (int i = 0; i < items.Count; i++)
             {
-                ItemData item = items[i];
-                roleData.inventoryItemIds.Add(GetItemSaveId(item));
+                roleData.inventoryItemIds.Add(((int)items[i]).ToString());
             }
         }
 
         private void ApplyInventory(RoleSaveData roleData)
         {
-            Dictionary<string, ItemData> itemTable = BuildSceneItemTable();
-            List<ItemData> restored = new List<ItemData>();
+            List<ItemType> restored = new List<ItemType>();
 
             for (int i = 0; i < roleData.inventoryItemIds.Count; i++)
             {
                 string itemId = roleData.inventoryItemIds[i];
-                ItemData item;
-                if (itemTable.TryGetValue(itemId, out item))
+                int itemTypeId;
+                if (!int.TryParse(itemId, out itemTypeId))
                 {
-                    restored.Add(item);
+                    continue;
+                }
+
+                if (Enum.IsDefined(typeof(ItemType), itemTypeId))
+                {
+                    restored.Add((ItemType)itemTypeId);
                 }
             }
 
             InventoryManager.Instance.SetItems(restored);
-        }
-
-        private Dictionary<string, ItemData> BuildSceneItemTable()
-        {
-            Dictionary<string, ItemData> table = new Dictionary<string, ItemData>();
-
-            PickupObject[] pickupObjects =
-                FindObjectsByType<PickupObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < pickupObjects.Length; i++)
-            {
-                ItemData item;
-                if (!pickupObjects[i].TryGetPickupItem(out item)) continue;
-                string itemId = GetItemSaveId(item);
-                if (!table.ContainsKey(itemId)) table.Add(itemId, item);
-            }
-
-            return table;
         }
 
         private void CaptureSaveables(RoleSaveData roleData)
@@ -376,11 +362,6 @@ namespace Save
             {
                 PhotonNetwork.CurrentRoom.SetCustomProperties(table);
             }
-        }
-
-        private string GetItemSaveId(ItemData item)
-        {
-            return string.IsNullOrEmpty(item.id) ? item.name : item.id;
         }
     }
 }

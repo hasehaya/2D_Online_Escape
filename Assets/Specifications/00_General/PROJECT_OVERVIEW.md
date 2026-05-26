@@ -16,7 +16,8 @@
 - マッチング: ルームID指定参加（6桁）
 - 設定: `TitleScene` から設定画面を開き、BGM/SE 音量と言語（日本語/英語）を変更可能
 - インゲーム: 視点切替、ズーム、インタラクト、インベントリ、会話演出（Elias/Noelの非対称進行）
-- セーブ: ペア単位で `Item` / `謎進捗(Room Properties)` / `ステージ` / `SaveableObject状態` を保存
+- アイテム: `ItemType` enum で識別し、`ItemDatabase` で icon を一元管理する
+- セーブ: ペア単位で `ItemType` / `謎進捗(Room Properties)` / `ステージ` / `SaveableObject状態` を保存
 - ID方針: Steam導入前は暫定ローカルIDを発行し、将来SteamIDへ移行予定
 
 ## 未実装 / 今後検討

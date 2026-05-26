@@ -13,7 +13,7 @@ public class GimmickCauldron : InteractableObject
     [Serializable]
     public struct CauldronStep
     {
-        public ItemData RequiredItem; // 投入するアイテム
+        public ItemType RequiredItem; // 投入するアイテム
         public Sprite StateSprite; // 投入成功時に切り替わる画像
     }
 
@@ -26,9 +26,9 @@ public class GimmickCauldron : InteractableObject
     private List<CauldronStep> _recipeSteps = new List<CauldronStep>();
 
     [Header("Final Phase (Bottling)")] [SerializeField]
-    private ItemData _bottleItem; // 最後に使用する空瓶など
+    private ItemType _bottleItem; // 最後に使用する空瓶など
 
-    [SerializeField] private ItemData _resultItem; // 汲み取って得られる完成品アイテム
+    [SerializeField] private ItemType _resultItem; // 汲み取って得られる完成品アイテム
 
     [Header("Events")] [SerializeField] private UnityEvent _onStepAdvanced;
     [SerializeField] private UnityEvent _onReset;
@@ -48,8 +48,8 @@ public class GimmickCauldron : InteractableObject
 
         if (InventoryManager.Instance == null) return;
 
-        ItemData selectedItem = InventoryManager.Instance.GetSelectedItem();
-        if (selectedItem == null)
+        ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
+        if (selectedItem == ItemType.None)
         {
             // アイテム未選択の場合は何もしない（未選択時用のアクションがあればここで呼ぶ）
             return;
@@ -68,13 +68,13 @@ public class GimmickCauldron : InteractableObject
                 AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
 
                 _currentStepIndex++;
-                Debug.Log($"[GimmickCauldron] Advanced to step {_currentStepIndex}. Added: {selectedItem.itemName}");
+                Debug.Log($"[GimmickCauldron] Advanced to step {_currentStepIndex}. Added: {selectedItem}");
                 _onStepAdvanced?.Invoke();
             }
             else
             {
                 // 手順を間違えた場合はリセット
-                Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem.itemName}. Resetting state.");
+                Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
                 AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
                 ResetCauldron(true);
             }
@@ -88,7 +88,7 @@ public class GimmickCauldron : InteractableObject
                 InventoryManager.Instance.TryRemoveItem(selectedItem);
                 InventoryManager.Instance.TryAddItem(_resultItem);
                 Debug.Log(
-                    $"[GimmickCauldron] Successfully bottled! Generated: {_resultItem.itemName}. Resetting state.");
+                    $"[GimmickCauldron] Successfully bottled! Generated: {_resultItem}. Resetting state.");
 
                 AudioManager.Instance.PlaySE(SESoundType.CauldronComplete);
 
@@ -99,7 +99,7 @@ public class GimmickCauldron : InteractableObject
             {
                 // 違うアイテムを入れた場合はリセット
                 Debug.Log(
-                    $"[GimmickCauldron] Failed to bottle, wrong item used: {selectedItem.itemName}. Resetting state.");
+                    $"[GimmickCauldron] Failed to bottle, wrong item used: {selectedItem}. Resetting state.");
                 AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
                 ResetCauldron(true);
             }

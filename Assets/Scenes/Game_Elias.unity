@@ -1390,7 +1390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 597.8, y: -241}
+  m_AnchoredPosition: {x: 650, y: -241}
   m_SizeDelta: {x: 724.4, y: 523.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &241272132
@@ -5197,7 +5197,7 @@ GameObject:
   - component: {fileID: 1700297250}
   - component: {fileID: 1700297252}
   m_Layer: 5
-  m_Name: Plant
+  m_Name: Planter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5277,8 +5277,8 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _planterImage: {fileID: 0}
-  _emptySprite: {fileID: 0}
+  _planterImage: {fileID: 1700297250}
+  _emptySprite: {fileID: 21300000, guid: 934be00af45b14740b042dfe1a80a73d, type: 3}
   _routeData: {fileID: 0}
   _currentState: 0
   _history: 
@@ -5287,7 +5287,7 @@ MonoBehaviour:
     RequiredSequence: 
     GrowingSprite: {fileID: 0}
     MatureSprite: {fileID: 0}
-    ResultItem: {fileID: 0}
+    ResultItem: 0
 --- !u!1 &1723229838
 GameObject:
   m_ObjectHideFlags: 0

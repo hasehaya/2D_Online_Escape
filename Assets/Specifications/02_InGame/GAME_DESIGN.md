@@ -4,7 +4,10 @@
 - 操作: マウス中心（クリックでインタラクト）
 - 視点: `ViewController` で左右移動 / ズーム / 戻るを管理
 - 会話: `StillNode` + `DialogueController` で連続表示
-- アイテム: `InventoryManager` + `InventorySlot`
+- アイテム: `ItemDatabase` + `InventoryManager` + `InventorySlot`
+  - `ItemDatabase` は ScriptableObject で、`ItemData` の List を Inspector からインライン編集して定義する
+  - `ItemData` は `ItemType` enum と `Sprite icon` だけを持つ
+  - `InventoryManager` は所持状態を `ItemType` で管理し、表示時に `ItemDatabase` から icon を引く
   - 取得、選択、選択中アイテムの拡大表示
   - `InventoryManager` がデータ管理、スロットUI生成、選択処理、拡大表示UI制御を一括で担当
   - `InventorySlot` は `ItemInventry` プレハブ上のViewコンポーネントとして、タップ通知と選択表示のみを担当
@@ -14,7 +17,7 @@
 - セーブ:
   - `SaveableBehaviour` 基底 + `ISaveable` 契約でオブジェクト状態を管理
   - `PairSaveCoordinator` がシーン内 `SaveableBehaviour` と `InventoryManager` を集約保存
-  - 保存対象: `Item取得状況`, `Room Custom Properties(謎進捗)`, `現在ステージ(シーン名)`, `InteractableObjectのactive状態`
+  - 保存対象: `ItemType` の所持一覧, `Room Custom Properties(謎進捗)`, `現在ステージ(シーン名)`, `InteractableObjectのactive状態`
 
 ## シーン構成
 - `Game_Elias`: Elias 側のギミックを担当（`WorldCanvas` + `UICanvas` + `Manager` 構成）

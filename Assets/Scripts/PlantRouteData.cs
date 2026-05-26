@@ -12,7 +12,7 @@ public class PlantRoute
 
     public Sprite GrowingSprite;
     public Sprite MatureSprite;
-    public ItemData ResultItem;
+    public ItemType ResultItem;
 }
 
 [CreateAssetMenu(fileName = "NewPlantRouteData", menuName = "Gimmick/PlantRouteData")]

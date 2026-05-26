@@ -156,7 +156,7 @@ public class GimmickPlanter : InteractableObject
             if (InventoryManager.Instance != null)
             {
                 InventoryManager.Instance.TryAddItem(_currentMatchingRoute.ResultItem);
-                Debug.Log($"[{gameObject.name}] Collected item: {_currentMatchingRoute.ResultItem.itemName}");
+                Debug.Log($"[{gameObject.name}] Collected item: {_currentMatchingRoute.ResultItem}");
                 AudioManager.Instance.PlaySE(SESoundType.PlanterHarvest);
             }
         }

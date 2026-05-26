@@ -9,37 +9,27 @@ using UnityEngine;
 public class PickupObject : InteractableObject, ISaveable
 {
     [Header("Pickup Settings")] [SerializeField]
-    protected ItemData _itemToPickup;
+    protected ItemType _itemToPickup;
 
     [Header("Save")] [SerializeField] private string _saveId;
 
     public string SaveId => _saveId;
 
-    protected override void Reset()
-    {
-        base.Reset();
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
-    private void OnValidate()
+    private new void OnValidate()
     {
         EnsureSaveId();
         EnsureUniqueSaveIdInScene();
     }
 
-    public bool TryGetPickupItem(out ItemData item)
+    public bool TryGetPickupItem(out ItemType item)
     {
-        if (_itemToPickup != null)
+        if (_itemToPickup != ItemType.None)
         {
             item = _itemToPickup;
             return true;
         }
 
-        item = null;
+        item = ItemType.None;
         return false;
     }
 
@@ -51,7 +41,7 @@ public class PickupObject : InteractableObject, ISaveable
 
     protected virtual bool TryPickup()
     {
-        if (_itemToPickup == null)
+        if (_itemToPickup == ItemType.None)
         {
             return false;
         }

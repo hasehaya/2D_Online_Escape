@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class ItemRequireObject : InteractableObject
 {
     [Header("Item Requirements")] [SerializeField]
-    private ItemData _requiredItem;
+    private ItemType _requiredItem;
 
     [SerializeField] private bool _consumeItemOnUse = true;
 
@@ -24,9 +24,9 @@ public class ItemRequireObject : InteractableObject
             return;
         }
 
-        ItemData selectedItem = InventoryManager.Instance.GetSelectedItem();
+        ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
 
-        if (selectedItem != null && selectedItem == _requiredItem)
+        if (selectedItem == _requiredItem)
         {
             // アイテム使用時の処理
             if (_consumeItemOnUse)
@@ -34,7 +34,7 @@ public class ItemRequireObject : InteractableObject
                 InventoryManager.Instance.TryRemoveItem(selectedItem);
             }
 
-            Debug.Log($"[{gameObject.name}] '{_requiredItem.itemName}' was used successfully.");
+            Debug.Log($"[{gameObject.name}] '{_requiredItem}' was used successfully.");
             _onItemUsed?.Invoke();
         }
         else

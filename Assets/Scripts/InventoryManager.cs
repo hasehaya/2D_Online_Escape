@@ -12,6 +12,9 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
 
+    [Header("Item Database")] [SerializeField]
+    private ItemDatabase _itemDatabase;
+
     [Header("Inventory UI")] [SerializeField]
     private Transform _itemSlotContainer;
 
@@ -22,7 +25,7 @@ public class InventoryManager : MonoBehaviour
 
     [SerializeField] private Image _itemZoomImage;
 
-    private readonly List<ItemData> _items = new List<ItemData>();
+    private readonly List<ItemType> _items = new List<ItemType>();
     private readonly List<InventorySlot> _slotViews = new List<InventorySlot>();
 
     private int _selectedIndex = -1;
@@ -48,7 +51,7 @@ public class InventoryManager : MonoBehaviour
         CloseItemZoom();
     }
 
-    public bool TryAddItem(ItemData item)
+    public bool TryAddItem(ItemType item)
     {
         _items.Add(item);
         RefreshUI();
@@ -64,7 +67,7 @@ public class InventoryManager : MonoBehaviour
             return false;
         }
 
-        ItemData removedItem = _items[index];
+        ItemType removedItem = _items[index];
         _items.RemoveAt(index);
 
         if (_selectedIndex == index)
@@ -85,7 +88,7 @@ public class InventoryManager : MonoBehaviour
         return true;
     }
 
-    public bool TryRemoveItem(ItemData item)
+    public bool TryRemoveItem(ItemType item)
     {
         int index = _items.FindIndex(x => x == item);
         if (index < 0)
@@ -96,7 +99,7 @@ public class InventoryManager : MonoBehaviour
         return TryRemoveItemAt(index);
     }
 
-    public bool HasItem(ItemData item)
+    public bool HasItem(ItemType item)
     {
         return _items.Exists(x => x == item);
     }
@@ -132,22 +135,22 @@ public class InventoryManager : MonoBehaviour
         CloseItemZoom();
     }
 
-    public IReadOnlyList<ItemData> GetItems()
+    public IReadOnlyList<ItemType> GetItems()
     {
         return _items;
     }
 
-    public ItemData GetSelectedItem()
+    public ItemType GetSelectedItem()
     {
         if (_selectedIndex < 0 || _selectedIndex >= _items.Count)
         {
-            return null;
+            return ItemType.None;
         }
 
         return _items[_selectedIndex];
     }
 
-    public bool TryGetItemIndex(ItemData item, out int index)
+    public bool TryGetItemIndex(ItemType item, out int index)
     {
         index = _items.FindIndex(x => x == item);
         return index >= 0;
@@ -169,7 +172,7 @@ public class InventoryManager : MonoBehaviour
 
         for (int i = 0; i < _items.Count; i++)
         {
-            ItemData item = _items[i];
+            ItemType item = _items[i];
             GameObject slotObject = Instantiate(_itemSlotPrefab, _itemSlotContainer);
             if (!slotObject.TryGetComponent(out InventorySlot slotView))
             {
@@ -196,8 +199,17 @@ public class InventoryManager : MonoBehaviour
             Transform iconTransform = slotObject.transform.Find("Icon");
             if (iconTransform != null && iconTransform.TryGetComponent(out Image iconImage))
             {
-                iconImage.sprite = item.icon;
-                iconImage.enabled = true;
+                Sprite icon;
+                if (_itemDatabase.TryGetIcon(item, out icon))
+                {
+                    iconImage.sprite = icon;
+                    iconImage.enabled = true;
+                }
+                else
+                {
+                    iconImage.sprite = null;
+                    iconImage.enabled = false;
+                }
             }
 
             Transform countTransform = slotObject.transform.Find("CountText");
@@ -237,21 +249,31 @@ public class InventoryManager : MonoBehaviour
 
     private void OpenSelectedItemZoom()
     {
-        ItemData selectedItem = GetSelectedItem();
-        if (selectedItem == null)
+        ItemType selectedItem = GetSelectedItem();
+        if (selectedItem == ItemType.None)
         {
             return;
         }
 
-        _itemZoomImage.sprite = selectedItem.icon;
-        _itemZoomImage.enabled = true;
+        Sprite icon;
+        if (_itemDatabase.TryGetIcon(selectedItem, out icon))
+        {
+            _itemZoomImage.sprite = icon;
+            _itemZoomImage.enabled = true;
+        }
+        else
+        {
+            _itemZoomImage.sprite = null;
+            _itemZoomImage.enabled = false;
+        }
+
         _itemZoomPanel.SetActive(true);
     }
 
-    private void NotifyStateChanged(int index, ItemData item)
+    private void NotifyStateChanged(int index, ItemType item)
     {
         OnStateChanged?.Invoke();
-        Debug.Log($"Inventory updated: [{index}] {item.itemName}");
+        Debug.Log($"Inventory updated: [{index}] {item}");
     }
 
     private void NotifySelectionChanged()
@@ -259,7 +281,7 @@ public class InventoryManager : MonoBehaviour
         OnSelectionChanged?.Invoke(_selectedIndex);
     }
 
-    public void SetItems(IReadOnlyList<ItemData> items)
+    public void SetItems(IReadOnlyList<ItemType> items)
     {
         _items.Clear();
 
