@@ -15,6 +15,10 @@
 | 2 | `CauldronInsert` | 釜に正解のアイテムを投入したときのSE |
 | 3 | `CauldronFail` | 釜の手順を間違えたときのSE |
 | 4 | `CauldronComplete` | 釜での調合が完了し、瓶詰めしたときのSE |
+| 5 | `PlanterGrow` | 種や苗木が成長期になったときのSE |
+| 6 | `PlanterMature` | 植物が成熟期になった（完成した）ときのSE |
+| 7 | `PlanterFail` | 手順を間違えて植物が枯れたときのSE |
+| 8 | `PlanterHarvest` | 成熟した植物からアイテムを収穫したときのSE |
 
 ## BGMSoundType 一覧
 

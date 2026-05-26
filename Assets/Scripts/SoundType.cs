@@ -9,6 +9,10 @@ public enum SESoundType
     CauldronInsert = 2,
     CauldronFail = 3,
     CauldronComplete = 4,
+    PlanterGrow = 5,
+    PlanterMature = 6,
+    PlanterFail = 7,
+    PlanterHarvest = 8,
 }
 
 /// <summary>
