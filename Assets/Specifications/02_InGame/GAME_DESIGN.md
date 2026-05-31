@@ -8,9 +8,11 @@
   - `ItemDatabase` は ScriptableObject で、`ItemData` の List を Inspector からインライン編集して定義する
   - `ItemData` は `ItemType` enum と `Sprite icon` だけを持つ
   - `InventoryManager` は所持状態を `ItemType` で管理し、表示時に `ItemDatabase` から icon を引く
+  - `ItemSlot` には現在の所持アイテムを順番に表示し、所持数が減っても既存のスロット欄は消さない
+  - 空のスロットは非表示にせず、枠だけ残してインベントリUIのレイアウトを維持する
   - 取得、選択、選択中アイテムの拡大表示
-  - `InventoryManager` がデータ管理、スロットUI生成、選択処理、拡大表示UI制御を一括で担当
-  - `InventorySlot` は `ItemInventry` プレハブ上のViewコンポーネントとして、タップ通知と選択表示のみを担当
+  - `InventoryManager` がデータ管理、スロットUI生成・再利用、選択処理、拡大表示UI制御を一括で担当
+  - `InventorySlot` は `ItemInventry` プレハブ上のViewコンポーネントとして、アイコン表示、タップ通知と選択表示のみを担当
 - インタラクト: `InteractableObject`
   - Zoom 遷移
   - Pickup（取得後に対象を非表示）

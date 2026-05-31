@@ -571,7 +571,7 @@ GameObject:
   - component: {fileID: 815024790996831420}
   - component: {fileID: 5880225167518270598}
   m_Layer: 5
-  m_Name: ItemBox
+  m_Name: ItemInventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1140,7 +1140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355156462327767516, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: m_Name
-      value: ItemInventry_2
+      value: ItemSlot
       objectReference: {fileID: 0}
     - target: {fileID: 8275277902464292142, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: _index
@@ -1246,7 +1246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355156462327767516, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: m_Name
-      value: ItemInventry_3
+      value: ItemSlot
       objectReference: {fileID: 0}
     - target: {fileID: 8275277902464292142, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: _index
@@ -1352,7 +1352,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355156462327767516, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: m_Name
-      value: ItemInventry_4
+      value: ItemSlot
       objectReference: {fileID: 0}
     - target: {fileID: 8275277902464292142, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: _index
@@ -1458,7 +1458,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1355156462327767516, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
       propertyPath: m_Name
-      value: ItemInventry_1
+      value: ItemSlot
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

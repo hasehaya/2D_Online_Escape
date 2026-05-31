@@ -27,6 +27,19 @@ public class InventorySlot : MonoBehaviour
         _onTapped = onTapped;
     }
 
+    public void SetItemIcon(Sprite icon)
+    {
+        _button.image.sprite = icon;
+        _button.image.preserveAspect = true;
+        _button.image.enabled = true;
+    }
+
+    public void ClearItemIcon()
+    {
+        _button.image.sprite = null;
+        _button.image.enabled = true;
+    }
+
     public void SetSelected(bool isSelected)
     {
         _selectedImage.enabled = isSelected;

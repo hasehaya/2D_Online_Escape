@@ -1543,8 +1543,8 @@ MonoBehaviour:
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _actionType: 1
-  _moveDuration: 0.5
-  _actionDuration: 1
+  _moveDuration: 0.3
+  _actionDuration: 0.5
   _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &310363347
 GameObject:
@@ -2244,8 +2244,8 @@ MonoBehaviour:
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _actionType: 0
-  _moveDuration: 0.5
-  _actionDuration: 1
+  _moveDuration: 0.3
+  _actionDuration: 0.5
   _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &606731836
 GameObject:
@@ -2938,9 +2938,9 @@ RectTransform:
   - {fileID: 1097136120}
   - {fileID: 104733312}
   - {fileID: 1700297249}
-  - {fileID: 806348986}
   - {fileID: 601655360}
   - {fileID: 252547342}
+  - {fileID: 806348986}
   m_Father: {fileID: 399978751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -3171,8 +3171,8 @@ MonoBehaviour:
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _actionType: 2
-  _moveDuration: 0.5
-  _actionDuration: 1
+  _moveDuration: 0.3
+  _actionDuration: 0.5
   _actionOffset: {x: 0, y: 100, z: 0}
 --- !u!1 &834335819
 GameObject:

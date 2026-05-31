@@ -10,6 +10,8 @@ using UnityEngine.UI;
 /// </summary>
 public class InventoryManager : MonoBehaviour
 {
+    private const int MaxItemCount = 4;
+
     public static InventoryManager Instance { get; private set; }
 
     [Header("Item Database")] [SerializeField]
@@ -51,6 +53,11 @@ public class InventoryManager : MonoBehaviour
 
     public bool TryAddItem(ItemType item)
     {
+        if (_items.Count >= MaxItemCount)
+        {
+            return false;
+        }
+
         _items.Add(item);
         RefreshUI();
         NotifyStateChanged(_items.Count - 1, item);
@@ -166,12 +173,14 @@ public class InventoryManager : MonoBehaviour
 
         foreach (Transform child in _itemSlotContainer)
         {
-            Destroy(child.gameObject);
+            if (child.TryGetComponent(out InventorySlot slotView))
+            {
+                _slotViews.Add(slotView);
+            }
         }
 
-        for (int i = 0; i < _items.Count; i++)
+        for (int i = _slotViews.Count; i < _items.Count; i++)
         {
-            ItemType item = _items[i];
             GameObject slotObject = Instantiate(_itemSlotPrefab, _itemSlotContainer);
             if (!slotObject.TryGetComponent(out InventorySlot slotView))
             {
@@ -180,42 +189,38 @@ public class InventoryManager : MonoBehaviour
                 continue;
             }
 
+            _slotViews.Add(slotView);
+        }
+
+        for (int i = 0; i < _slotViews.Count; i++)
+        {
+            InventorySlot slotView = _slotViews[i];
             slotView.SetIndex(i);
             slotView.BindUI(OnSlotTapped);
 
             Button slotButton = slotView.Button;
-            if (slotButton == null)
-            {
-                Debug.LogError("Inventory slot prefab is missing Button reference.");
-                Destroy(slotObject);
-                continue;
-            }
-
             slotButton.onClick.RemoveAllListeners();
             slotButton.onClick.AddListener(slotView.Tap);
-            _slotViews.Add(slotView);
 
-            Transform iconTransform = slotObject.transform.Find("Icon");
-            if (iconTransform != null && iconTransform.TryGetComponent(out Image iconImage))
+            if (i < _items.Count)
             {
+                ItemType item = _items[i];
                 Sprite icon;
                 if (_itemDatabase.TryGetIcon(item, out icon))
                 {
-                    iconImage.sprite = icon;
-                    iconImage.enabled = true;
+                    slotView.SetItemIcon(icon);
                 }
                 else
                 {
-                    iconImage.sprite = null;
-                    iconImage.enabled = false;
+                    slotView.ClearItemIcon();
                 }
-            }
 
-            Transform countTransform = slotObject.transform.Find("CountText");
-            if (countTransform != null && countTransform.TryGetComponent(out Text countText))
+                slotButton.interactable = true;
+            }
+            else
             {
-                countText.text = i.ToString();
-                countText.enabled = true;
+                slotView.ClearItemIcon();
+                slotButton.interactable = false;
             }
         }
 
@@ -280,7 +285,8 @@ public class InventoryManager : MonoBehaviour
     {
         _items.Clear();
 
-        for (int i = 0; i < items.Count; i++)
+        int count = Mathf.Min(items.Count, MaxItemCount);
+        for (int i = 0; i < count; i++)
         {
             _items.Add(items[i]);
         }

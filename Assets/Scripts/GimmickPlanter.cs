@@ -172,7 +172,13 @@ public class GimmickPlanter : InteractableObject
         {
             if (InventoryManager.Instance != null)
             {
-                InventoryManager.Instance.TryAddItem(_currentMatchingRoute.ResultItem);
+                if (!InventoryManager.Instance.TryAddItem(_currentMatchingRoute.ResultItem))
+                {
+                    Debug.Log(
+                        $"[{gameObject.name}] Inventory full. Harvest blocked: {_currentMatchingRoute.ResultItem}");
+                    return;
+                }
+
                 Debug.Log($"[{gameObject.name}] Collected item: {_currentMatchingRoute.ResultItem}");
                 AudioManager.Instance.PlaySE(SESoundType.PlanterHarvest);
             }
