@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
-/// 特定の手順でアイテムを投入し、最後に瓶を使用することでアイテムを生成する大釜ギミック。
+/// 2つのルートを持つ大釜ギミック。
+/// 各ルートは2回のアイテム投入で完成し、最後に空の瓶を使うと完成品を生成して初期状態に戻る。
 /// 手順を間違えると初期状態にリセットされる。
 /// </summary>
 public class GimmickCauldron : InteractableObject
@@ -13,8 +14,15 @@ public class GimmickCauldron : InteractableObject
     [Serializable]
     public struct CauldronStep
     {
-        public ItemType RequiredItem; // 投入するアイテム
-        public Sprite StateSprite; // 投入成功時に切り替わる画像
+        [SerializeField] private ItemType _firstRequiredItem; // 1回目に投入するアイテム
+        [SerializeField] private Sprite _firstStateSprite; // 1回目成功時に切り替わる画像
+        [SerializeField] private ItemType _secondRequiredItem; // 2回目に投入するアイテム
+        [SerializeField] private Sprite _secondStateSprite; // 2回目成功時に切り替わる画像
+
+        public ItemType FirstRequiredItem => _firstRequiredItem;
+        public Sprite FirstStateSprite => _firstStateSprite;
+        public ItemType SecondRequiredItem => _secondRequiredItem;
+        public Sprite SecondStateSprite => _secondStateSprite;
     }
 
     [Header("UI References")] [SerializeField]
@@ -23,7 +31,7 @@ public class GimmickCauldron : InteractableObject
     [SerializeField] private Sprite _initialSprite;
 
     [Header("Recipe Settings")] [SerializeField]
-    private List<CauldronStep> _recipeSteps = new List<CauldronStep>();
+    private List<CauldronStep> _recipeSteps;
 
     [Header("Final Phase (Bottling)")] [SerializeField]
     private ItemType _bottleItem; // 最後に使用する空瓶など
@@ -34,6 +42,7 @@ public class GimmickCauldron : InteractableObject
     [SerializeField] private UnityEvent _onReset;
     [SerializeField] private UnityEvent _onCompleted;
 
+    private int _currentRouteIndex = -1;
     private int _currentStepIndex = 0;
 
     protected override void Awake()
@@ -55,40 +64,15 @@ public class GimmickCauldron : InteractableObject
             return;
         }
 
-        // 素材投入フェーズ
-        if (_currentStepIndex < _recipeSteps.Count)
-        {
-            if (selectedItem == _recipeSteps[_currentStepIndex].RequiredItem)
-            {
-                // 正解のアイテムを投入
-                InventoryManager.Instance.TryRemoveItem(selectedItem);
-
-                _cauldronImage.sprite = _recipeSteps[_currentStepIndex].StateSprite;
-
-                AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
-
-                _currentStepIndex++;
-                Debug.Log($"[GimmickCauldron] Advanced to step {_currentStepIndex}. Added: {selectedItem}");
-                _onStepAdvanced?.Invoke();
-            }
-            else
-            {
-                // 手順を間違えた場合はリセット
-                Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
-                AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
-                ResetCauldron(true);
-            }
-        }
-        // 最終フェーズ（瓶詰め）
-        else
+        // 完成後は瓶詰めフェーズ
+        if (_currentStepIndex >= 2)
         {
             if (selectedItem == _bottleItem)
             {
-                // 空瓶に汲む処理
                 InventoryManager.Instance.TryRemoveItem(selectedItem);
                 InventoryManager.Instance.TryAddItem(_resultItem);
-                Debug.Log(
-                    $"[GimmickCauldron] Successfully bottled! Generated: {_resultItem}. Resetting state.");
+
+                Debug.Log($"[GimmickCauldron] Successfully bottled! Generated: {_resultItem}. Resetting state.");
 
                 AudioManager.Instance.PlaySE(SESoundType.CauldronComplete);
 
@@ -97,13 +81,77 @@ public class GimmickCauldron : InteractableObject
             }
             else
             {
-                // 違うアイテムを入れた場合はリセット
-                Debug.Log(
-                    $"[GimmickCauldron] Failed to bottle, wrong item used: {selectedItem}. Resetting state.");
+                Debug.Log($"[GimmickCauldron] Failed to bottle, wrong item used: {selectedItem}. Resetting state.");
                 AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
                 ResetCauldron(true);
             }
+
+            return;
         }
+
+        // 1回目の投入
+        if (_currentStepIndex == 0)
+        {
+            if (!TryFindRouteByFirstItem(selectedItem, out _currentRouteIndex))
+            {
+                Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
+                AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
+                ResetCauldron(true);
+                return;
+            }
+
+            CauldronStep route = _recipeSteps[_currentRouteIndex];
+            InventoryManager.Instance.TryRemoveItem(selectedItem);
+            _cauldronImage.sprite = route.FirstStateSprite;
+
+            AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
+
+            _currentStepIndex = 1;
+            Debug.Log($"[GimmickCauldron] Route {_currentRouteIndex} advanced to step 1. Added: {selectedItem}");
+            _onStepAdvanced?.Invoke();
+            return;
+        }
+
+        // 2回目の投入
+        if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
+        {
+            ResetCauldron(true);
+            return;
+        }
+
+        CauldronStep currentRoute = _recipeSteps[_currentRouteIndex];
+        if (selectedItem == currentRoute.SecondRequiredItem)
+        {
+            InventoryManager.Instance.TryRemoveItem(selectedItem);
+            _cauldronImage.sprite = currentRoute.SecondStateSprite;
+
+            AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
+
+            _currentStepIndex = 2;
+            Debug.Log($"[GimmickCauldron] Route {_currentRouteIndex} advanced to step 2. Added: {selectedItem}");
+            _onStepAdvanced?.Invoke();
+        }
+        else
+        {
+            Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
+            AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
+            ResetCauldron(true);
+        }
+    }
+
+    private bool TryFindRouteByFirstItem(ItemType item, out int routeIndex)
+    {
+        for (int i = 0; i < _recipeSteps.Count; i++)
+        {
+            if (_recipeSteps[i].FirstRequiredItem == item)
+            {
+                routeIndex = i;
+                return true;
+            }
+        }
+
+        routeIndex = -1;
+        return false;
     }
 
     /// <summary>
@@ -112,6 +160,7 @@ public class GimmickCauldron : InteractableObject
     /// <param name="invokeEvent">リセット時のイベントを発火するかどうか</param>
     private void ResetCauldron(bool invokeEvent)
     {
+        _currentRouteIndex = -1;
         _currentStepIndex = 0;
         _cauldronImage.sprite = _initialSprite;
 

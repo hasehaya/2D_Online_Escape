@@ -2550,7 +2550,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 88a1cb9d3f35c8046ae982c9ae25aad0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d3530ca3e99bc4940aecf613155edd69, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2579,6 +2579,7 @@ GameObject:
   - component: {fileID: 684615637}
   - component: {fileID: 684615639}
   - component: {fileID: 684615638}
+  - component: {fileID: 684615640}
   m_Layer: 5
   m_Name: MagicSack
   m_TagString: Untagged
@@ -2643,6 +2644,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 684615636}
   m_CullTransparentMesh: 1
+--- !u!114 &684615640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684615636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupObject
+  _clickAreaSize: {x: 293, y: 359}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 0
+  _saveId: f48181e5ac52455c87df5d1ec3938eff
 --- !u!1 &688089246
 GameObject:
   m_ObjectHideFlags: 0
@@ -4885,6 +4905,7 @@ GameObject:
   - component: {fileID: 1591049553}
   - component: {fileID: 1591049555}
   - component: {fileID: 1591049554}
+  - component: {fileID: 1591049556}
   m_Layer: 5
   m_Name: Book
   m_TagString: Untagged
@@ -4949,6 +4970,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1591049552}
   m_CullTransparentMesh: 1
+--- !u!114 &1591049556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1591049552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 384, y: 176}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _zoomViewNode: {fileID: 0}
 --- !u!1 &1593356954
 GameObject:
   m_ObjectHideFlags: 0

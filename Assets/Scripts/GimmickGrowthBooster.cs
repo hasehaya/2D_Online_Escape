@@ -72,7 +72,9 @@ public class GimmickGrowthBooster : InteractableObject
                 seq.Append(transform.DORotate(Vector3.zero, 0.2f));
                 break;
             case BoosterActionType.NutrientB:
+                seq.Append(transform.DORotate(new Vector3(0, 0, 180), 0.15f));
                 seq.Append(transform.DOPunchPosition(Vector3.down * 20f, _actionDuration, 5, 0.5f));
+                seq.Append(transform.DORotate(Vector3.zero, 0.15f));
                 break;
             case BoosterActionType.Water:
                 seq.Append(transform.DORotate(new Vector3(0, 0, 45), 0.2f));

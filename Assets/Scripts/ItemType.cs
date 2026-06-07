@@ -19,6 +19,7 @@ public enum ItemType
     CurePotionFilled = 11,
     Pendant = 12,
     Match = 13,
+    MagicSack = 14,
 
     KeyEliasPrepareWoodBox = 101,
 }
