@@ -676,6 +676,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 656, y: 317}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _zoomViewNode: {fileID: 171863545}
@@ -1747,6 +1750,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 384, y: 176}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _zoomViewNode: {fileID: 0}
@@ -1839,19 +1845,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 060aacc32d934a7bb50a986544e478b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GimmickCauldron
+  _clickAreaSize: {x: 883, y: 674}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _cauldronImage: {fileID: 577310612}
-  _initialSprite: {fileID: 0}
+  _cauldronImage: {fileID: 2105670154}
+  _defaultColor: {r: 0.6265366, g: 0.23713954, b: 0.6886792, a: 1}
   _recipeSteps:
-  - RequiredItem: {fileID: 0}
-    StateSprite: {fileID: 0}
-  - RequiredItem: {fileID: 0}
-    StateSprite: {fileID: 0}
-  - RequiredItem: {fileID: 0}
-    StateSprite: {fileID: 0}
-  _bottleItem: {fileID: 0}
-  _resultItem: {fileID: 0}
+  - _firstRequiredItem: 1
+    _firstStateColor: {r: 1, g: 0, b: 0, a: 1}
+    _secondRequiredItem: 2
+    _secondStateColor: {r: 0, g: 0.839838, b: 1, a: 1}
+    _bottleItem: 10
+    _resultItem: 11
+  - _firstRequiredItem: 3
+    _firstStateColor: {r: 1, g: 0.75263053, b: 0, a: 1}
+    _secondRequiredItem: 2
+    _secondStateColor: {r: 0.018987417, g: 1, b: 0, a: 1}
+    _bottleItem: 8
+    _resultItem: 9
   _onStepAdvanced:
     m_PersistentCalls:
       m_Calls: []
@@ -2427,6 +2440,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 656, y: 599}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   _zoomViewNode: {fileID: 171863545}
@@ -4214,7 +4230,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 560, y: 476}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1704937092
 MonoBehaviour:
@@ -4236,7 +4252,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: df37d289759972c458e30152c70285e8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4854,6 +4870,30 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: -133.70001
       objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: _useDebugInitialState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: _debugInitialItems.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: '_debugInitialItems.Array.data[0]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: '_debugInitialItems.Array.data[1]'
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: '_debugInitialItems.Array.data[2]'
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5880225167518270598, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: '_debugInitialItems.Array.data[3]'
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7909743023070104774, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -329.78003
@@ -5304,7 +5344,7 @@ PrefabInstance:
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _initialView
       value: 
-      objectReference: {fileID: 698274020}
+      objectReference: {fileID: 1256320318}
     - target: {fileID: 256462286649675397, guid: 38d91a58491a02f49b8613d4c079fab5, type: 3}
       propertyPath: _rightButton
       value: 

@@ -15,35 +15,34 @@ public class GimmickCauldron : InteractableObject
     public struct CauldronStep
     {
         [SerializeField] private ItemType _firstRequiredItem; // 1回目に投入するアイテム
-        [SerializeField] private Sprite _firstStateSprite; // 1回目成功時に切り替わる画像
+        [SerializeField] private Color _firstStateColor; // 1回目成功時に切り替わる色
         [SerializeField] private ItemType _secondRequiredItem; // 2回目に投入するアイテム
-        [SerializeField] private Sprite _secondStateSprite; // 2回目成功時に切り替わる画像
+        [SerializeField] private Color _secondStateColor; // 2回目成功時に切り替わる色
+        [SerializeField] private ItemType _bottleItem; // このルートで使う空の瓶
+        [SerializeField] private ItemType _resultItem; // このルートで得られる満タンの瓶
 
         public ItemType FirstRequiredItem => _firstRequiredItem;
-        public Sprite FirstStateSprite => _firstStateSprite;
+        public Color FirstStateColor => _firstStateColor;
         public ItemType SecondRequiredItem => _secondRequiredItem;
-        public Sprite SecondStateSprite => _secondStateSprite;
+        public Color SecondStateColor => _secondStateColor;
+        public ItemType BottleItem => _bottleItem;
+        public ItemType ResultItem => _resultItem;
     }
 
     [Header("UI References")] [SerializeField]
     private Image _cauldronImage;
 
-    [SerializeField] private Sprite _initialSprite;
+    [SerializeField] private Color _defaultColor;
 
     [Header("Recipe Settings")] [SerializeField]
     private List<CauldronStep> _recipeSteps;
-
-    [Header("Final Phase (Bottling)")] [SerializeField]
-    private ItemType _bottleItem; // 最後に使用する空瓶など
-
-    [SerializeField] private ItemType _resultItem; // 汲み取って得られる完成品アイテム
 
     [Header("Events")] [SerializeField] private UnityEvent _onStepAdvanced;
     [SerializeField] private UnityEvent _onReset;
     [SerializeField] private UnityEvent _onCompleted;
 
     private int _currentRouteIndex = -1;
-    private int _currentStepIndex = 0;
+    private int _currentStepIndex;
 
     protected override void Awake()
     {
@@ -67,12 +66,20 @@ public class GimmickCauldron : InteractableObject
         // 完成後は瓶詰めフェーズ
         if (_currentStepIndex >= 2)
         {
-            if (selectedItem == _bottleItem)
+            if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
+            {
+                ResetCauldron(true);
+                return;
+            }
+
+            CauldronStep completedRoute = _recipeSteps[_currentRouteIndex];
+            if (selectedItem == completedRoute.BottleItem)
             {
                 InventoryManager.Instance.TryRemoveItem(selectedItem);
-                InventoryManager.Instance.TryAddItem(_resultItem);
+                InventoryManager.Instance.TryAddItem(completedRoute.ResultItem);
 
-                Debug.Log($"[GimmickCauldron] Successfully bottled! Generated: {_resultItem}. Resetting state.");
+                Debug.Log(
+                    $"[GimmickCauldron] Successfully bottled! Generated: {completedRoute.ResultItem}. Resetting state.");
 
                 AudioManager.Instance.PlaySE(SESoundType.CauldronComplete);
 
@@ -102,7 +109,7 @@ public class GimmickCauldron : InteractableObject
 
             CauldronStep route = _recipeSteps[_currentRouteIndex];
             InventoryManager.Instance.TryRemoveItem(selectedItem);
-            _cauldronImage.sprite = route.FirstStateSprite;
+            _cauldronImage.color = route.FirstStateColor;
 
             AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
 
@@ -123,7 +130,7 @@ public class GimmickCauldron : InteractableObject
         if (selectedItem == currentRoute.SecondRequiredItem)
         {
             InventoryManager.Instance.TryRemoveItem(selectedItem);
-            _cauldronImage.sprite = currentRoute.SecondStateSprite;
+            _cauldronImage.color = currentRoute.SecondStateColor;
 
             AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
 
@@ -162,7 +169,7 @@ public class GimmickCauldron : InteractableObject
     {
         _currentRouteIndex = -1;
         _currentStepIndex = 0;
-        _cauldronImage.sprite = _initialSprite;
+        _cauldronImage.color = _defaultColor;
 
         if (invokeEvent)
         {

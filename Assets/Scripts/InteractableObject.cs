@@ -120,7 +120,7 @@ public abstract class InteractableObject : MonoBehaviour, IPointerClickHandler
         clickAreaRect.localScale = Vector3.one;
 
         Image clickAreaImage = clickAreaObject.GetComponent<Image>();
-        clickAreaImage.color = new Color(1f, 1f, 1f, 0.01f);
+        clickAreaImage.color = new Color(1f, 1f, 1f, 0f);
         clickAreaImage.raycastTarget = true;
 
         LayoutElement layoutElement = clickAreaObject.GetComponent<LayoutElement>();

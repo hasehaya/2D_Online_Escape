@@ -25,6 +25,11 @@ public class InventoryManager : MonoBehaviour
     [Header("Item Zoom UI")] [SerializeField]
     private ItemZoomPanel _itemZoomPanel;
 
+    [Header("Debug Initial State")] [SerializeField, HideInInspector]
+    private bool _useDebugInitialState;
+
+    [SerializeField, HideInInspector] private List<ItemType> _debugInitialItems = new List<ItemType>();
+
     private readonly List<ItemType> _items = new List<ItemType>();
     private readonly List<InventorySlot> _slotViews = new List<InventorySlot>();
 
@@ -38,6 +43,11 @@ public class InventoryManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+
+            if (_useDebugInitialState)
+            {
+                SetItems(_debugInitialItems);
+            }
         }
         else
         {
