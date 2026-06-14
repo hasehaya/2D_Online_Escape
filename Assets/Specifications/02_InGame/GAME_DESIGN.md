@@ -13,6 +13,10 @@
   - 取得、選択、選択中アイテムの拡大表示
   - `InventoryManager` がデータ管理、スロットUI生成・再利用、選択処理、拡大表示UI制御を一括で担当
   - `InventorySlot` は `ItemInventry` プレハブ上のViewコンポーネントとして、アイコン表示、タップ通知と選択表示のみを担当
+  - `ItemType.MagicSack` を取得すると、通信相手と共有する追加スロットを1枠だけアンロックする
+  - 共有スロットは通常の `ItemSlot` と同じUI・選択・使用・削除処理で扱う
+  - 通常インベントリが満杯でも、共有スロットがアンロック済みかつ空なら取得アイテムを共有スロットへ入れられる
+  - 共有スロットの中身は2人の間でリアルタイムに同期され、どちらかが入れ替え・使用・削除すると相手側にも即時反映される
 - インタラクト: `InteractableObject`
   - Zoom 遷移
   - Pickup（取得後に対象を非表示）
@@ -20,6 +24,8 @@
   - `SaveableBehaviour` 基底 + `ISaveable` 契約でオブジェクト状態を管理
   - `PairSaveCoordinator` がシーン内 `SaveableBehaviour` と `InventoryManager` を集約保存
   - 保存対象: `ItemType` の所持一覧, `Room Custom Properties(謎進捗)`, `現在ステージ(シーン名)`, `InteractableObjectのactive状態`
+  - 通常インベントリは各プレイヤー個別の所持一覧として保存する
+  - MagicSack の共有スロットは `Room Custom Properties` 側の共有進捗として保存し、ペア再開時も同じ共有枠として復元する
 
 ## シーン構成
 - `Game_Elias`: Elias 側のギミックを担当（`WorldCanvas` + `UICanvas` + `Manager` 構成）

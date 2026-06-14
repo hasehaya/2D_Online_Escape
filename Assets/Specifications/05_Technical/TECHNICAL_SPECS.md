@@ -12,6 +12,9 @@
 - ルーム状態同期:
   - `GameStateService` で Room Custom Properties を管理
   - `Float` / `Bool` / `Enum` / `FlagType` の同期に対応
+  - MagicSack の共有インベントリ枠は `InventoryManager` が Room Custom Properties を直接監視して同期する
+  - 共有枠の状態は `Inventory.SharedSlot.Unlocked` と `Inventory.SharedSlot.Item` で管理する
+  - 共有枠の受信反映時は再送信しない。中身を変更するローカル操作だけが Room Custom Properties を更新し、同期ループを避ける
 
 ## セーブシステム
 - 方式: **B案（`SaveableBehaviour` 基底でID管理一元化）**
@@ -19,6 +22,9 @@
   - 各保存対象オブジェクトは `saveId` を持ち、`CaptureState` / `RestoreState` を実装
 - 集約: `PairSaveCoordinator`
   - インベントリ、`SaveableBehaviour` 状態、Room Custom Properties、現在シーン名をペア単位で保存/復元
+  - 通常インベントリは役割別の `inventoryItemIds` に保存する
+  - MagicSack の共有スロットは Room Custom Properties として `sharedProgress` に保存する
+  - ロード時は通常インベントリを先に復元し、共有進捗を適用した後で MagicSack 所持による共有枠アンロックを再評価する
 - 永続化: `PlayerPrefs` に保存スロットキー単位でJSON保存
 - ペア識別: 両プレイヤーIDをソートして `pairKey` を生成
 - プレイヤーID: Steam連携前は `LocalIdentityProvider` が暫定ローカルIDを発行

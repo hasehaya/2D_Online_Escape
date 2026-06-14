@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 using Save;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,9 +11,11 @@ using UnityEngine.UI;
 /// インベントリ機能全体を管理するシングルトンクラス。
 /// データ管理、スロットUI更新、選択、拡大表示を担当する。
 /// </summary>
-public class InventoryManager : MonoBehaviour
+public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 {
     private const int MaxItemCount = 4;
+    private const string SharedSlotUnlockedKey = "Inventory.SharedSlot.Unlocked";
+    private const string SharedSlotItemKey = "Inventory.SharedSlot.Item";
 
     public static InventoryManager Instance { get; private set; }
 
@@ -34,6 +39,8 @@ public class InventoryManager : MonoBehaviour
     private readonly List<InventorySlot> _slotViews = new List<InventorySlot>();
 
     private int _selectedIndex = -1;
+    private bool _sharedSlotUnlocked;
+    private ItemType _sharedSlotItem = ItemType.None;
 
     public event Action OnStateChanged;
     public event Action<int> OnSelectionChanged;
@@ -55,28 +62,65 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
     private void Start()
     {
+        ReadSharedSlotFromRoom();
         RefreshUI();
         CloseItemZoom();
     }
 
+    private void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
     public bool TryAddItem(ItemType item)
     {
-        if (_items.Count >= MaxItemCount)
+        if (item == ItemType.None)
         {
             return false;
         }
 
-        _items.Add(item);
-        RefreshUI();
-        NotifyStateChanged(_items.Count - 1, item);
-        PairSaveCoordinator.RequestSaveIfAvailable();
-        return true;
+        if (_items.Count < MaxItemCount)
+        {
+            _items.Add(item);
+            RefreshUI();
+            NotifyStateChanged(_items.Count - 1, item);
+
+            if (item == ItemType.MagicSack)
+            {
+                EnsureSharedSlotUnlocked();
+            }
+
+            PairSaveCoordinator.RequestSaveIfAvailable();
+            return true;
+        }
+
+        if (IsSharedSlotEnabled && _sharedSlotItem == ItemType.None)
+        {
+            return TrySetSharedSlotItem(item);
+        }
+
+        return false;
     }
 
     public bool TryRemoveItemAt(int index)
     {
+        if (IsSharedSlotIndex(index))
+        {
+            if (_sharedSlotItem == ItemType.None)
+            {
+                return false;
+            }
+
+            return TrySetSharedSlotItem(ItemType.None);
+        }
+
         if (index < 0 || index >= _items.Count)
         {
             return false;
@@ -105,9 +149,24 @@ public class InventoryManager : MonoBehaviour
 
     public bool TryRemoveItem(ItemType item)
     {
+        if (item == ItemType.None)
+        {
+            return false;
+        }
+
+        if (_selectedIndex >= 0 && GetSelectedItem() == item)
+        {
+            return TryRemoveItemAt(_selectedIndex);
+        }
+
         int index = _items.FindIndex(x => x == item);
         if (index < 0)
         {
+            if (IsSharedSlotEnabled && _sharedSlotItem == item)
+            {
+                return TrySetSharedSlotItem(ItemType.None);
+            }
+
             return false;
         }
 
@@ -116,12 +175,17 @@ public class InventoryManager : MonoBehaviour
 
     public bool HasItem(ItemType item)
     {
-        return _items.Exists(x => x == item);
+        if (item == ItemType.None)
+        {
+            return false;
+        }
+
+        return _items.Exists(x => x == item) || (IsSharedSlotEnabled && _sharedSlotItem == item);
     }
 
     public bool TrySelectSlot(int index)
     {
-        if (index < 0 || index >= _items.Count)
+        if (!TryGetItemAt(index, out ItemType item) || item == ItemType.None)
         {
             return false;
         }
@@ -158,18 +222,35 @@ public class InventoryManager : MonoBehaviour
 
     public ItemType GetSelectedItem()
     {
-        if (_selectedIndex < 0 || _selectedIndex >= _items.Count)
+        if (!TryGetItemAt(_selectedIndex, out ItemType item))
         {
             return ItemType.None;
         }
 
-        return _items[_selectedIndex];
+        return item;
     }
 
     public bool TryGetItemIndex(ItemType item, out int index)
     {
+        if (item == ItemType.None)
+        {
+            index = -1;
+            return false;
+        }
+
         index = _items.FindIndex(x => x == item);
-        return index >= 0;
+        if (index >= 0)
+        {
+            return true;
+        }
+
+        if (IsSharedSlotEnabled && _sharedSlotItem == item)
+        {
+            index = SharedSlotIndex;
+            return true;
+        }
+
+        return false;
     }
 
     public void CloseItemZoom()
@@ -189,7 +270,8 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        for (int i = _slotViews.Count; i < _items.Count; i++)
+        int visibleSlotCount = GetVisibleSlotCount();
+        for (int i = _slotViews.Count; i < visibleSlotCount; i++)
         {
             GameObject slotObject = Instantiate(_itemSlotPrefab, _itemSlotContainer);
             if (!slotObject.TryGetComponent(out InventorySlot slotView))
@@ -212,9 +294,8 @@ public class InventoryManager : MonoBehaviour
             slotButton.onClick.RemoveAllListeners();
             slotButton.onClick.AddListener(slotView.Tap);
 
-            if (i < _items.Count)
+            if (TryGetItemAt(i, out ItemType item) && item != ItemType.None)
             {
-                ItemType item = _items[i];
                 Sprite icon;
                 if (_itemDatabase.TryGetIcon(item, out icon))
                 {
@@ -234,7 +315,7 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
-        if (_selectedIndex >= _items.Count)
+        if (!TryGetItemAt(_selectedIndex, out ItemType selectedItem) || selectedItem == ItemType.None)
         {
             _selectedIndex = -1;
         }
@@ -291,7 +372,7 @@ public class InventoryManager : MonoBehaviour
         OnSelectionChanged?.Invoke(_selectedIndex);
     }
 
-    public void SetItems(IReadOnlyList<ItemType> items)
+    public void SetItems(IReadOnlyList<ItemType> items, bool publishSharedUnlock = true)
     {
         _items.Clear();
 
@@ -305,5 +386,182 @@ public class InventoryManager : MonoBehaviour
         RefreshUI();
         NotifySelectionChanged();
         CloseItemZoom();
+
+        if (publishSharedUnlock && _items.Contains(ItemType.MagicSack))
+        {
+            EnsureSharedSlotUnlocked();
+        }
+    }
+
+    public void ReconcileSharedSlotUnlock()
+    {
+        if (_items.Contains(ItemType.MagicSack))
+        {
+            EnsureSharedSlotUnlocked();
+        }
+    }
+
+    private bool IsSharedSlotEnabled => _sharedSlotUnlocked || _items.Contains(ItemType.MagicSack);
+    private int SharedSlotIndex => _items.Count;
+
+    private bool IsSharedSlotIndex(int index)
+    {
+        return IsSharedSlotEnabled && index == SharedSlotIndex;
+    }
+
+    private int GetVisibleSlotCount()
+    {
+        return _items.Count + (IsSharedSlotEnabled ? 1 : 0);
+    }
+
+    private bool TryGetItemAt(int index, out ItemType item)
+    {
+        if (index >= 0 && index < _items.Count)
+        {
+            item = _items[index];
+            return true;
+        }
+
+        if (IsSharedSlotIndex(index))
+        {
+            item = _sharedSlotItem;
+            return true;
+        }
+
+        item = ItemType.None;
+        return false;
+    }
+
+    private void EnsureSharedSlotUnlocked()
+    {
+        if (!_sharedSlotUnlocked)
+        {
+            _sharedSlotUnlocked = true;
+            RefreshUI();
+        }
+
+        if (!PhotonNetwork.InRoom)
+        {
+            return;
+        }
+
+        Hashtable properties = new Hashtable { { SharedSlotUnlockedKey, true } };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+    }
+
+    private bool TrySetSharedSlotItem(ItemType item)
+    {
+        if (!IsSharedSlotEnabled)
+        {
+            return false;
+        }
+
+        if (!PhotonNetwork.InRoom)
+        {
+            ApplySharedSlotState(_sharedSlotUnlocked, item);
+            NotifyStateChanged(SharedSlotIndex, item);
+            PairSaveCoordinator.RequestSaveIfAvailable();
+            return true;
+        }
+
+        Hashtable properties = new Hashtable
+        {
+            { SharedSlotUnlockedKey, true },
+            { SharedSlotItemKey, (int)item }
+        };
+        return PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+    }
+
+    private void ReadSharedSlotFromRoom()
+    {
+        if (!PhotonNetwork.InRoom)
+        {
+            return;
+        }
+
+        bool unlocked = false;
+        ItemType item = ItemType.None;
+        ReadSharedSlotProperties(PhotonNetwork.CurrentRoom.CustomProperties, ref unlocked, ref item);
+        ApplySharedSlotState(unlocked, item);
+    }
+
+    private void ReadSharedSlotProperties(Hashtable properties, ref bool unlocked, ref ItemType item)
+    {
+        if (properties.TryGetValue(SharedSlotUnlockedKey, out object unlockedValue) &&
+            unlockedValue is bool unlockedBool)
+        {
+            unlocked = unlockedBool;
+        }
+
+        if (properties.TryGetValue(SharedSlotItemKey, out object itemValue))
+        {
+            int itemTypeId;
+            try
+            {
+                itemTypeId = Convert.ToInt32(itemValue);
+            }
+            catch
+            {
+                itemTypeId = (int)ItemType.None;
+            }
+
+            item = Enum.IsDefined(typeof(ItemType), itemTypeId) ? (ItemType)itemTypeId : ItemType.None;
+        }
+    }
+
+    private void ApplySharedSlotState(bool unlocked, ItemType item)
+    {
+        bool changed = _sharedSlotUnlocked != unlocked || _sharedSlotItem != item;
+        _sharedSlotUnlocked = unlocked;
+        _sharedSlotItem = item;
+
+        if (!changed)
+        {
+            return;
+        }
+
+        if (_selectedIndex == SharedSlotIndex)
+        {
+            CloseItemZoom();
+
+            if (!IsSharedSlotEnabled || _sharedSlotItem == ItemType.None)
+            {
+                _selectedIndex = -1;
+                NotifySelectionChanged();
+            }
+        }
+
+        RefreshUI();
+    }
+
+    public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
+    {
+        if (!propertiesThatChanged.ContainsKey(SharedSlotUnlockedKey) &&
+            !propertiesThatChanged.ContainsKey(SharedSlotItemKey))
+        {
+            return;
+        }
+
+        bool unlocked = _sharedSlotUnlocked;
+        ItemType item = _sharedSlotItem;
+        ReadSharedSlotProperties(propertiesThatChanged, ref unlocked, ref item);
+        ApplySharedSlotState(unlocked, item);
+        NotifyStateChanged(SharedSlotIndex, item);
+    }
+
+    public void OnPlayerEnteredRoom(Player newPlayer)
+    {
+    }
+
+    public void OnPlayerLeftRoom(Player otherPlayer)
+    {
+    }
+
+    public void OnMasterClientSwitched(Player newMasterClient)
+    {
+    }
+
+    public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
     }
 }

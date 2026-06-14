@@ -127,6 +127,11 @@ namespace Save
                 ApplySharedProgress(pairData.sharedProgress);
             }
 
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.ReconcileSharedSlotUnlock();
+            }
+
             _loaded = true;
             Debug.Log($"[PairSaveCoordinator] ロード完了 Pair={pairKey} Role={role}");
         }
@@ -245,7 +250,7 @@ namespace Save
                 }
             }
 
-            InventoryManager.Instance.SetItems(restored);
+            InventoryManager.Instance.SetItems(restored, false);
         }
 
         private void CaptureSaveables(RoleSaveData roleData)
