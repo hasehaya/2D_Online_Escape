@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class BookObject : MonoBehaviour
 {
     [SerializeField] private CanvasGroup[] _pages;
-    [SerializeField] private CanvasGroup[] _animImages; // 白紙のアニメーション画像 (要素0と1を想定)
+    [SerializeField] private Image _animImage; // 白紙のアニメーション画像を表示するImage
+    [SerializeField] private Sprite[] _animSprites; // 白紙のアニメーション画像 (要素0と1を想定)
     [SerializeField] private Button _rightButton;
     [SerializeField] private Button _leftButton;
     [SerializeField] private float _fadeDuration = 0.5f;
@@ -13,6 +14,7 @@ public class BookObject : MonoBehaviour
 
     private int _currentPageIndex;
     private Sequence _currentAnimation;
+    private Sprite _defaultAnimSprite;
 
     private void Start()
     {
@@ -22,10 +24,10 @@ public class BookObject : MonoBehaviour
             _pages[i].alpha = i == _currentPageIndex ? 1f : 0f;
         }
 
-        for (int i = 0; i < _animImages.Length; i++)
+        if (_animImage != null)
         {
-            _animImages[i].gameObject.SetActive(false);
-            _animImages[i].alpha = 0f;
+            _defaultAnimSprite = _animImage.sprite;
+            RestoreDefaultAnimImage();
         }
 
         _rightButton.onClick.AddListener(TurnRight);
@@ -65,28 +67,59 @@ public class BookObject : MonoBehaviour
             _currentAnimation.Complete();
         }
 
-        // 進行方向によって白紙アニメーションの順序を切り替え
-        CanvasGroup animFrom = isRight ? _animImages[0] : _animImages[1];
-        CanvasGroup animTo = isRight ? _animImages[1] : _animImages[0];
+        if (_animImage == null || _animSprites == null || _animSprites.Length < 2)
+        {
+            SwitchPage(fromIndex, toIndex);
+            RestoreDefaultAnimImage();
+            return;
+        }
 
-        _currentAnimation = FadeSwitchService.Switch(
-            animFrom,
-            animTo,
-            _fadeDuration,
-            _fadeDuration,
-            Ease.Linear,
-            _fadeInDelay
-        );
+        int fromSpriteIndex = isRight ? 0 : 1;
+        int toSpriteIndex = isRight ? 1 : 0;
+
+        _animImage.gameObject.SetActive(true);
+        _animImage.sprite = _animSprites[fromSpriteIndex];
+        SetAnimImageAlpha(1f);
+
+        _currentAnimation = DOTween.Sequence();
+        _currentAnimation.Append(_animImage.DOFade(0f, _fadeDuration).SetEase(Ease.Linear));
+        _currentAnimation.AppendCallback(() => _animImage.sprite = _animSprites[toSpriteIndex]);
+
+        if (_fadeInDelay > 0f)
+        {
+            _currentAnimation.AppendInterval(_fadeInDelay);
+        }
+
+        _currentAnimation.Append(_animImage.DOFade(1f, _fadeDuration).SetEase(Ease.Linear));
 
         // アニメーションが終わったらページを表示（切り替え）する
         _currentAnimation.OnComplete(() =>
         {
-            _pages[fromIndex].gameObject.SetActive(false);
-            _pages[toIndex].gameObject.SetActive(true);
-            _pages[toIndex].alpha = 1f;
-
-            animTo.alpha = 0f;
-            animTo.gameObject.SetActive(false);
+            SwitchPage(fromIndex, toIndex);
+            RestoreDefaultAnimImage();
         });
+    }
+
+    private void SwitchPage(int fromIndex, int toIndex)
+    {
+        _pages[fromIndex].gameObject.SetActive(false);
+        _pages[toIndex].gameObject.SetActive(true);
+        _pages[toIndex].alpha = 1f;
+    }
+
+    private void SetAnimImageAlpha(float alpha)
+    {
+        Color color = _animImage.color;
+        color.a = alpha;
+        _animImage.color = color;
+    }
+
+    private void RestoreDefaultAnimImage()
+    {
+        if (_animImage == null) return;
+
+        _animImage.gameObject.SetActive(true);
+        _animImage.sprite = _defaultAnimSprite;
+        SetAnimImageAlpha(1f);
     }
 }
