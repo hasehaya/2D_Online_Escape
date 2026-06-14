@@ -32,6 +32,7 @@ public class BookObject : MonoBehaviour
 
         _rightButton.onClick.AddListener(TurnRight);
         _leftButton.onClick.AddListener(TurnLeft);
+        UpdateTurnButtons();
     }
 
     /// <summary>
@@ -45,6 +46,7 @@ public class BookObject : MonoBehaviour
         int nextIndex = _currentPageIndex + 1;
         PlayFadeAnimation(_currentPageIndex, nextIndex, true);
         _currentPageIndex = nextIndex;
+        UpdateTurnButtons();
     }
 
     /// <summary>
@@ -58,6 +60,7 @@ public class BookObject : MonoBehaviour
         int prevIndex = _currentPageIndex - 1;
         PlayFadeAnimation(_currentPageIndex, prevIndex, false);
         _currentPageIndex = prevIndex;
+        UpdateTurnButtons();
     }
 
     private void PlayFadeAnimation(int fromIndex, int toIndex, bool isRight)
@@ -77,12 +80,15 @@ public class BookObject : MonoBehaviour
         int fromSpriteIndex = isRight ? 0 : 1;
         int toSpriteIndex = isRight ? 1 : 0;
 
+        HidePage(fromIndex);
+        HidePage(toIndex);
+
         _animImage.gameObject.SetActive(true);
         _animImage.sprite = _animSprites[fromSpriteIndex];
         SetAnimImageAlpha(1f);
 
         _currentAnimation = DOTween.Sequence();
-        _currentAnimation.Append(_animImage.DOFade(0f, _fadeDuration).SetEase(Ease.Linear));
+        _currentAnimation.AppendInterval(_fadeDuration);
         _currentAnimation.AppendCallback(() => _animImage.sprite = _animSprites[toSpriteIndex]);
 
         if (_fadeInDelay > 0f)
@@ -90,21 +96,28 @@ public class BookObject : MonoBehaviour
             _currentAnimation.AppendInterval(_fadeInDelay);
         }
 
-        _currentAnimation.Append(_animImage.DOFade(1f, _fadeDuration).SetEase(Ease.Linear));
+        _currentAnimation.AppendInterval(_fadeDuration);
 
         // アニメーションが終わったらページを表示（切り替え）する
         _currentAnimation.OnComplete(() =>
         {
             SwitchPage(fromIndex, toIndex);
             RestoreDefaultAnimImage();
+            UpdateTurnButtons();
         });
     }
 
     private void SwitchPage(int fromIndex, int toIndex)
     {
-        _pages[fromIndex].gameObject.SetActive(false);
+        HidePage(fromIndex);
         _pages[toIndex].gameObject.SetActive(true);
         _pages[toIndex].alpha = 1f;
+    }
+
+    private void HidePage(int index)
+    {
+        _pages[index].gameObject.SetActive(false);
+        _pages[index].alpha = 0f;
     }
 
     private void SetAnimImageAlpha(float alpha)
@@ -121,5 +134,18 @@ public class BookObject : MonoBehaviour
         _animImage.gameObject.SetActive(true);
         _animImage.sprite = _defaultAnimSprite;
         SetAnimImageAlpha(1f);
+    }
+
+    private void UpdateTurnButtons()
+    {
+        if (_leftButton != null)
+        {
+            _leftButton.gameObject.SetActive(_currentPageIndex > 0);
+        }
+
+        if (_rightButton != null)
+        {
+            _rightButton.gameObject.SetActive(_currentPageIndex < _pages.Length - 1);
+        }
     }
 }

@@ -642,6 +642,8 @@ MonoBehaviour:
   _itemSlotContainer: {fileID: 5572452782385670091}
   _itemSlotPrefab: {fileID: 1355156462327767516, guid: 5aef776ccd2e6df419dc4f1bb47ee281, type: 3}
   _itemZoomPanel: {fileID: 4872296308129157416}
+  _useDebugInitialState: 0
+  _debugInitialItems: 
 --- !u!1 &6974086340289928287
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,9 +916,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
