@@ -9,8 +9,8 @@ public class BookObject : MonoBehaviour
     [SerializeField] private Sprite[] _animSprites; // 白紙のアニメーション画像 (要素0と1を想定)
     [SerializeField] private Button _rightButton;
     [SerializeField] private Button _leftButton;
-    [SerializeField] private float _fadeDuration = 0.5f;
-    [SerializeField] private float _fadeInDelay = 0.2f;
+    [SerializeField] private float _fadeDuration = 0.3f;
+    [SerializeField] private float _fadeInDelay = 0.1f;
 
     private int _currentPageIndex;
     private Sequence _currentAnimation;

@@ -5961,12 +5961,12 @@ MonoBehaviour:
   - {fileID: 1329661138}
   _animImage: {fileID: 1363110899}
   _animSprites:
-  - {fileID: 21300000, guid: 76dc2279ebcf8764880e3d6108e3be9c, type: 3}
   - {fileID: 21300000, guid: a823fab64fffc1a4c91e6747f55ad3a2, type: 3}
+  - {fileID: 21300000, guid: 76dc2279ebcf8764880e3d6108e3be9c, type: 3}
   _rightButton: {fileID: 352552700}
   _leftButton: {fileID: 37045288}
-  _fadeDuration: 0.5
-  _fadeInDelay: 0.2
+  _fadeDuration: 0.3
+  _fadeInDelay: 0.1
 --- !u!1 &1372200081
 GameObject:
   m_ObjectHideFlags: 0
