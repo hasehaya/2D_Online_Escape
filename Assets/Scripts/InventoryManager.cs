@@ -230,6 +230,31 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         return item;
     }
 
+    public bool CanDiscardItem(ItemType item)
+    {
+        return _itemDatabase != null && _itemDatabase.CanDiscard(item);
+    }
+
+    public bool CanDiscardSelectedItem()
+    {
+        return CanDiscardItem(GetSelectedItem());
+    }
+
+    public bool TryDiscardSelectedItem()
+    {
+        if (_selectedIndex < 0 || !TryGetItemAt(_selectedIndex, out ItemType selectedItem))
+        {
+            return false;
+        }
+
+        if (!CanDiscardItem(selectedItem))
+        {
+            return false;
+        }
+
+        return TryRemoveItemAt(_selectedIndex);
+    }
+
     public bool TryGetItemIndex(ItemType item, out int index)
     {
         if (item == ItemType.None)

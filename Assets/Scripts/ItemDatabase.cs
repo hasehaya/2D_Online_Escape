@@ -40,4 +40,15 @@ public class ItemDatabase : ScriptableObject
         icon = null;
         return false;
     }
+
+    public bool CanDiscard(ItemType itemType)
+    {
+        if (itemType == ItemType.None)
+        {
+            return false;
+        }
+
+        ItemData item;
+        return TryGetItem(itemType, out item) && item.canDiscard;
+    }
 }

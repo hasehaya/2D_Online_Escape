@@ -30,6 +30,7 @@ namespace Editor
         {
             ItemDatabase database = (ItemDatabase)target;
             Dictionary<ItemType, Sprite> iconMap = BuildIconMap(database.Items);
+            Dictionary<ItemType, bool> canDiscardMap = BuildCanDiscardMap(database.Items);
             List<ItemType> itemTypes = BuildItemTypeList();
 
             Undo.RecordObject(database, "Generate Item Database From Enum");
@@ -47,6 +48,10 @@ namespace Editor
                 SerializedProperty iconProperty = element.FindPropertyRelative("icon");
                 Sprite icon;
                 iconProperty.objectReferenceValue = iconMap.TryGetValue(itemType, out icon) ? icon : null;
+
+                SerializedProperty canDiscardProperty = element.FindPropertyRelative("canDiscard");
+                bool canDiscard;
+                canDiscardProperty.boolValue = canDiscardMap.TryGetValue(itemType, out canDiscard) && canDiscard;
             }
 
             serializedObject.ApplyModifiedProperties();
@@ -97,6 +102,24 @@ namespace Editor
             }
 
             return iconMap;
+        }
+
+        private static Dictionary<ItemType, bool> BuildCanDiscardMap(IReadOnlyList<ItemData> items)
+        {
+            Dictionary<ItemType, bool> canDiscardMap = new Dictionary<ItemType, bool>();
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                ItemData item = items[i];
+                if (item == null || canDiscardMap.ContainsKey(item.itemType))
+                {
+                    continue;
+                }
+
+                canDiscardMap.Add(item.itemType, item.canDiscard);
+            }
+
+            return canDiscardMap;
         }
 
         private static List<ItemType> BuildItemTypeList()

@@ -2234,6 +2234,7 @@ GameObject:
   - component: {fileID: 429544009}
   - component: {fileID: 429544011}
   - component: {fileID: 429544010}
+  - component: {fileID: 429544012}
   m_Layer: 5
   m_Name: MagicSack
   m_TagString: Untagged
@@ -2298,6 +2299,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 429544008}
   m_CullTransparentMesh: 1
+--- !u!114 &429544012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429544008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupObject
+  _clickAreaSize: {x: 293, y: 359}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 14
+  _saveId: 61091052996d4af6ae88cf55e304f61f
 --- !u!1 &491045341
 GameObject:
   m_ObjectHideFlags: 0
@@ -4005,6 +4025,7 @@ GameObject:
   - component: {fileID: 855910046}
   - component: {fileID: 855910048}
   - component: {fileID: 855910047}
+  - component: {fileID: 855910049}
   m_Layer: 5
   m_Name: Pendant
   m_TagString: Untagged
@@ -4069,6 +4090,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 855910045}
   m_CullTransparentMesh: 1
+--- !u!114 &855910049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 855910045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupObject
+  _clickAreaSize: {x: 173, y: 98}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 12
+  _saveId: c848d907522242839d04959cc95977ed
 --- !u!1 &885218025
 GameObject:
   m_ObjectHideFlags: 0
@@ -6270,6 +6310,7 @@ GameObject:
   - component: {fileID: 1521516962}
   - component: {fileID: 1521516964}
   - component: {fileID: 1521516963}
+  - component: {fileID: 1521516965}
   m_Layer: 5
   m_Name: Trash
   m_TagString: Untagged
@@ -6334,6 +6375,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521516961}
   m_CullTransparentMesh: 1
+--- !u!114 &1521516965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521516961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 874130df304a095488dbb181e73f59e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrashObject
+  _clickAreaSize: {x: 343, y: 328}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _onItemDiscarded:
+    m_PersistentCalls:
+      m_Calls: []
+  _onCannotDiscard:
+    m_PersistentCalls:
+      m_Calls: []
+  _onNoItemSelected:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1522570834
 GameObject:
   m_ObjectHideFlags: 0
@@ -7123,6 +7190,7 @@ GameObject:
   - component: {fileID: 1704937091}
   - component: {fileID: 1704937093}
   - component: {fileID: 1704937092}
+  - component: {fileID: 1704937094}
   m_Layer: 5
   m_Name: CD
   m_TagString: Untagged
@@ -7187,6 +7255,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704937090}
   m_CullTransparentMesh: 1
+--- !u!114 &1704937094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704937090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PickupObject
+  _clickAreaSize: {x: 560, y: 476}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 0
+  _saveId: 863b9063e21c482bb8db83b92962e98e
 --- !u!1 &1782549003
 GameObject:
   m_ObjectHideFlags: 0
@@ -8028,6 +8115,7 @@ GameObject:
   - component: {fileID: 1982218012}
   - component: {fileID: 1982218014}
   - component: {fileID: 1982218013}
+  - component: {fileID: 1982218015}
   m_Layer: 5
   m_Name: PuzzleBox_Closed
   m_TagString: Untagged
@@ -8092,6 +8180,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1982218011}
   m_CullTransparentMesh: 1
+--- !u!114 &1982218015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982218011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 462.2, y: 435}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _zoomViewNode: {fileID: 1522570836}
 --- !u!1 &1997094961
 GameObject:
   m_ObjectHideFlags: 0
