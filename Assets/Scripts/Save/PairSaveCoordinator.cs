@@ -256,11 +256,16 @@ namespace Save
         private void CaptureSaveables(RoleSaveData roleData)
         {
             roleData.saveables.Clear();
-            SaveableBehaviour[] saveables =
-                FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < saveables.Length; i++)
+            MonoBehaviour[] behaviours =
+                FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
             {
-                SaveableBehaviour saveable = saveables[i];
+                ISaveable saveable = behaviours[i] as ISaveable;
+                if (saveable == null || string.IsNullOrEmpty(saveable.SaveId))
+                {
+                    continue;
+                }
+
                 SaveableObjectData data = new SaveableObjectData();
                 data.saveId = saveable.SaveId;
                 data.stateJson = saveable.CaptureState();
@@ -277,11 +282,16 @@ namespace Save
                 stateMap[state.saveId] = state.stateJson;
             }
 
-            SaveableBehaviour[] saveables =
-                FindObjectsByType<SaveableBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (int i = 0; i < saveables.Length; i++)
+            MonoBehaviour[] behaviours =
+                FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < behaviours.Length; i++)
             {
-                SaveableBehaviour saveable = saveables[i];
+                ISaveable saveable = behaviours[i] as ISaveable;
+                if (saveable == null || string.IsNullOrEmpty(saveable.SaveId))
+                {
+                    continue;
+                }
+
                 string json;
                 if (stateMap.TryGetValue(saveable.SaveId, out json))
                 {
