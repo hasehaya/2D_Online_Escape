@@ -15,6 +15,8 @@
   - MagicSack の共有インベントリ枠は `InventoryManager` が Room Custom Properties を直接監視して同期する
   - 共有枠の状態は `Inventory.SharedSlot.Unlocked` と `Inventory.SharedSlot.Item` で管理する
   - 共有枠の受信反映時は再送信しない。中身を変更するローカル操作だけが Room Custom Properties を更新し、同期ループを避ける
+  - Dungeon ライツアウトパズルの途中盤面は `Transient.DungeonLightsOutPuzzle.BoardBits` に 9bit の `int` として同期する
+  - `Transient.` で始まる Room Custom Properties は一時同期用とし、セーブ対象にしない
 
 ## セーブシステム
 - 方式: **B案（`SaveableBehaviour` 基底でID管理一元化）**
@@ -24,6 +26,8 @@
   - インベントリ、`SaveableBehaviour` 状態、Room Custom Properties、現在シーン名をペア単位で保存/復元
   - 通常インベントリは役割別の `inventoryItemIds` に保存する
   - MagicSack の共有スロットは Room Custom Properties として `sharedProgress` に保存する
+  - 途中経過を保存しない同期値は `Transient.` prefix を付け、`sharedProgress` から除外する
+  - Dungeon ライツアウトパズルは途中盤面を保存せず、`Flag_Dungeon_LightsOutPuzzleCompleted` のクリアフラグのみ保存する
   - ロード時は通常インベントリを先に復元し、共有進捗を適用した後で MagicSack 所持による共有枠アンロックを再評価する
 - 永続化: `PlayerPrefs` に保存スロットキー単位でJSON保存
 - ペア識別: 両プレイヤーIDをソートして `pairKey` を生成

@@ -8,6 +8,8 @@
    タイトル〜マッチングまでの画面遷移とUI仕様
 3. `02_InGame/GAME_DESIGN.md`  
    インゲームの共通システムと実装済みギミック
+   - `02_InGame/DUNGEON_LIGHTS_OUT_PUZZLE.md`  
+     Dungeon ライツアウトパズルのゲーム仕様、通信仕様、保存仕様
 4. `05_Technical/TECHNICAL_SPECS.md`  
    技術スタック、ネットワーク同期、ビルドシーン
 5. `07_Sound/SOUND_SPECS.md`  

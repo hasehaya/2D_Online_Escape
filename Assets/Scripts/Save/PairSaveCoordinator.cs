@@ -14,6 +14,8 @@ namespace Save
     [DefaultExecutionOrder(-900)]
     public class PairSaveCoordinator : MonoBehaviour
     {
+        private const string TransientProgressKeyPrefix = "Transient.";
+
         public static PairSaveCoordinator Instance { get; private set; }
 
         private bool _loaded;
@@ -218,6 +220,11 @@ namespace Save
 
         private void OnGamePropertyChanged(string key, object value)
         {
+            if (IsTransientProgressKey(key))
+            {
+                return;
+            }
+
             SaveNow();
         }
 
@@ -312,6 +319,11 @@ namespace Save
                 string key = entry.Key as string;
                 object value = entry.Value;
 
+                if (IsTransientProgressKey(key))
+                {
+                    continue;
+                }
+
                 if (value is bool)
                 {
                     BoolEntry boolEntry = new BoolEntry();
@@ -347,6 +359,12 @@ namespace Save
                     progress.strings.Add(stringEntry);
                 }
             }
+        }
+
+        private static bool IsTransientProgressKey(string key)
+        {
+            return !string.IsNullOrEmpty(key)
+                   && key.StartsWith(TransientProgressKeyPrefix, StringComparison.Ordinal);
         }
 
         private void ApplySharedProgress(SharedProgressData progress)
