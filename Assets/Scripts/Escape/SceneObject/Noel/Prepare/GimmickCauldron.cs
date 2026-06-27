@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Escape.SceneObject.Common;
 using Save;
@@ -9,23 +9,23 @@ using UnityEngine.UI;
 namespace Escape.SceneObject.Noel.Prepare
 {
     /// <summary>
-    /// 2�̃��[�g�����劘�M�~�b�N�B
-    /// �e���[�g��2��̃A�C�e�������Ŋ������A�Ō�ɋ�̕r���g���Ɗ����i�𐶐����ď�����Ԃɖ߂�B
-    /// �菇���ԈႦ��Ə�����ԂɃ��Z�b�g�����B
+    /// 2つのルートを持つ大釜ギミック。
+    /// 各ルートは2回のアイテム投入で完成し、最後に空の瓶を使うと完成品を生成して初期状態に戻る。
+    /// 手順を間違えると初期状態にリセットされる。
     /// </summary>
     public class GimmickCauldron : InteractableObject, ISaveable
     {
         [Serializable]
         public struct CauldronStep
         {
-            [SerializeField] private ItemType _firstRequiredItem; // 1��ڂɓ�������A�C�e��
-            [SerializeField] private Color _firstStateColor; // 1��ڐ������ɐ؂�ւ��F
-            [SerializeField] private string _firstStateAnimationName; // 1��ڐ������̒��g�A�j���[�V������Ԗ�
-            [SerializeField] private ItemType _secondRequiredItem; // 2��ڂɓ�������A�C�e��
-            [SerializeField] private Color _secondStateColor; // 2��ڐ������ɐ؂�ւ��F
-            [SerializeField] private string _secondStateAnimationName; // 2��ڐ������̒��g�A�j���[�V������Ԗ�
-            [SerializeField] private ItemType _bottleItem; // ���̃��[�g�Ŏg����̕r
-            [SerializeField] private ItemType _resultItem; // ���̃��[�g�œ����閞�^���̕r
+            [SerializeField] private ItemType _firstRequiredItem; // 1回目に投入するアイテム
+            [SerializeField] private Color _firstStateColor; // 1回目成功時に切り替わる色
+            [SerializeField] private string _firstStateAnimationName; // 1回目成功時の中身アニメーション状態名
+            [SerializeField] private ItemType _secondRequiredItem; // 2回目に投入するアイテム
+            [SerializeField] private Color _secondStateColor; // 2回目成功時に切り替わる色
+            [SerializeField] private string _secondStateAnimationName; // 2回目成功時の中身アニメーション状態名
+            [SerializeField] private ItemType _bottleItem; // このルートで使う空の瓶
+            [SerializeField] private ItemType _resultItem; // このルートで得られる満タンの瓶
 
             public ItemType FirstRequiredItem => _firstRequiredItem;
             public Color FirstStateColor => _firstStateColor;
@@ -102,7 +102,7 @@ namespace Escape.SceneObject.Noel.Prepare
             ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
             if (selectedItem == ItemType.None)
             {
-                // �A�C�e�����I���̏ꍇ�͉������Ȃ��i���I�����p�̃A�N�V����������΂����ŌĂԁj
+                // アイテム未選択の場合は何もしない（未選択時用のアクションがあればここで呼ぶ）
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace Escape.SceneObject.Noel.Prepare
                 return;
             }
 
-            // ������͕r�l�߃t�F�[�Y
+            // 完成後は瓶詰めフェーズ
             if (_currentStepIndex >= 2)
             {
                 if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
@@ -152,7 +152,7 @@ namespace Escape.SceneObject.Noel.Prepare
                 return;
             }
 
-            // 1��ڂ̓���
+            // 1回目の投入
             if (_currentStepIndex == 0)
             {
                 if (!TryFindRouteByFirstItem(selectedItem, out _currentRouteIndex))
@@ -176,7 +176,7 @@ namespace Escape.SceneObject.Noel.Prepare
                 return;
             }
 
-            // 2��ڂ̓���
+            // 2回目の投入
             if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
             {
                 ResetCauldron(true, true);
@@ -334,9 +334,9 @@ namespace Escape.SceneObject.Noel.Prepare
         }
 
         /// <summary>
-        /// ����������Ԃɖ߂�
+        /// 釜を初期状態に戻す
         /// </summary>
-        /// <param name="invokeEvent">���Z�b�g���̃C�x���g�𔭉΂��邩�ǂ���</param>
+        /// <param name="invokeEvent">リセット時のイベントを発火するかどうか</param>
         private void ResetCauldron(bool invokeEvent, bool requestSave = false)
         {
             _currentRouteIndex = -1;

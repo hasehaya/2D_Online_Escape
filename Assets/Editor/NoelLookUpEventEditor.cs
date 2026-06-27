@@ -1,4 +1,4 @@
-﻿using Map.Noel.Wake;
+﻿using Escape.SceneObject.Noel.Wake;
 using UnityEditor;
 using UnityEngine;
 

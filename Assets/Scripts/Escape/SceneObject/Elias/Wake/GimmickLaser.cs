@@ -1,10 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Map.Elias.Wake
+namespace Escape.SceneObject.Elias.Wake
 {
     public class GimmickLaser : MonoBehaviour
     {

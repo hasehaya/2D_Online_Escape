@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// クリックで拡大表示を行うインタラクタブルオブジェクト。
-/// </summary>
-public class ZoomObject : InteractableObject
+namespace Escape.SceneObject.Common
 {
-    [Header("Zoom Settings")] [SerializeField]
-    private ViewNode _zoomViewNode;
-
-    protected override void Interact()
+    /// <summary>
+    /// クリックで拡大表示を行うインタラクタブルオブジェクト。
+    /// </summary>
+    public class ZoomObject : InteractableObject
     {
-        base.Interact();
-        if (_zoomViewNode != null)
+        [Header("Zoom Settings")] [SerializeField]
+        private ViewNode _zoomViewNode;
+
+        protected override void Interact()
         {
-            ViewController.Instance.ZoomIn(_zoomViewNode);
+            base.Interact();
+            if (_zoomViewNode != null)
+            {
+                ViewController.Instance.ZoomIn(_zoomViewNode);
+            }
         }
     }
 }

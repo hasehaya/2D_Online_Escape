@@ -2,7 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace Map.Noel.Wake
+namespace Escape.SceneObject.Noel.Wake
 {
     public class NoelLookUpEvent : MonoBehaviour
     {

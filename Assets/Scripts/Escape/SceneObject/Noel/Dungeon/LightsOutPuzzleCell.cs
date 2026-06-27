@@ -1,9 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
+using Escape.SceneObject.Common;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Map.Noel.Dungeon
+namespace Escape.SceneObject.Noel.Dungeon
 {
     public class LightsOutPuzzleCell : InteractableObject
     {

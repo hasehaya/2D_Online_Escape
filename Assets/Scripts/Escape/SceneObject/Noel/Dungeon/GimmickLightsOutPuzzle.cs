@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-namespace Map.Noel.Dungeon
+namespace Escape.SceneObject.Noel.Dungeon
 {
     public class GimmickLightsOutPuzzle : MonoBehaviour
     {

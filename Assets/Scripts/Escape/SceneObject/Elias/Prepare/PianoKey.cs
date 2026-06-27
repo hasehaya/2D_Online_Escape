@@ -1,7 +1,8 @@
 ﻿using System.Collections;
+using Escape.SceneObject.Common;
 using UnityEngine;
 
-namespace Map.Elias.Prepare
+namespace Escape.SceneObject.Elias.Prepare
 {
     /// <summary>
     /// ピアノの鍵盤を表すクラス。

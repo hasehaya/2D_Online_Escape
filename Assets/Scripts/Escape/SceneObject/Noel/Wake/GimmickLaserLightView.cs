@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Map.Noel.Wake
+namespace Escape.SceneObject.Noel.Wake
 {
     /// <summary>
     /// Mirrors Elias GimmickLaser target lights to Noel UI.

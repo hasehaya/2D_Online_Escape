@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Map.Elias.Prepare
+namespace Escape.SceneObject.Elias.Prepare
 {
     /// <summary>
     /// ピアノギミックを管理するクラス。

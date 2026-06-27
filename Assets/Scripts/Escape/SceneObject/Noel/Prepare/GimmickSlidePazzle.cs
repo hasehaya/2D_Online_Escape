@@ -2,7 +2,7 @@
 using DG.Tweening;
 using UnityEngine;
 
-namespace Map.Noel.Prepare
+namespace Escape.SceneObject.Noel.Prepare
 {
     /// <summary>
     /// WoodBoxのスライドパズルギミック管理。

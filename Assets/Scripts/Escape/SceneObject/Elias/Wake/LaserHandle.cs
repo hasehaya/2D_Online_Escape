@@ -1,7 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Map.Elias.Wake
+namespace Escape.SceneObject.Elias.Wake
 {
     public enum LaserHandleAxis
     {

@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Map.Elias.Dungeon
+namespace Escape.SceneObject.Elias.Dungeon
 {
     [DisallowMultipleComponent]
     public class LightsOutCrystalProjection : MonoBehaviour

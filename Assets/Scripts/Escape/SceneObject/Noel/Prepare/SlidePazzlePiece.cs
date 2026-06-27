@@ -1,7 +1,8 @@
+﻿using Escape.SceneObject.Common;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Map.Noel.Prepare
+namespace Escape.SceneObject.Noel.Prepare
 {
     /// <summary>
     /// スライドパズルの1ピース。

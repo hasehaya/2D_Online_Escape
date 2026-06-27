@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Escape.SceneObject.Common;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,7 +6,8 @@ using UnityEngine.Events;
 namespace Escape.SceneObject.Noel.Prepare
 {
     /// <summary>
-    /// 選択中のアイチE��を捨てるため�Eゴミ箱オブジェクト、E/// </summary>
+    /// 選択中のアイテムを捨てるためのゴミ箱オブジェクト。
+    /// </summary>
     public class TrashObject : InteractableObject
     {
         [Header("Discard Settings")] [SerializeField]
