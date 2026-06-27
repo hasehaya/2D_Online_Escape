@@ -1,41 +1,55 @@
+using System.Collections.Generic;
+using Escape.SceneObject.Common;
 using UnityEngine;
 using UnityEngine.Events;
 
-/// <summary>
-/// 選択中のアイテムを捨てるためのゴミ箱オブジェクト。
-/// </summary>
-public class TrashObject : InteractableObject
+namespace Escape.SceneObject.Noel.Prepare
 {
-    [Header("Events")] [SerializeField] private UnityEvent _onItemDiscarded;
-    [SerializeField] private UnityEvent _onCannotDiscard;
-    [SerializeField] private UnityEvent _onNoItemSelected;
-
-    protected override void Interact()
+    /// <summary>
+    /// 選択中のアイチE��を捨てるため�Eゴミ箱オブジェクト、E/// </summary>
+    public class TrashObject : InteractableObject
     {
-        base.Interact();
+        [Header("Discard Settings")] [SerializeField]
+        private List<ItemType> _discardableItems = new List<ItemType>();
 
-        if (InventoryManager.Instance == null)
+        [Header("Events")] [SerializeField] private UnityEvent _onItemDiscarded;
+        [SerializeField] private UnityEvent _onCannotDiscard;
+        [SerializeField] private UnityEvent _onNoItemSelected;
+
+        protected override void Interact()
         {
-            Debug.LogError("[TrashObject] InventoryManager instance is null.");
-            return;
-        }
+            base.Interact();
 
-        ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
-        if (selectedItem == ItemType.None)
-        {
-            Debug.Log("[TrashObject] No item selected.");
-            _onNoItemSelected?.Invoke();
-            return;
-        }
+            if (InventoryManager.Instance == null)
+            {
+                Debug.LogError("[TrashObject] InventoryManager instance is null.");
+                return;
+            }
 
-        if (!InventoryManager.Instance.TryDiscardSelectedItem())
-        {
-            Debug.Log($"[TrashObject] {selectedItem} cannot be discarded.");
-            _onCannotDiscard?.Invoke();
-            return;
-        }
+            ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
+            if (selectedItem == ItemType.None)
+            {
+                Debug.Log("[TrashObject] No item selected.");
+                _onNoItemSelected?.Invoke();
+                return;
+            }
 
-        Debug.Log($"[TrashObject] Discarded {selectedItem}.");
-        _onItemDiscarded?.Invoke();
+            if (!_discardableItems.Contains(selectedItem))
+            {
+                Debug.Log($"[TrashObject] {selectedItem} cannot be discarded.");
+                _onCannotDiscard?.Invoke();
+                return;
+            }
+
+            if (!InventoryManager.Instance.TryRemoveSelectedItem())
+            {
+                Debug.Log($"[TrashObject] Failed to remove selected item: {selectedItem}.");
+                _onCannotDiscard?.Invoke();
+                return;
+            }
+
+            Debug.Log($"[TrashObject] Discarded {selectedItem}.");
+            _onItemDiscarded?.Invoke();
+        }
     }
 }

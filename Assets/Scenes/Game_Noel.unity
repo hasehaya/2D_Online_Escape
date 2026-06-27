@@ -2997,15 +2997,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 497656587}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c57038c572e91e43aa3f6def284a1a4, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b97ad9931073bc4b81a74bfc75cce2e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Map.Noel.Prepare.FurnitureFire
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteLoopAnimator
   _image: {fileID: 497656589}
   _sprites:
   - {fileID: 21300000, guid: 5f9c748547e82d243a608ab40394903f, type: 3}
+  _states: []
   _frameInterval: 0.1
   _fadeDuration: 0.05
   _fadeEase: 1
+  _playOnEnable: 1
+  _initialStateName: 
 --- !u!1 &521550540
 GameObject:
   m_ObjectHideFlags: 0
@@ -3341,16 +3344,38 @@ MonoBehaviour:
   _recipeSteps:
   - _firstRequiredItem: 1
     _firstStateColor: {r: 1, g: 0, b: 0, a: 1}
+    _firstStateAnimationName: 
     _secondRequiredItem: 2
     _secondStateColor: {r: 0, g: 0.839838, b: 1, a: 1}
+    _secondStateAnimationName: 
     _bottleItem: 10
     _resultItem: 11
   - _firstRequiredItem: 3
     _firstStateColor: {r: 1, g: 0.75263053, b: 0, a: 1}
+    _firstStateAnimationName: 
     _secondRequiredItem: 2
     _secondStateColor: {r: 0.018987417, g: 1, b: 0, a: 1}
+    _secondStateAnimationName: 
     _bottleItem: 8
     _resultItem: 9
+  _cauldronItems:
+  - 1
+  - 2
+  - 3
+  - 8
+  - 10
+  _ignitionItem: 13
+  _consumeIgnitionItem: 1
+  _fireLoop: {fileID: 0}
+  _fireLoopStateName: 
+  _hideFireOnReset: 1
+  _contentLoop: {fileID: 0}
+  _emptyContentStateName: 
+  _hideContentOnReset: 0
+  _saveId: cauldron_noel_prepare_fire_state
+  _onIgnited:
+    m_PersistentCalls:
+      m_Calls: []
   _onStepAdvanced:
     m_PersistentCalls:
       m_Calls: []
@@ -7618,6 +7643,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _discardableItems: []
   _onItemDiscarded:
     m_PersistentCalls:
       m_Calls: []

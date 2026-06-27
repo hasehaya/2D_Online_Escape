@@ -10,5 +10,4 @@ public class ItemData
 {
     public ItemType itemType;
     public Sprite icon;
-    public bool canDiscard;
 }

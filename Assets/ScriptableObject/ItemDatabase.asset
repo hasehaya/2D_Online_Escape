@@ -15,43 +15,29 @@ MonoBehaviour:
   _items:
   - itemType: 1
     icon: {fileID: 21300000, guid: 8d5f28068bcca504c927420dfa4f48cd, type: 3}
-    canDiscard: 0
   - itemType: 2
     icon: {fileID: 21300000, guid: 5ef245261e46a4b40850da916929295b, type: 3}
-    canDiscard: 0
   - itemType: 3
     icon: {fileID: 21300000, guid: 5828c928ca8c7ee488ccc63dd81db7a3, type: 3}
-    canDiscard: 0
   - itemType: 4
     icon: {fileID: 21300000, guid: d3530ca3e99bc4940aecf613155edd69, type: 3}
-    canDiscard: 0
   - itemType: 5
     icon: {fileID: 21300000, guid: f175af345ca61484c912f4ee695354aa, type: 3}
-    canDiscard: 0
   - itemType: 6
     icon: {fileID: 21300000, guid: fd232ff3934b34c47b8071e9ee29c586, type: 3}
-    canDiscard: 0
   - itemType: 7
     icon: {fileID: 21300000, guid: 373ed4bee0471984aa850bd5ab4e52f9, type: 3}
-    canDiscard: 0
   - itemType: 8
     icon: {fileID: 21300000, guid: 5a22d47839c9aa74399f2b82bcb92c0c, type: 3}
-    canDiscard: 0
   - itemType: 9
     icon: {fileID: 21300000, guid: 3adfaf1c47ba0b3428c73fd6a0843fce, type: 3}
-    canDiscard: 0
   - itemType: 10
     icon: {fileID: 21300000, guid: ac5532fe2efa0324ea3ef517162f694d, type: 3}
-    canDiscard: 0
   - itemType: 11
     icon: {fileID: 21300000, guid: 9610ff1282d54834abcdd9626993e566, type: 3}
-    canDiscard: 0
   - itemType: 12
     icon: {fileID: 21300000, guid: 4251c6e41e1c5b540b396748f633b82e, type: 3}
-    canDiscard: 0
   - itemType: 13
     icon: {fileID: 21300000, guid: f4a3571971c95d643b94672d4a702d5a, type: 3}
-    canDiscard: 0
   - itemType: 101
     icon: {fileID: 21300000, guid: 0595a8f86305a454db0e2f7caacd6d7b, type: 3}
-    canDiscard: 0

@@ -11,7 +11,7 @@
 - 大釜: `GimmickCauldron`
 - スライドパズル: `GimmickSlidePazzle` / `SlidePazzlePiece`
 - 本棚: `BookShelfObject`
-- 炎: `FurnitureFire`
+- 炎: `SpriteLoopAnimator`
 - 破棄: `TrashObject`
 
 ## 大釜
@@ -34,7 +34,7 @@
 ## 本棚 / 炎 / 破棄
 
 - `BookShelfObject` は `SaveableBehaviour` を継承し、本棚が左へスライドした状態を保存する。
-- `FurnitureFire` は複数 Sprite をフェード付きで順番に切り替え、炎などのループ表現に使う。
+- `SpriteLoopAnimator` は複数 Sprite をフェード付きで順番に切り替え、炎などのループ表現に使う。
 - `TrashObject` は選択中アイテムが破棄可能な場合だけインベントリから削除し、結果ごとの UnityEvent を実行する。
 
 ## サウンド
@@ -50,7 +50,7 @@
 - `Assets/Scripts/Map/Noel/Prepare/GimmickSlidePazzle.cs`
 - `Assets/Scripts/Map/Noel/Prepare/SlidePazzlePiece.cs`
 - `Assets/Scripts/Map/Noel/Prepare/BookShelfObject.cs`
-- `Assets/Scripts/Map/Noel/Prepare/FurnitureFire.cs`
+- `Assets/Scripts/Map/Noel/Prepare/SpriteLoopAnimator.cs`
 - `Assets/Scripts/Map/Noel/Prepare/TrashObject.cs`
 - `Assets/Scripts/FadeSwitchService.cs`
 - `Assets/Scripts/Audio/SoundType.cs`
