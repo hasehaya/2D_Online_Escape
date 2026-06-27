@@ -2,8 +2,8 @@
 
 ## 概要
 
-- SE / BGM の種類は `SoundType.cs` の enum で管理する
-- AudioDatabase に各 enum 値に対応するクリップをアサインする
+- SE / BGM の種類は `Assets/Scripts/Audio/SoundType.cs` の enum で管理する
+- `Assets/Scripts/Audio/AudioDatabase.cs` の AudioDatabase に各 enum 値に対応するクリップをアサインする
 - 追加ルールは `05_Technical/TECHNICAL_SPECS.md` を参照
 
 ## SESoundType 一覧

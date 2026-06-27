@@ -14,8 +14,6 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 {
     private const int MaxItemCount = 4;
-    private const string SharedSlotUnlockedKey = "Inventory.SharedSlot.Unlocked";
-    private const string SharedSlotItemKey = "Inventory.SharedSlot.Item";
 
     public static InventoryManager Instance { get; private set; }
 
@@ -470,7 +468,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return;
         }
 
-        Hashtable properties = new Hashtable { { SharedSlotUnlockedKey, true } };
+        Hashtable properties = new Hashtable { { PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, true } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
     }
 
@@ -491,8 +489,8 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
         Hashtable properties = new Hashtable
         {
-            { SharedSlotUnlockedKey, true },
-            { SharedSlotItemKey, (int)item }
+            { PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, true },
+            { PhotonRoomPropertyKeys.InventorySharedSlotItem, (int)item }
         };
         return PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
     }
@@ -512,13 +510,13 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private void ReadSharedSlotProperties(Hashtable properties, ref bool unlocked, ref ItemType item)
     {
-        if (properties.TryGetValue(SharedSlotUnlockedKey, out object unlockedValue) &&
+        if (properties.TryGetValue(PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, out object unlockedValue) &&
             unlockedValue is bool unlockedBool)
         {
             unlocked = unlockedBool;
         }
 
-        if (properties.TryGetValue(SharedSlotItemKey, out object itemValue))
+        if (properties.TryGetValue(PhotonRoomPropertyKeys.InventorySharedSlotItem, out object itemValue))
         {
             int itemTypeId;
             try
@@ -561,8 +559,8 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        if (!propertiesThatChanged.ContainsKey(SharedSlotUnlockedKey) &&
-            !propertiesThatChanged.ContainsKey(SharedSlotItemKey))
+        if (!propertiesThatChanged.ContainsKey(PhotonRoomPropertyKeys.InventorySharedSlotUnlocked) &&
+            !propertiesThatChanged.ContainsKey(PhotonRoomPropertyKeys.InventorySharedSlotItem))
         {
             return;
         }

@@ -17,7 +17,9 @@ namespace Map.Elias.Dungeon
         [SerializeField] private Sprite _offSprite;
         [SerializeField] private Sprite _onSprite;
 
-        [Header("Network")] [SerializeField] private string _boardBitsKey = DungeonLightsOutPuzzleKeys.BoardBits;
+        [Header("Network")] [SerializeField]
+        private string _boardBitsKey = PhotonRoomPropertyKeys.DungeonLightsOutPuzzleBoardBits;
+
         [SerializeField] private FlagType _completedFlag = FlagType.Dungeon_LightsOutPuzzleCompleted;
 
         [Header("Events")] [SerializeField] private UnityEvent _onSolved;

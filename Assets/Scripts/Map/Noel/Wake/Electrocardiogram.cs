@@ -28,7 +28,8 @@ namespace Map.Noel.Wake
         [SerializeField] private float _maxAmplitudeRatio = 0.4f; // 最大振幅
         [SerializeField] private float _lineWidthRatio = 0.01f; // 線の太さ
 
-        [Header("Photon設定")] [SerializeField] private string _distanceRatioKey = "LaserDistanceRatio";
+        [Header("Photon設定")] [SerializeField]
+        private string _distanceRatioKey = PhotonRoomPropertyKeys.WakeLaserDistanceRatio;
 
         [Header("Events")] [SerializeField] private UnityEvent _onAllCorrect;
 

@@ -10,7 +10,6 @@ namespace Map.Noel.Dungeon
     {
         private const int CellCount = 9;
         private const int Columns = 3;
-        private const string FlagKeyPrefix = "Flag_";
 
         [Header("Cells")] [SerializeField] private LightsOutPuzzleCell[] _cells = new LightsOutPuzzleCell[CellCount];
 
@@ -27,7 +26,9 @@ namespace Map.Noel.Dungeon
         [SerializeField] private bool _resetOnStart = true;
         [SerializeField] private bool _allowInputAfterSolved;
 
-        [Header("Network")] [SerializeField] private string _boardBitsKey = DungeonLightsOutPuzzleKeys.BoardBits;
+        [Header("Network")] [SerializeField]
+        private string _boardBitsKey = PhotonRoomPropertyKeys.DungeonLightsOutPuzzleBoardBits;
+
         [SerializeField] private FlagType _completedFlag = FlagType.Dungeon_LightsOutPuzzleCompleted;
         [SerializeField] private bool _publishInitialStateOnStart = true;
 
@@ -241,7 +242,7 @@ namespace Map.Noel.Dungeon
 
             Hashtable properties = new Hashtable
             {
-                { $"{FlagKeyPrefix}{_completedFlag}", true }
+                { PhotonRoomPropertyKeys.BuildFlagKey(_completedFlag), true }
             };
 
             PhotonNetwork.CurrentRoom.SetCustomProperties(properties);

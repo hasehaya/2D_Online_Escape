@@ -14,8 +14,6 @@ namespace Save
     [DefaultExecutionOrder(-900)]
     public class PairSaveCoordinator : MonoBehaviour
     {
-        private const string TransientProgressKeyPrefix = "Transient.";
-
         public static PairSaveCoordinator Instance { get; private set; }
 
         private bool _loaded;
@@ -164,9 +162,8 @@ namespace Save
             }
 
             pairData.pairKey = pairKey;
-            pairData.eliasPlayerId = SaveSessionContext.GetRoomString(SaveSessionContext.EliasPlayerIdRoomPropertyKey);
-            pairData.noelPlayerId = SaveSessionContext.GetRoomString(SaveSessionContext.NoelPlayerIdRoomPropertyKey);
-            pairData.isCleared = false;
+            pairData.eliasPlayerId = SaveSessionContext.GetRoomString(PhotonRoomPropertyKeys.SaveEliasPlayerId);
+            pairData.noelPlayerId = SaveSessionContext.GetRoomString(PhotonRoomPropertyKeys.SaveNoelPlayerId);
 
             SaveRole role = SaveSessionContext.GetLocalRole();
             RoleSaveData roleData = pairData.GetRoleData(role);
@@ -220,7 +217,7 @@ namespace Save
 
         private void OnGamePropertyChanged(string key, object value)
         {
-            if (IsTransientProgressKey(key))
+            if (!PhotonRoomPropertyKeys.IsPersistentSharedProgressKey(key))
             {
                 return;
             }
@@ -319,7 +316,7 @@ namespace Save
                 string key = entry.Key as string;
                 object value = entry.Value;
 
-                if (IsTransientProgressKey(key))
+                if (!PhotonRoomPropertyKeys.IsPersistentSharedProgressKey(key))
                 {
                     continue;
                 }
@@ -359,12 +356,6 @@ namespace Save
                     progress.strings.Add(stringEntry);
                 }
             }
-        }
-
-        private static bool IsTransientProgressKey(string key)
-        {
-            return !string.IsNullOrEmpty(key)
-                   && key.StartsWith(TransientProgressKeyPrefix, StringComparison.Ordinal);
         }
 
         private void ApplySharedProgress(SharedProgressData progress)

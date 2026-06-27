@@ -246,7 +246,7 @@ public class GameStateService : IInRoomCallbacks
     {
         if (flag == FlagType.None) return;
 
-        string key = GetFlagKey(flag);
+        string key = PhotonRoomPropertyKeys.BuildFlagKey(flag);
         SetBool(key, value);
     }
 
@@ -259,16 +259,8 @@ public class GameStateService : IInRoomCallbacks
     {
         if (flag == FlagType.None) return false;
 
-        string key = GetFlagKey(flag);
+        string key = PhotonRoomPropertyKeys.BuildFlagKey(flag);
         return GetBool(key);
-    }
-
-    /// <summary>
-    /// フラグキーの生成（内部用）
-    /// </summary>
-    private string GetFlagKey(FlagType flag)
-    {
-        return $"Flag_{flag}";
     }
 
     #endregion
@@ -289,9 +281,9 @@ public class GameStateService : IInRoomCallbacks
             OnPropertyChanged?.Invoke(keyString, value);
 
             // フラグイベント（Flag_で始まるキー）
-            if (keyString.StartsWith("Flag_") && value is bool boolValue)
+            if (keyString.StartsWith(PhotonRoomPropertyKeys.FlagPrefix) && value is bool boolValue)
             {
-                string flagName = keyString.Substring(5); // "Flag_"を除去
+                string flagName = keyString.Substring(PhotonRoomPropertyKeys.FlagPrefix.Length);
                 if (Enum.TryParse(flagName, out FlagType flagType))
                 {
                     OnFlagChanged?.Invoke(flagType, boolValue);

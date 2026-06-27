@@ -34,7 +34,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
         _localPlayerId = LocalIdentityProvider.GetOrCreateLocalPlayerId();
         PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable
         {
-            { SaveSessionContext.PlayerIdPropertyKey, _localPlayerId }
+            { PhotonRoomPropertyKeys.PlayerId, _localPlayerId }
         });
 
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
@@ -159,11 +159,11 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
                 Hashtable roomProps = new Hashtable
                 {
                     {
-                        SaveSessionContext.PairKeyRoomPropertyKey,
+                        PhotonRoomPropertyKeys.SavePairKey,
                         SaveSessionContext.BuildPairKey(eliasPlayerId, noelPlayerId)
                     },
-                    { SaveSessionContext.EliasPlayerIdRoomPropertyKey, eliasPlayerId },
-                    { SaveSessionContext.NoelPlayerIdRoomPropertyKey, noelPlayerId }
+                    { PhotonRoomPropertyKeys.SaveEliasPlayerId, eliasPlayerId },
+                    { PhotonRoomPropertyKeys.SaveNoelPlayerId, noelPlayerId }
                 };
                 PhotonNetwork.CurrentRoom.SetCustomProperties(roomProps);
 
@@ -211,7 +211,7 @@ public class MatchingRoomController : MonoBehaviourPunCallbacks
     private string GetPlayerId(Player player)
     {
         object value;
-        if (player.CustomProperties.TryGetValue(SaveSessionContext.PlayerIdPropertyKey, out value))
+        if (player.CustomProperties.TryGetValue(PhotonRoomPropertyKeys.PlayerId, out value))
         {
             return value as string ?? string.Empty;
         }

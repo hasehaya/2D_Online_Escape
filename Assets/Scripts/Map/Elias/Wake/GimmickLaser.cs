@@ -32,7 +32,8 @@ namespace Map.Elias.Wake
         [Header("Distance Sharing")] [SerializeField]
         private float _distanceUpdateInterval = 1f; // 距離情報の更新間隔（秒）
 
-        [SerializeField] private string _distanceRatioKey = "LaserDistanceRatio"; // Room Custom Propertyのキー
+        [SerializeField]
+        private string _distanceRatioKey = PhotonRoomPropertyKeys.WakeLaserDistanceRatio; // Room Custom Propertyのキー
 
         [Header("Debug (Editor Only)")] [SerializeField]
         private Button _clearAllTargetsButton;

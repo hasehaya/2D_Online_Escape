@@ -10,15 +10,17 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("Audio Sources")]
-    [SerializeField] private AudioSource _bgmSource;
+    [Header("Audio Sources")] [SerializeField]
+    private AudioSource _bgmSource;
+
     [SerializeField] private AudioSource _seSource;
 
-    [Header("Audio Database")]
-    [SerializeField] private AudioDatabase _audioDatabase;
+    [Header("Audio Database")] [SerializeField]
+    private AudioDatabase _audioDatabase;
 
     [Header("Volume Settings (0.0 - 1.0)")]
     private float _bgmVolume = 1.0f;
+
     private float _seVolume = 1.0f;
 
     private const string BGM_VOLUME_KEY = "BGM_Volume";

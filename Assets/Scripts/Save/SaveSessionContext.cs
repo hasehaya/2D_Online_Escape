@@ -10,15 +10,10 @@ namespace Save
     }
 
     /// <summary>
-    /// ルーム上のセーブ関連キーとローカル役割判定を扱う。
+    /// 現在ルームからセーブスロットとローカル役割を解決する。
     /// </summary>
     public static class SaveSessionContext
     {
-        public const string PlayerIdPropertyKey = "PlayerId";
-        public const string PairKeyRoomPropertyKey = "Save.PairKey";
-        public const string EliasPlayerIdRoomPropertyKey = "Save.EliasPlayerId";
-        public const string NoelPlayerIdRoomPropertyKey = "Save.NoelPlayerId";
-
         public static string GetCurrentPairKey()
         {
             if (!PhotonNetwork.InRoom)
@@ -27,7 +22,7 @@ namespace Save
             }
 
             object value;
-            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(PairKeyRoomPropertyKey, out value))
+            if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(PhotonRoomPropertyKeys.SavePairKey, out value))
             {
                 return value as string ?? string.Empty;
             }
@@ -43,8 +38,8 @@ namespace Save
             }
 
             string localId = LocalIdentityProvider.GetOrCreateLocalPlayerId();
-            string eliasId = GetRoomString(EliasPlayerIdRoomPropertyKey);
-            string noelId = GetRoomString(NoelPlayerIdRoomPropertyKey);
+            string eliasId = GetRoomString(PhotonRoomPropertyKeys.SaveEliasPlayerId);
+            string noelId = GetRoomString(PhotonRoomPropertyKeys.SaveNoelPlayerId);
 
             if (localId == eliasId)
             {
@@ -93,8 +88,8 @@ namespace Save
                 return string.Empty;
             }
 
-            string eliasId = GetRoomString(EliasPlayerIdRoomPropertyKey);
-            string noelId = GetRoomString(NoelPlayerIdRoomPropertyKey);
+            string eliasId = GetRoomString(PhotonRoomPropertyKeys.SaveEliasPlayerId);
+            string noelId = GetRoomString(PhotonRoomPropertyKeys.SaveNoelPlayerId);
             if (string.IsNullOrEmpty(eliasId) || string.IsNullOrEmpty(noelId))
             {
                 return string.Empty;
