@@ -5,9 +5,9 @@ using Photon.Realtime;
 using UnityEngine;
 
 /// <summary>
-/// Photon Room Custom Propertiesを使用してゲーム状態を管理する汎用Serviceクラス。
+/// Photonのルームカスタムプロパティを使用してゲーム状態を管理する汎用Serviceクラス。
 /// Float、Bool、Enum値をネットワーク越しに同期する。
-/// 旧FlagManagerの機能も統合。
+/// 旧FlagManagerの機能も統合する。
 /// </summary>
 public class GameStateService : IInRoomCallbacks
 {
@@ -59,7 +59,7 @@ public class GameStateService : IInRoomCallbacks
             return;
         }
 
-        // MasterClientのみが設定可能
+        // MasterClientのみ設定可能
         if (!PhotonNetwork.IsMasterClient)
         {
             Debug.LogWarning($"[GameStateService] MasterClientではありません。Float値 '{key}' を設定できません。");
@@ -126,7 +126,7 @@ public class GameStateService : IInRoomCallbacks
             return;
         }
 
-        // MasterClientのみが設定可能
+        // MasterClientのみ設定可能
         if (!PhotonNetwork.IsMasterClient)
         {
             Debug.LogWarning($"[GameStateService] MasterClientではありません。Bool値 '{key}' を設定できません。");
@@ -186,7 +186,7 @@ public class GameStateService : IInRoomCallbacks
             return;
         }
 
-        // MasterClientのみが設定可能
+        // MasterClientのみ設定可能
         if (!PhotonNetwork.IsMasterClient)
         {
             Debug.LogWarning($"[GameStateService] MasterClientではありません。Enum値 '{key}' を設定できません。");
@@ -268,7 +268,7 @@ public class GameStateService : IInRoomCallbacks
     #region IInRoomCallbacksの実装
 
     /// <summary>
-    /// Room Custom Propertiesが変更されたときに呼ばれる
+    /// ルームのカスタムプロパティが変更されたときに呼ばれる
     /// </summary>
     public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {

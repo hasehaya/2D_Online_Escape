@@ -6,8 +6,8 @@ using UnityEngine.Events;
 namespace Escape.SceneObject.Common
 {
     /// <summary>
-    /// Consumes the selected required item and activates the target GameObject.
-    /// The activated state is saved and restored through the pair save system.
+    /// 選択中の必要アイテムを消費し、対象のGameObjectを有効化する。
+    /// 有効化状態はペアセーブシステムで保存・復元される。
     /// </summary>
     public class ItemConsumeActivateObject : InteractableObject, ISaveable
     {

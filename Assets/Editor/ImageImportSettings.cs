@@ -7,7 +7,7 @@ public class ImageImportSettings : AssetPostprocessor
 
     void OnPreprocessTexture()
     {
-        // Only process textures in the Images folder
+        // Imagesフォルダ内のテクスチャだけを処理する
         if (!assetPath.StartsWith(ImagesPath))
         {
             return;
@@ -15,11 +15,11 @@ public class ImageImportSettings : AssetPostprocessor
 
         TextureImporter importer = (TextureImporter)assetImporter;
 
-        // Set texture type to Sprite (2D and UI)
+        // テクスチャタイプをSprite（2DとUI）に設定する
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
 
-        // Optional: Set common sprite settings
+        // 必要に応じて共通のSprite設定を行う
         importer.mipmapEnabled = false;
         importer.alphaIsTransparency = true;
 

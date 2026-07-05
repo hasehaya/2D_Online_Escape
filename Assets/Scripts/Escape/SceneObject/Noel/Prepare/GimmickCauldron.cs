@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Escape.SceneObject.Common;
 using Save;
@@ -16,34 +16,73 @@ namespace Escape.SceneObject.Noel.Prepare
     public class GimmickCauldron : InteractableObject, ISaveable
     {
         [Serializable]
-        public struct CauldronStep
+        public struct CauldronRecipeStep
         {
-            [SerializeField] private ItemType _firstRequiredItem; // 1回目に投入するアイテム
-            [SerializeField] private Color _firstStateColor; // 1回目成功時に切り替わる色
-            [SerializeField] private string _firstStateAnimationName; // 1回目成功時の中身アニメーション状態名
-            [SerializeField] private ItemType _secondRequiredItem; // 2回目に投入するアイテム
-            [SerializeField] private Color _secondStateColor; // 2回目成功時に切り替わる色
-            [SerializeField] private string _secondStateAnimationName; // 2回目成功時の中身アニメーション状態名
-            [SerializeField] private ItemType _bottleItem; // このルートで使う空の瓶
-            [SerializeField] private ItemType _resultItem; // このルートで得られる満タンの瓶
+            [SerializeField] private ItemType _requiredItem;
+            [SerializeField] private Sprite[] _stateSprites;
 
-            public ItemType FirstRequiredItem => _firstRequiredItem;
-            public Color FirstStateColor => _firstStateColor;
-            public string FirstStateAnimationName => _firstStateAnimationName;
-            public ItemType SecondRequiredItem => _secondRequiredItem;
-            public Color SecondStateColor => _secondStateColor;
-            public string SecondStateAnimationName => _secondStateAnimationName;
+            public CauldronRecipeStep(ItemType requiredItem, Sprite[] stateSprites)
+            {
+                _requiredItem = requiredItem;
+                _stateSprites = stateSprites;
+            }
+
+            public ItemType RequiredItem => _requiredItem;
+            public Sprite[] StateSprites => _stateSprites;
+        }
+
+        [Serializable]
+        public struct CauldronRecipe
+        {
+            [SerializeField] private List<CauldronRecipeStep> _steps;
+            [SerializeField] private ItemType _bottleItem;
+            [SerializeField] private ItemType _resultItem;
+
+            public int StepCount => _steps?.Count ?? 0;
             public ItemType BottleItem => _bottleItem;
             public ItemType ResultItem => _resultItem;
+
+            public bool TryGetStep(int stepIndex, out CauldronRecipeStep step)
+            {
+                if (_steps != null && stepIndex >= 0 && stepIndex < _steps.Count)
+                {
+                    step = _steps[stepIndex];
+                    return true;
+                }
+
+                step = default;
+                return false;
+            }
+
+            public bool HasStepThatRequires(ItemType item)
+            {
+                if (_steps == null)
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < _steps.Count; i++)
+                {
+                    if (_steps[i].RequiredItem == item)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
 
         [Header("UI References")] [SerializeField]
         private Image _cauldronImage;
 
+        [SerializeField] private SpriteLoopAnimator _cauldronImageLoop;
+
         [SerializeField] private Color _defaultColor;
+        [SerializeField] private Sprite _defaultSprite;
 
         [Header("Recipe Settings")] [SerializeField]
-        private List<CauldronStep> _recipeSteps;
+        private List<CauldronRecipe> _recipes;
 
         [SerializeField] private List<ItemType> _cauldronItems = new List<ItemType>();
 
@@ -68,7 +107,7 @@ namespace Escape.SceneObject.Noel.Prepare
         [SerializeField] private UnityEvent _onReset;
         [SerializeField] private UnityEvent _onCompleted;
 
-        private int _currentRouteIndex = -1;
+        private int _currentRecipeIndex = -1;
         private int _currentStepIndex;
         private bool _isLit;
 
@@ -102,7 +141,6 @@ namespace Escape.SceneObject.Noel.Prepare
             ItemType selectedItem = InventoryManager.Instance.GetSelectedItem();
             if (selectedItem == ItemType.None)
             {
-                // アイテム未選択の場合は何もしない（未選択時用のアクションがあればここで呼ぶ）
                 return;
             }
 
@@ -119,23 +157,22 @@ namespace Escape.SceneObject.Noel.Prepare
                 return;
             }
 
-            // 完成後は瓶詰めフェーズ
-            if (_currentStepIndex >= 2)
+            if (IsCompletionStepReached())
             {
-                if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
+                if (_currentRecipeIndex < 0 || _currentRecipeIndex >= _recipes.Count)
                 {
                     ResetCauldron(true, true);
                     return;
                 }
 
-                CauldronStep completedRoute = _recipeSteps[_currentRouteIndex];
-                if (selectedItem == completedRoute.BottleItem)
+                CauldronRecipe completedRecipe = _recipes[_currentRecipeIndex];
+                if (selectedItem == completedRecipe.BottleItem)
                 {
                     InventoryManager.Instance.TryRemoveItem(selectedItem);
-                    InventoryManager.Instance.TryAddItem(completedRoute.ResultItem);
+                    InventoryManager.Instance.TryAddItem(completedRecipe.ResultItem);
 
                     Debug.Log(
-                        $"[GimmickCauldron] Successfully bottled! Generated: {completedRoute.ResultItem}. Resetting state.");
+                        $"[GimmickCauldron] Successfully bottled! Generated: {completedRecipe.ResultItem}. Resetting state.");
 
                     AudioManager.Instance.PlaySE(SESoundType.CauldronComplete);
 
@@ -152,51 +189,15 @@ namespace Escape.SceneObject.Noel.Prepare
                 return;
             }
 
-            // 1回目の投入
-            if (_currentStepIndex == 0)
+            if (_currentStepIndex == 0 && !TryFindRecipeByFirstItem(selectedItem, out _currentRecipeIndex))
             {
-                if (!TryFindRouteByFirstItem(selectedItem, out _currentRouteIndex))
-                {
-                    Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
-                    AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
-                    ResetCauldron(true, true);
-                    return;
-                }
-
-                CauldronStep route = _recipeSteps[_currentRouteIndex];
-                InventoryManager.Instance.TryRemoveItem(selectedItem);
-
-                AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
-
-                _currentStepIndex = 1;
-                ApplyContentVisualState();
-                Debug.Log($"[GimmickCauldron] Route {_currentRouteIndex} advanced to step 1. Added: {selectedItem}");
-                _onStepAdvanced?.Invoke();
-                PairSaveCoordinator.RequestSaveIfAvailable();
-                return;
-            }
-
-            // 2回目の投入
-            if (_currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
-            {
+                Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
+                AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
                 ResetCauldron(true, true);
                 return;
             }
 
-            CauldronStep currentRoute = _recipeSteps[_currentRouteIndex];
-            if (selectedItem == currentRoute.SecondRequiredItem)
-            {
-                InventoryManager.Instance.TryRemoveItem(selectedItem);
-
-                AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
-
-                _currentStepIndex = 2;
-                ApplyContentVisualState();
-                Debug.Log($"[GimmickCauldron] Route {_currentRouteIndex} advanced to step 2. Added: {selectedItem}");
-                _onStepAdvanced?.Invoke();
-                PairSaveCoordinator.RequestSaveIfAvailable();
-            }
-            else
+            if (!TryAdvanceCurrentStep(selectedItem))
             {
                 Debug.Log($"[GimmickCauldron] Wrong material inserted: {selectedItem}. Resetting state.");
                 AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
@@ -234,7 +235,20 @@ namespace Escape.SceneObject.Noel.Prepare
                 return false;
             }
 
-            return _cauldronItems.Contains(item);
+            if (_cauldronItems.Contains(item))
+            {
+                return true;
+            }
+
+            for (int i = 0; i < _recipes.Count; i++)
+            {
+                if (_recipes[i].BottleItem == item || _recipes[i].HasStepThatRequires(item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void StartFireLoop()
@@ -280,23 +294,67 @@ namespace Escape.SceneObject.Noel.Prepare
 
         private void ApplyContentVisualState()
         {
-            if (_currentStepIndex <= 0 || _currentRouteIndex < 0 || _currentRouteIndex >= _recipeSteps.Count)
+            if (_currentStepIndex <= 0 || _currentRecipeIndex < 0 || _currentRecipeIndex >= _recipes.Count)
             {
-                _cauldronImage.color = _defaultColor;
+                ApplyCauldronImageState(_defaultSprite, null);
                 PlayContentState(_emptyContentStateName, _hideContentOnReset);
                 return;
             }
 
-            CauldronStep route = _recipeSteps[_currentRouteIndex];
-            if (_currentStepIndex == 1)
+            CauldronRecipe recipe = _recipes[_currentRecipeIndex];
+            if (recipe.StepCount <= 0)
             {
-                _cauldronImage.color = route.FirstStateColor;
-                PlayContentState(route.FirstStateAnimationName, false);
+                ApplyCauldronImageState(_defaultSprite, null);
+                PlayContentState(_emptyContentStateName, _hideContentOnReset);
                 return;
             }
 
-            _cauldronImage.color = route.SecondStateColor;
-            PlayContentState(route.SecondStateAnimationName, false);
+            int visualStepIndex = Mathf.Clamp(_currentStepIndex - 1, 0, recipe.StepCount - 1);
+            if (!recipe.TryGetStep(visualStepIndex, out CauldronRecipeStep step))
+            {
+                ApplyCauldronImageState(_defaultSprite, null);
+                PlayContentState(_emptyContentStateName, _hideContentOnReset);
+                return;
+            }
+
+            ApplyCauldronImageState(_defaultSprite, step.StateSprites);
+            PlayContentState(string.Empty, true);
+        }
+
+        private void ApplyCauldronImageState(Sprite fallbackSprite, Sprite[] animatedSprites)
+        {
+            if (_cauldronImage != null)
+            {
+                _cauldronImage.color = _defaultColor;
+            }
+
+            if (_cauldronImageLoop != null)
+            {
+                if (animatedSprites != null && animatedSprites.Length > 0)
+                {
+                    if (_cauldronImageLoop.PlayLoop(animatedSprites))
+                    {
+                        return;
+                    }
+                }
+                else if (fallbackSprite != null && _cauldronImageLoop.ShowSprite(fallbackSprite))
+                {
+                    return;
+                }
+
+                _cauldronImageLoop.Clear(false);
+            }
+
+            if (_cauldronImage != null)
+            {
+                if (animatedSprites != null && animatedSprites.Length > 0)
+                {
+                    _cauldronImage.sprite = animatedSprites[0];
+                    return;
+                }
+
+                _cauldronImage.sprite = fallbackSprite;
+            }
         }
 
         private void PlayContentState(string stateName, bool hideIfMissing)
@@ -318,28 +376,94 @@ namespace Escape.SceneObject.Noel.Prepare
             }
         }
 
-        private bool TryFindRouteByFirstItem(ItemType item, out int routeIndex)
+        private bool TryFindRecipeByFirstItem(ItemType item, out int recipeIndex)
         {
-            for (int i = 0; i < _recipeSteps.Count; i++)
+            for (int i = 0; i < _recipes.Count; i++)
             {
-                if (_recipeSteps[i].FirstRequiredItem == item)
+                if (_recipes[i].TryGetStep(0, out CauldronRecipeStep firstStep) &&
+                    firstStep.RequiredItem == item)
                 {
-                    routeIndex = i;
+                    recipeIndex = i;
                     return true;
                 }
             }
 
-            routeIndex = -1;
+            recipeIndex = -1;
             return false;
         }
 
-        /// <summary>
-        /// 釜を初期状態に戻す
-        /// </summary>
-        /// <param name="invokeEvent">リセット時のイベントを発火するかどうか</param>
+        private bool TryAdvanceCurrentStep(ItemType selectedItem)
+        {
+            if (_currentRecipeIndex < 0 || _currentRecipeIndex >= _recipes.Count)
+            {
+                return false;
+            }
+
+            CauldronRecipe recipe = _recipes[_currentRecipeIndex];
+            if (!recipe.TryGetStep(_currentStepIndex, out CauldronRecipeStep step))
+            {
+                return false;
+            }
+
+            if (selectedItem != step.RequiredItem)
+            {
+                return false;
+            }
+
+            InventoryManager.Instance.TryRemoveItem(selectedItem);
+            AudioManager.Instance.PlaySE(SESoundType.CauldronInsert);
+
+            _currentStepIndex++;
+            ApplyContentVisualState();
+            Debug.Log(
+                $"[GimmickCauldron] Recipe {_currentRecipeIndex} advanced to step {_currentStepIndex}. Added: {selectedItem}");
+            _onStepAdvanced?.Invoke();
+            PairSaveCoordinator.RequestSaveIfAvailable();
+            return true;
+        }
+
+        private bool IsCompletionStepReached()
+        {
+            if (_currentRecipeIndex < 0 || _currentRecipeIndex >= _recipes.Count)
+            {
+                return false;
+            }
+
+            int stepCount = _recipes[_currentRecipeIndex].StepCount;
+            return stepCount > 0 && _currentStepIndex >= stepCount;
+        }
+
+        private void NormalizeProgressState()
+        {
+            if (_currentRecipeIndex < -1 || _currentRecipeIndex >= _recipes.Count)
+            {
+                _currentRecipeIndex = -1;
+                _currentStepIndex = 0;
+                _isLit = false;
+                return;
+            }
+
+            if (_currentRecipeIndex == -1)
+            {
+                _currentStepIndex = 0;
+                return;
+            }
+
+            int maxStepIndex = _recipes[_currentRecipeIndex].StepCount;
+            _currentStepIndex = Mathf.Clamp(_currentStepIndex, 0, maxStepIndex);
+
+            if (_currentStepIndex <= 0)
+            {
+                _currentRecipeIndex = -1;
+                return;
+            }
+
+            _isLit = true;
+        }
+
         private void ResetCauldron(bool invokeEvent, bool requestSave = false)
         {
-            _currentRouteIndex = -1;
+            _currentRecipeIndex = -1;
             _currentStepIndex = 0;
             _isLit = false;
             ApplyVisualState();
@@ -359,7 +483,7 @@ namespace Escape.SceneObject.Noel.Prepare
         private struct CauldronState
         {
             public bool isLit;
-            public int currentRouteIndex;
+            public int currentRecipeIndex;
             public int currentStepIndex;
         }
 
@@ -368,7 +492,7 @@ namespace Escape.SceneObject.Noel.Prepare
             CauldronState state = new CauldronState
             {
                 isLit = _isLit,
-                currentRouteIndex = _currentRouteIndex,
+                currentRecipeIndex = _currentRecipeIndex,
                 currentStepIndex = _currentStepIndex
             };
             return JsonUtility.ToJson(state);
@@ -383,26 +507,9 @@ namespace Escape.SceneObject.Noel.Prepare
 
             CauldronState state = JsonUtility.FromJson<CauldronState>(stateJson);
             _isLit = state.isLit;
-            _currentRouteIndex = state.currentRouteIndex;
+            _currentRecipeIndex = state.currentRecipeIndex;
             _currentStepIndex = state.currentStepIndex;
-
-            if (_currentRouteIndex < -1 || _currentRouteIndex >= _recipeSteps.Count)
-            {
-                _currentRouteIndex = -1;
-                _currentStepIndex = 0;
-            }
-
-            if (_currentRouteIndex == -1)
-            {
-                _currentStepIndex = 0;
-            }
-
-            _currentStepIndex = Mathf.Clamp(_currentStepIndex, 0, 2);
-            if (_currentStepIndex == 0)
-            {
-                _currentRouteIndex = -1;
-            }
-
+            NormalizeProgressState();
             ApplyVisualState();
         }
 

@@ -7,7 +7,7 @@ using UnityEngine.Events;
 namespace Escape.SceneObject.Noel.Prepare
 {
     /// <summary>
-    /// Saveable bookshelf that slides left when its public request event fires.
+    /// 公開リクエストイベントが発火すると左へスライドする、保存対応の本棚。
     /// </summary>
     public class BookShelfObject : SaveableBehaviour
     {
@@ -49,7 +49,7 @@ namespace Escape.SceneObject.Noel.Prepare
         }
 
         /// <summary>
-        /// Entry point for Inspector UnityEvents and other scripts.
+        /// InspectorのUnityEventや他スクリプトから呼ぶためのエントリーポイント。
         /// </summary>
         public void RequestSlide()
         {

@@ -24,7 +24,7 @@ public static class SyncImagesFromGoogleDrive
             return;
         }
 
-        // Create destination directory if it doesn't exist
+        // 出力先ディレクトリが存在しない場合は作成する
         if (!Directory.Exists(fullDestPath))
         {
             Directory.CreateDirectory(fullDestPath);
@@ -73,7 +73,7 @@ public static class SyncImagesFromGoogleDrive
             EditorUtility.ClearProgressBar();
         }
 
-        // Refresh the AssetDatabase to see the new files
+        // 新しいファイルを認識するためにAssetDatabaseを更新する
         AssetDatabase.Refresh();
 
         EditorUtility.DisplayDialog("Sync Complete",

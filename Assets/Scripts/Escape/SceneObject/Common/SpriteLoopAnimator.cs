@@ -7,8 +7,8 @@ using UnityEngine.UI;
 namespace Escape.SceneObject.Common
 {
     /// <summary>
-    /// Plays a looping sprite animation on a UI Image.
-    /// Use named states when one object needs multiple loops, such as fire and cauldron contents.
+    /// UI Image上でスプライトのループアニメーションを再生する。
+    /// 火や大釜の中身のように1つのオブジェクトで複数のループを切り替える場合は、名前付きステートを使う。
     /// </summary>
     public class SpriteLoopAnimator : MonoBehaviour
     {
@@ -79,9 +79,19 @@ namespace Escape.SceneObject.Common
                 return false;
             }
 
+            Sprite[] sprites = ResolveSprites(stateName);
+            return PlayLoop(sprites);
+        }
+
+        public bool PlayLoop(Sprite[] sprites)
+        {
+            if (_image == null)
+            {
+                return false;
+            }
+
             StopLoop();
 
-            Sprite[] sprites = ResolveSprites(stateName);
             if (sprites == null || sprites.Length == 0)
             {
                 return false;
@@ -102,6 +112,27 @@ namespace Escape.SceneObject.Common
                 _loopCoroutine = StartCoroutine(LoopCoroutine());
             }
 
+            return true;
+        }
+
+        public bool ShowSprite(Sprite sprite)
+        {
+            if (_image == null || sprite == null)
+            {
+                return false;
+            }
+
+            StopLoop();
+
+            if (!gameObject.activeSelf)
+            {
+                gameObject.SetActive(true);
+            }
+
+            _currentSprites = null;
+            _currentIndex = 0;
+            _image.sprite = sprite;
+            SetAlpha(1f);
             return true;
         }
 

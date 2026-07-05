@@ -159,7 +159,7 @@ public class DialogueController : MonoBehaviour
     }
 
     /// <summary>
-    /// Update is called once per frame (スペースキーまたはマウス左クリックで進められるようにする)
+    /// 1フレームごとに呼ばれる更新処理（スペースキーまたはマウス左クリックで進められるようにする）
     /// </summary>
     private void Update()
     {

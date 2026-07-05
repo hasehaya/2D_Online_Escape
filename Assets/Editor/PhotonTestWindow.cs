@@ -10,8 +10,8 @@ using UnityEngine;
 
 /// <summary>
 /// ParallelSync使用時のPhotonマッチングテスト用EditorWindow
-/// オリジナル: CreateRoomを実行してGame_Eliasに遷移
-/// 複製(Clone): JoinRoomを2秒ごとに試行してGame_Noelに遷移
+/// 元: CreateRoomを実行してGame_Eliasに遷移
+/// 複製: JoinRoomを2秒ごとに試行してGame_Noelに遷移
 /// </summary>
 public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallbacks, IMatchmakingCallbacks,
     IInRoomCallbacks
@@ -103,7 +103,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
 
         if (_isClone)
         {
-            // Clone: JoinRoomボタン
+            // 複製: JoinRoomボタン
             if (GUILayout.Button("JoinRoom (自動リトライ)", GUILayout.Height(40)))
             {
                 StartJoinRoom();
@@ -111,7 +111,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
         }
         else
         {
-            // Original: CreateRoomボタン
+            // 元: CreateRoomボタン
             if (GUILayout.Button("CreateRoom", GUILayout.Height(40)))
             {
                 StartCreateRoom();

@@ -125,7 +125,7 @@ public class TitleController : MonoBehaviourPunCallbacks
         SetInteractable(false);
 
         // 特定の相手とだけ遊ぶ想定のため、ロビー一覧には表示せずID入力でのみ参加可能にする
-        // ただ��、UnityEditor実行時はテストのためにIsVisible=trueにして、Join機能のテストができるようにする
+        // ただし、UnityEditor実行時はテストのためにIsVisible=trueにして、Join機能のテストができるようにする
         RoomOptions roomOptions = new RoomOptions
         {
             MaxPlayers = 2,
@@ -143,11 +143,11 @@ public class TitleController : MonoBehaviourPunCallbacks
     private void OnJoinRoomClicked()
     {
 #if UNITY_EDITOR
-        // UnityEditor実行時は既存の部屋に自動参加を試みる
+        // UnityEditor実行時は既存の部屋への自動参加を試みる
         SetStatus("title.search_room");
         SetInteractable(false);
 
-        // GetRoomListで取得した部屋のリストから最初の部屋に参加する
+        // GetRoomListで取得した部屋リストの先頭に参加する
         if (PhotonNetwork.InLobby && PhotonNetwork.CountOfRooms > 0)
         {
             // ロビー内の部屋情報を取得して参加
