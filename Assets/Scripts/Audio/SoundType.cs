@@ -1,5 +1,5 @@
 ﻿/// <summary>
-/// SE の種類を表すEnum。AudioDatabase でクリップとの対応を定義する。
+/// ゲーム固有のSE ID。RunconaLib側には依存させず、拡張メソッドで文字列IDへ変換する。
 /// 値の追加時は Assets/Specifications/07_Sound/SOUND_SPECS.md も更新すること。
 /// </summary>
 public enum SESoundType
@@ -16,7 +16,7 @@ public enum SESoundType
 }
 
 /// <summary>
-/// BGM の種類を表すEnum。AudioDatabase でクリップとの対応を定義する。
+/// ゲーム固有のBGM ID。RunconaLib側には依存させず、拡張メソッドで文字列IDへ変換する。
 /// 値の追加時は Assets/Specifications/07_Sound/SOUND_SPECS.md も更新すること。
 /// </summary>
 public enum BGMSoundType

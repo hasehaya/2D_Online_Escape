@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
+using RunconaLib.Audio;
 using UnityEngine;
 
 namespace Escape.SceneObject.Noel.Prepare

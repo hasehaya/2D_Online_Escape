@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using RunconaLib.Audio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -153,7 +154,7 @@ public class SettingsController : MonoBehaviour
         TMP_Dropdown dropdown = dropdownObject.GetComponent<TMP_Dropdown>();
         dropdown.options = new List<TMP_Dropdown.OptionData>
         {
-            new TMP_Dropdown.OptionData("Japanese"),
+            new TMP_Dropdown.OptionData("日本語"),
             new TMP_Dropdown.OptionData("English")
         };
 

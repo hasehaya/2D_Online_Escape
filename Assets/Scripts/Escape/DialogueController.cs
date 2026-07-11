@@ -34,7 +34,7 @@ public class DialogueController : MonoBehaviour
     public void StartDialogue(StillNode stillNode)
     {
         _currentStillNode = stillNode;
-        _currentDialogues = stillNode.dialogues;
+        _currentDialogues = stillNode.GetDialogues();
         _currentDialogueIndex = 0;
 
         if (_currentDialogues != null && _currentDialogues.Length > 0)

@@ -22,12 +22,17 @@ public class TitleController : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI _statusText;
     [SerializeField] private GameObject _connectingPanel;
     [SerializeField] private SettingsController _settingsController;
+    [SerializeField] private TMP_Dropdown _languageDropdown;
 
     private List<RoomInfo> _cachedRoomList = new List<RoomInfo>();
+    private string _currentStatusKey;
+    private object[] _currentStatusArgs;
 
     private void Start()
     {
         LocalIdentityProvider.GetOrCreateLocalPlayerId();
+
+        EnsureLanguageDropdown();
 
         _createRoomButton.onClick.AddListener(OnCreateRoomClicked);
         _joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
@@ -36,6 +41,8 @@ public class TitleController : MonoBehaviourPunCallbacks
         {
             _settingsButton.onClick.AddListener(_settingsController.OpenSettings);
         }
+
+        _languageDropdown.onValueChanged.AddListener(OnLanguageChanged);
 
         SetInteractable(false);
         SetStatus("title.connecting");
@@ -49,6 +56,42 @@ public class TitleController : MonoBehaviourPunCallbacks
         {
             OnConnectedToMaster();
         }
+    }
+
+    private void EnsureLanguageDropdown()
+    {
+        if (_languageDropdown == null)
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            GameObject dropdownObject = TMP_DefaultControls.CreateDropdown(new TMP_DefaultControls.Resources());
+            dropdownObject.name = "LanguageDropdown";
+            dropdownObject.transform.SetParent(canvas.transform, false);
+            RectTransform rect = dropdownObject.GetComponent<RectTransform>();
+            rect.anchorMin = rect.anchorMax = new Vector2(1f, 1f);
+            rect.pivot = new Vector2(1f, 1f);
+            rect.anchoredPosition = new Vector2(-32f, -32f);
+            rect.sizeDelta = new Vector2(240f, 52f);
+            _languageDropdown = dropdownObject.GetComponent<TMP_Dropdown>();
+        }
+
+        _languageDropdown.ClearOptions();
+        _languageDropdown.AddOptions(new List<string> { "日本語", "English" });
+        int language = LocalizationManager.Instance != null
+            ? LocalizationManager.Instance.CurrentLanguageIndex
+            : PlayerPrefs.GetInt(LocalizationManager.LanguageKey, 0);
+        _languageDropdown.SetValueWithoutNotify(language);
+    }
+
+    private void OnLanguageChanged(int index)
+    {
+        if (LocalizationManager.Instance != null) LocalizationManager.Instance.SetLanguage(index);
+        else
+        {
+            PlayerPrefs.SetInt(LocalizationManager.LanguageKey, index);
+            PlayerPrefs.Save();
+        }
+
+        if (!string.IsNullOrEmpty(_currentStatusKey)) SetStatus(_currentStatusKey, _currentStatusArgs);
     }
 
     public override void OnConnectedToMaster()
@@ -223,6 +266,8 @@ public class TitleController : MonoBehaviourPunCallbacks
 
     private void SetStatus(string key, params object[] args)
     {
+        _currentStatusKey = key;
+        _currentStatusArgs = args;
         string template = LocalizationManager.Instance != null ? LocalizationManager.Instance.Get(key) : key;
         _statusText.text = args == null || args.Length == 0 ? template : string.Format(template, args);
     }

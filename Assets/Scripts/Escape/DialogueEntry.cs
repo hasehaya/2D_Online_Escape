@@ -23,7 +23,20 @@ public class DialogueEntry
     [Tooltip("発言内容")] [TextArea(3, 10)] [SerializeField]
     private string _text;
 
+    [SerializeField] private string _localizationKey;
+    [SerializeField, HideInInspector] private string _englishFallback;
+
     public DialogueCharacter Character => _character;
     public string CharacterName => _character == DialogueCharacter.Narration ? "" : _character.ToString();
-    public string Text => _text;
+
+    public string Text => string.IsNullOrEmpty(_localizationKey) || LocalizationManager.Instance == null
+        ? _text
+        : LocalizationManager.Instance.Get(_localizationKey, _text, _englishFallback);
+
+    public static DialogueEntry CreateLocalized(DialogueCharacter character, string key, string japanese,
+        string english)
+    {
+        return new DialogueEntry
+            { _character = character, _localizationKey = key, _text = japanese, _englishFallback = english };
+    }
 }

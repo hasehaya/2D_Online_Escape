@@ -1,76 +1,43 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using RunconaLib.Localization;
 using UnityEngine;
 
-/// <summary>
-/// 言語インデックスを保持し、簡易ローカライズ文字列を提供する。
-/// </summary>
-public class LocalizationManager : MonoBehaviour
+/// <summary>言語選択とローカライズテーブル参照を管理するプロジェクト側の窓口。</summary>
+public sealed class LocalizationManager : MonoBehaviour
 {
     public static LocalizationManager Instance { get; private set; }
+    public const string LanguageKey = "Language";
 
-    private const string LanguageKey = "Language";
-
+    [SerializeField] private LocalizationTable _table;
     public event Action<int> OnLanguageChanged;
-
     public int CurrentLanguageIndex { get; private set; }
 
-    private readonly Dictionary<string, string> _ja = new Dictionary<string, string>
+    private static readonly Dictionary<string, string[]> Defaults = new Dictionary<string, string[]>
     {
-        ["title.connecting"] = "Photonに接続中...",
-        ["title.connecting_lobby"] = "ロビーに接続中...",
-        ["title.ready"] = "部屋を作成するか、IDを入力して参加してください",
-        ["title.create_room"] = "部屋「{0}」を作成中...",
-        ["title.search_room"] = "既存の部屋を検索中...",
-        ["title.input_room_id"] = "部屋IDを入力してください",
-        ["title.room_id_invalid"] = "部屋IDは6桁の数字です",
-        ["title.joining_room"] = "部屋「{0}」に参加中...",
-        ["title.joined_room"] = "部屋に参加しました！マッチングルームに移動中...",
-        ["title.create_room_failed"] = "部屋作成に失敗しました。もう一度お試しください。",
-        ["title.no_room_found"] = "参加できる部屋が見つかりませんでした。部屋を作成してください。",
-        ["title.join_room_failed"] = "部屋参加失敗: {0}\n（IDが間違っているか、満員です）",
-        ["title.connect_error"] = "接続エラー: {0}",
-        ["ui.create"] = "部屋作成",
-        ["ui.join"] = "参加",
-        ["ui.settings"] = "設定",
-        ["ui.close"] = "閉じる",
-        ["matching.all_joined"] = "全員揃いました！準備ができたらOKボタンを押してください",
-        ["matching.player_left"] = "プレイヤーが退室しました。新しいプレイヤーを待っています...",
-        ["matching.waiting_players"] = "プレイヤーを待っています... ({0}/2)",
-        ["matching.starting"] = "ゲームを開始します...",
-        ["matching.leave_room"] = "部屋から退出中...",
-        ["matching.waiting"] = "待機中...",
-        ["matching.ready_ok"] = "OK",
-        ["matching.ready_cancel"] = "キャンセル"
-    };
-
-    private readonly Dictionary<string, string> _en = new Dictionary<string, string>
-    {
-        ["title.connecting"] = "Connecting to Photon...",
-        ["title.connecting_lobby"] = "Connecting to lobby...",
-        ["title.ready"] = "Create a room or enter Room ID to join.",
-        ["title.create_room"] = "Creating room \"{0}\"...",
-        ["title.search_room"] = "Searching for available rooms...",
-        ["title.input_room_id"] = "Please enter Room ID.",
-        ["title.room_id_invalid"] = "Room ID must be 6 digits.",
-        ["title.joining_room"] = "Joining room \"{0}\"...",
-        ["title.joined_room"] = "Joined room! Moving to matching room...",
-        ["title.create_room_failed"] = "Failed to create room. Please try again.",
-        ["title.no_room_found"] = "No joinable room found. Please create a room.",
-        ["title.join_room_failed"] = "Failed to join room: {0}\n(Check ID or room capacity.)",
-        ["title.connect_error"] = "Connection error: {0}",
-        ["ui.create"] = "Create",
-        ["ui.join"] = "Join",
-        ["ui.settings"] = "Settings",
-        ["ui.close"] = "Close",
-        ["matching.all_joined"] = "Both players are here! Press OK when ready.",
-        ["matching.player_left"] = "A player left the room. Waiting for another player...",
-        ["matching.waiting_players"] = "Waiting for players... ({0}/2)",
-        ["matching.starting"] = "Starting game...",
-        ["matching.leave_room"] = "Leaving room...",
-        ["matching.waiting"] = "Waiting...",
-        ["matching.ready_ok"] = "OK",
-        ["matching.ready_cancel"] = "Cancel"
+        ["title.connecting"] = new[] { "Photonに接続中...", "Connecting to Photon..." },
+        ["title.connecting_lobby"] = new[] { "ロビーに接続中...", "Connecting to lobby..." },
+        ["title.ready"] = new[] { "部屋を作成するか、ルームIDを入力して参加してください。", "Create a room or enter a Room ID to join." },
+        ["title.create_room"] = new[] { "部屋「{0}」を作成中...", "Creating room \"{0}\"..." },
+        ["title.search_room"] = new[] { "参加できる部屋を検索中...", "Searching for available rooms..." },
+        ["title.input_room_id"] = new[] { "ルームIDを入力してください。", "Please enter a Room ID." },
+        ["title.room_id_invalid"] = new[] { "ルームIDは6桁の数字です。", "Room ID must be 6 digits." },
+        ["title.joining_room"] = new[] { "部屋「{0}」に参加中...", "Joining room \"{0}\"..." },
+        ["title.joined_room"] = new[] { "部屋に参加しました。待機画面へ移動します...", "Joined room. Moving to matching room..." },
+        ["title.create_room_failed"] =
+            new[] { "部屋の作成に失敗しました。もう一度お試しください。", "Failed to create room. Please try again." },
+        ["title.no_room_found"] = new[] { "参加できる部屋が見つかりませんでした。", "No joinable room was found." },
+        ["title.join_room_failed"] = new[] { "部屋への参加に失敗しました: {0}", "Failed to join room: {0}" },
+        ["title.connect_error"] = new[] { "接続エラー: {0}", "Connection error: {0}" },
+        ["ui.create"] = new[] { "部屋を作る", "Create" }, ["ui.join"] = new[] { "参加", "Join" },
+        ["ui.settings"] = new[] { "設定", "Settings" }, ["ui.close"] = new[] { "閉じる", "Close" },
+        ["matching.all_joined"] = new[] { "全員揃いました。準備ができたらOKを押してください。", "Both players are here. Press OK when ready." },
+        ["matching.player_left"] = new[] { "プレイヤーが退出しました。", "A player left the room." },
+        ["matching.waiting_players"] = new[] { "プレイヤーを待っています... ({0}/2)", "Waiting for players... ({0}/2)" },
+        ["matching.starting"] = new[] { "ゲームを開始します...", "Starting game..." },
+        ["matching.leave_room"] = new[] { "部屋から退出中...", "Leaving room..." },
+        ["matching.waiting"] = new[] { "待機中...", "Waiting..." },
+        ["matching.ready_ok"] = new[] { "OK", "OK" }, ["matching.ready_cancel"] = new[] { "キャンセル", "Cancel" }
     };
 
     private void Awake()
@@ -83,31 +50,31 @@ public class LocalizationManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-        CurrentLanguageIndex = PlayerPrefs.GetInt(LanguageKey, 0);
+        CurrentLanguageIndex = Mathf.Clamp(PlayerPrefs.GetInt(LanguageKey, 0), 0, 1);
     }
 
     public void SetLanguage(int index)
     {
-        int clampedIndex = Mathf.Clamp(index, 0, 1);
-        if (CurrentLanguageIndex == clampedIndex)
-        {
-            return;
-        }
-
-        CurrentLanguageIndex = clampedIndex;
-        PlayerPrefs.SetInt(LanguageKey, CurrentLanguageIndex);
+        index = Mathf.Clamp(index, 0, 1);
+        if (CurrentLanguageIndex == index) return;
+        CurrentLanguageIndex = index;
+        PlayerPrefs.SetInt(LanguageKey, index);
         PlayerPrefs.Save();
-        OnLanguageChanged?.Invoke(CurrentLanguageIndex);
+        OnLanguageChanged?.Invoke(index);
     }
 
-    public string Get(string key)
+    public string Get(string key) => Get(key, key, key);
+
+    public string Get(string key, string japaneseFallback, string englishFallback)
     {
-        Dictionary<string, string> table = CurrentLanguageIndex == 1 ? _en : _ja;
-        if (table.TryGetValue(key, out string value))
+        if (_table != null)
         {
-            return value;
+            string value = _table.Get(key, CurrentLanguageIndex);
+            if (value != key) return value;
         }
 
-        return key;
+        if (Defaults.TryGetValue(key, out string[] values)) return values[CurrentLanguageIndex];
+        string fallback = CurrentLanguageIndex == 1 ? englishFallback : japaneseFallback;
+        return string.IsNullOrEmpty(fallback) ? key : fallback;
     }
 }
