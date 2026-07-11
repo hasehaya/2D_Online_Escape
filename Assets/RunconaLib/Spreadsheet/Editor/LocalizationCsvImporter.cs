@@ -14,7 +14,7 @@ namespace RunconaLib.Spreadsheet.Editor
         private string _sheetId = "0";
         private LocalizationTable _table;
 
-        [MenuItem("Tools/RunconaLib/Import Localization CSV")]
+        [MenuItem("Tools/RunconaLib/ローカライズCSVをインポート")]
         private static void Open() => GetWindow<LocalizationCsvImporter>("Localization CSV");
 
         private void OnGUI()

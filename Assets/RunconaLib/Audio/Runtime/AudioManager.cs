@@ -5,18 +5,28 @@ namespace RunconaLib.Audio
     public sealed class AudioManager : MonoBehaviour
     {
         public static AudioManager Instance { get; private set; }
-        [SerializeField] private AudioSource _bgmSource;
-        [SerializeField] private AudioSource _seSource;
-        [SerializeField] private AudioDatabase _audioDatabase;
-        [SerializeField, Range(0f, 1f)] private float _defaultBGMVolume = 0.5f;
-        [SerializeField, Range(0f, 1f)] private float _defaultSEVolume = 0.5f;
+
+        private const float DefaultBGMVolume = 0.5f;
+        private const float DefaultSEVolume = 0.5f;
+        private const string AudioDatabaseResourcePath = "AudioDatabase";
 
         private const string BGMVolumeKey = "RunconaLib.Audio.BGMVolume";
         private const string SEVolumeKey = "RunconaLib.Audio.SEVolume";
-        private const string LegacyBGMVolumeKey = "BGM_Volume";
-        private const string LegacySEVolumeKey = "SE_Volume";
+        private AudioSource _bgmSource;
+        private AudioSource _seSource;
+        private AudioDatabase _audioDatabase;
         private float _bgmVolume;
         private float _seVolume;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetInstance() => Instance = null;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void CreateInstance()
+        {
+            if (Instance == null)
+                new GameObject(nameof(AudioManager)).AddComponent<AudioManager>();
+        }
 
         private void Awake()
         {
@@ -29,9 +39,25 @@ namespace RunconaLib.Audio
             Instance = this;
             if (transform.parent != null) transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
-            _bgmVolume = LoadVolume(BGMVolumeKey, LegacyBGMVolumeKey, _defaultBGMVolume);
-            _seVolume = LoadVolume(SEVolumeKey, LegacySEVolumeKey, _defaultSEVolume);
+            _bgmSource = CreateSource(true);
+            _seSource = CreateSource(false);
+            _audioDatabase = Resources.Load<AudioDatabase>(AudioDatabaseResourcePath);
+            if (_audioDatabase == null)
+                Debug.LogWarning(
+                    $"{nameof(AudioManager)}: Resources/{AudioDatabaseResourcePath}.asset が見つかりません。音声を再生するには AudioDatabase を配置してください。",
+                    this);
+
+            _bgmVolume = PlayerPrefs.GetFloat(BGMVolumeKey, DefaultBGMVolume);
+            _seVolume = PlayerPrefs.GetFloat(SEVolumeKey, DefaultSEVolume);
             ApplyVolume();
+        }
+
+        private AudioSource CreateSource(bool loop)
+        {
+            AudioSource source = gameObject.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = loop;
+            return source;
         }
 
         public void SetBGMVolume(float volume)
@@ -70,14 +96,6 @@ namespace RunconaLib.Audio
         }
 
         public void StopBGM() => _bgmSource?.Stop();
-
-        private static float LoadVolume(string key, string legacyKey, float defaultValue)
-        {
-            if (PlayerPrefs.HasKey(key)) return PlayerPrefs.GetFloat(key, defaultValue);
-            float value = PlayerPrefs.GetFloat(legacyKey, defaultValue);
-            PlayerPrefs.SetFloat(key, value);
-            return value;
-        }
 
         private void ApplyVolume()
         {

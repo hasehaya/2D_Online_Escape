@@ -19,7 +19,7 @@ public class RoomLayoutTool
         SceneView.duringSceneGui += OnSceneGUI;
     }
 
-    [MenuItem("Tools/Room Layout Tool")]
+    [MenuItem("Tools/ルームレイアウトツール")]
     public static void AutoAlign()
     {
         // 1. "Map" オブジェクトを検索

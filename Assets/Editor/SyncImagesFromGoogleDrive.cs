@@ -10,7 +10,7 @@ public static class SyncImagesFromGoogleDrive
     private const string DestPath = @"Assets/Images";
     private const string ScriptPath = @"Tools/SyncGoogleDriveImages.ps1";
 
-    [MenuItem("Tools/Sync Images from Google Drive")]
+    [MenuItem("Tools/Googleドライブから画像を同期")]
     public static void SyncImages()
     {
         string projectRoot = Path.GetDirectoryName(Application.dataPath);

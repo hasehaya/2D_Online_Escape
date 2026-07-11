@@ -14,7 +14,7 @@ namespace Escape.EditorAdapters.Spreadsheet
         private string _sheetId = "0";
         private StillDialogueCatalog _catalog;
 
-        [MenuItem("Tools/RunconaLib/Import Still CSV")]
+        [MenuItem("Tools/RunconaLib/スチルCSVをインポート")]
         private static void Open() => GetWindow<StillCsvImporter>("Still CSV");
 
         private void OnGUI()

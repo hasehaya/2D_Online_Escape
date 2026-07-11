@@ -28,7 +28,7 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
     private bool _isCreateRoomMode = false;
     private bool _pendingCreateRoom = false;
 
-    [MenuItem("Tools/Photon Test Window")]
+    [MenuItem("Tools/Photonテストウィンドウ")]
     public static void ShowWindow()
     {
         _window = GetWindow<PhotonTestWindow>("Photon Test");
