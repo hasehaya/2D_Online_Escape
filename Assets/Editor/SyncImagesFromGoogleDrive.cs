@@ -76,7 +76,6 @@ public static class SyncImagesFromGoogleDrive
         // 新しいファイルを認識するためにAssetDatabaseを更新する
         AssetDatabase.Refresh();
 
-        EditorUtility.DisplayDialog("Sync Complete",
-            "Image sync from Google Drive completed.\nCheck the Console for details.", "OK");
+        Debug.Log("[SyncImages] Image sync from Google Drive completed. Check the Console for details.");
     }
 }
