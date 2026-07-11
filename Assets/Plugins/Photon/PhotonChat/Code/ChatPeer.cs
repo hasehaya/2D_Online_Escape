@@ -4,19 +4,21 @@
 // <copyright company="Exit Games GmbH">Photon Chat Api - Copyright (C) 2014 Exit Games GmbH</copyright>
 // ----------------------------------------------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using ExitGames.Client.Photon;
-
 #if UNITY_4_7 || UNITY_5 || UNITY_5_3_OR_NEWER
 #define SUPPORTED_UNITY
 #endif
 
 namespace Photon.Chat
 {
-#if SUPPORTED_UNITY || NETFX_CORE
-#endif
+    using System;
+    using System.Diagnostics;
+    using System.Collections.Generic;
+    using ExitGames.Client.Photon;
+
+    #if SUPPORTED_UNITY || NETFX_CORE
+    using Hashtable = ExitGames.Client.Photon.Hashtable;
+    using SupportClass = ExitGames.Client.Photon.SupportClass;
+    #endif
 
 
     /// <summary>
@@ -28,23 +30,12 @@ namespace Photon.Chat
         public string NameServerHost = "ns.photonengine.io";
 
         /// <summary>Name Server port per protocol (the UDP port is different than TCP, etc).</summary>
-        private static readonly Dictionary<ConnectionProtocol, int> ProtocolToNameServerPort =
-            new Dictionary<ConnectionProtocol, int>()
-            {
-                { ConnectionProtocol.Udp, 5058 }, { ConnectionProtocol.Tcp, 4533 },
-                { ConnectionProtocol.WebSocket, 80 }, { ConnectionProtocol.WebSocketSecure, 443 }
-            };
+        private static readonly Dictionary<ConnectionProtocol, int> ProtocolToNameServerPort = new Dictionary<ConnectionProtocol, int>() { { ConnectionProtocol.Udp, 5058 }, { ConnectionProtocol.Tcp, 4533 }, { ConnectionProtocol.WebSocket, 80 }, { ConnectionProtocol.WebSocketSecure, 443 } };
 
         /// <summary>Name Server Address for Photon Cloud (based on current protocol). You can use the default values and usually won't have to set this value.</summary>
-        public string NameServerAddress
-        {
-            get { return this.GetNameServerAddress(); }
-        }
+        public string NameServerAddress { get { return this.GetNameServerAddress(); } }
 
-        virtual internal bool IsProtocolSecure
-        {
-            get { return this.UsedProtocol == ConnectionProtocol.WebSocketSecure; }
-        }
+        virtual internal bool IsProtocolSecure { get { return this.UsedProtocol == ConnectionProtocol.WebSocketSecure; } }
 
         /// <summary> Chat Peer constructor. </summary>
         /// <param name="listener">Chat listener implementation.</param>
@@ -55,17 +46,17 @@ namespace Photon.Chat
         }
 
 
+
         // Sets up the socket implementations to use, depending on platform
-        [Conditional("SUPPORTED_UNITY")]
+        [System.Diagnostics.Conditional("SUPPORTED_UNITY")]
         private void ConfigUnitySockets()
         {
             Type websocketType = null;
-#if (UNITY_XBOXONE || UNITY_GAMECORE || UNITY_SWITCH2) && !UNITY_EDITOR
+            #if (UNITY_XBOXONE || UNITY_GAMECORE || UNITY_SWITCH2) && !UNITY_EDITOR
             websocketType = Type.GetType("ExitGames.Client.Photon.SocketNativeSource, Assembly-CSharp", false);
             if (websocketType == null)
             {
-                websocketType =
- Type.GetType("ExitGames.Client.Photon.SocketNativeSource, Assembly-CSharp-firstpass", false);
+                websocketType = Type.GetType("ExitGames.Client.Photon.SocketNativeSource, Assembly-CSharp-firstpass", false);
             }
             if (websocketType == null)
             {
@@ -73,10 +64,9 @@ namespace Photon.Chat
             }
             if (websocketType != null)
             {
-                this.SocketImplementationConfig[ConnectionProtocol.Udp] =
- websocketType;    // the native socket plugin supports UDP as well
+                this.SocketImplementationConfig[ConnectionProtocol.Udp] = websocketType;    // the native socket plugin supports UDP as well
             }
-#else
+            #else
             // to support WebGL export in Unity, we find and assign the SocketWebTcp class (if it's in the project).
             // alternatively class SocketWebTcp might be in the Photon3Unity3D.dll
             websocketType = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, PhotonWebSocket", false);
@@ -84,12 +74,11 @@ namespace Photon.Chat
             {
                 websocketType = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, Assembly-CSharp-firstpass", false);
             }
-
             if (websocketType == null)
             {
                 websocketType = Type.GetType("ExitGames.Client.Photon.SocketWebTcp, Assembly-CSharp", false);
             }
-#endif
+            #endif
 
             if (websocketType != null)
             {
@@ -97,10 +86,10 @@ namespace Photon.Chat
                 this.SocketImplementationConfig[ConnectionProtocol.WebSocketSecure] = websocketType;
             }
 
-#if NET_4_6 && (UNITY_EDITOR || !ENABLE_IL2CPP) && !NETFX_CORE
+            #if NET_4_6 && (UNITY_EDITOR || !ENABLE_IL2CPP) && !NETFX_CORE
             this.SocketImplementationConfig[ConnectionProtocol.Udp] = typeof(SocketUdpAsync);
             this.SocketImplementationConfig[ConnectionProtocol.Tcp] = typeof(SocketTcpAsync);
-#endif
+            #endif
         }
 
         /// <summary>If not zero, this is used for the name server port on connect. Independent of protocol (so this better matches). Set by ChatClient.ConnectUsingSettings.</summary>
@@ -118,9 +107,7 @@ namespace Photon.Chat
 
             if (this.NameServerPortOverride != 0)
             {
-                this.Listener.DebugReturn(DebugLevel.INFO,
-                    string.Format("Using NameServerPortInAppSettings as port for Name Server: {0}",
-                        this.NameServerPortOverride));
+                this.Listener.DebugReturn(DebugLevel.INFO, string.Format("Using NameServerPortInAppSettings as port for Name Server: {0}", this.NameServerPortOverride));
                 protocolPort = this.NameServerPortOverride;
             }
 
@@ -141,8 +128,7 @@ namespace Photon.Chat
 
         /// <summary> Authenticates on NameServer. </summary>
         /// <returns>If the authentication operation request could be sent.</returns>
-        public bool AuthenticateOnNameServer(string appId, string appVersion, string region,
-            AuthenticationValues authValues)
+        public bool AuthenticateOnNameServer(string appId, string appVersion, string region, AuthenticationValues authValues)
         {
             if (this.DebugOut >= DebugLevel.INFO)
             {
@@ -164,7 +150,7 @@ namespace Photon.Chat
 
                 if (authValues.AuthType != CustomAuthenticationType.None)
                 {
-                    opParameters[ParameterCode.ClientAuthenticationType] = (byte)authValues.AuthType;
+                    opParameters[ParameterCode.ClientAuthenticationType] = (byte) authValues.AuthType;
                     if (authValues.Token != null)
                     {
                         opParameters[ParameterCode.Secret] = authValues.Token;
@@ -175,7 +161,6 @@ namespace Photon.Chat
                         {
                             opParameters[ParameterCode.ClientAuthenticationParams] = authValues.AuthGetParameters;
                         }
-
                         if (authValues.AuthPostData != null)
                         {
                             opParameters[ParameterCode.ClientAuthenticationData] = authValues.AuthPostData;
@@ -184,8 +169,7 @@ namespace Photon.Chat
                 }
             }
 
-            return this.SendOperation(ChatOperationCode.Authenticate, opParameters,
-                new SendOptions() { Reliability = true, Encrypt = this.IsEncryptionAvailable });
+            return this.SendOperation(ChatOperationCode.Authenticate, opParameters, new SendOptions() { Reliability = true, Encrypt = this.IsEncryptionAvailable });
         }
     }
 
@@ -208,7 +192,6 @@ namespace Photon.Chat
 
         /// <summary>Authenticates users by their PSN Account and token on PS4. Set token as "token", env as "env" and userName as "userName" via AddAuthParameter().</summary>
         PlayStation4 = 4,
-
         [Obsolete("Use PlayStation4 or PlayStation5 as needed")]
         PlayStation = 4,
 
@@ -223,7 +206,6 @@ namespace Photon.Chat
 
         /// <summary>Authenticates users by their PSN Account and token on PS5. Set token as "token", env as "env" and userName as "userName" via AddAuthParameter().</summary>
         PlayStation5 = 12,
-
         [Obsolete("Use PlayStation4 or PlayStation5 as needed")]
         Playstation5 = 12,
 
@@ -333,8 +315,7 @@ namespace Photon.Chat
         public virtual void AddAuthParameter(string key, string value)
         {
             string ampersand = string.IsNullOrEmpty(this.AuthGetParameters) ? "" : "&";
-            this.AuthGetParameters = string.Format("{0}{1}{2}={3}", this.AuthGetParameters, ampersand,
-                Uri.EscapeDataString(key), Uri.EscapeDataString(value));
+            this.AuthGetParameters = string.Format("{0}{1}{2}={3}", this.AuthGetParameters, ampersand, System.Uri.EscapeDataString(key), System.Uri.EscapeDataString(value));
         }
 
         /// <summary>
@@ -343,8 +324,7 @@ namespace Photon.Chat
         /// <returns>string representation of this object.</returns>
         public override string ToString()
         {
-            return string.Format("AuthenticationValues Type: {3} UserId: {0}, GetParameters: {1} Token available: {2}",
-                this.UserId, this.AuthGetParameters, this.Token != null, this.AuthType);
+            return string.Format("AuthenticationValues Type: {3} UserId: {0}, GetParameters: {1} Token available: {2}", this.UserId, this.AuthGetParameters, this.Token != null, this.AuthType);
         }
 
         /// <summary>
@@ -368,28 +348,20 @@ namespace Photon.Chat
     {
         /// <summary>(224) Your application's ID: a name on your own Photon or a GUID on the Photon Cloud</summary>
         public const byte ApplicationId = 224;
-
         /// <summary>(221) Internally used to establish encryption</summary>
         public const byte Secret = 221;
-
         /// <summary>(220) Version of your application</summary>
         public const byte AppVersion = 220;
-
         /// <summary>(217) This key's (byte) value defines the target custom authentication type/service the client connects with. Used in OpAuthenticate</summary>
         public const byte ClientAuthenticationType = 217;
-
         /// <summary>(216) This key's (string) value provides parameters sent to the custom authentication type/service the client connects with. Used in OpAuthenticate</summary>
         public const byte ClientAuthenticationParams = 216;
-
         /// <summary>(214) This key's (string or byte[]) value provides parameters sent to the custom authentication service setup in Photon Dashboard. Used in OpAuthenticate</summary>
         public const byte ClientAuthenticationData = 214;
-
         /// <summary>(210) Used for region values in OpAuth and OpGetRegions.</summary>
         public const byte Region = 210;
-
         /// <summary>(230) Address of a (game) server to use.</summary>
         public const byte Address = 230;
-
         /// <summary>(225) User's ID</summary>
         public const byte UserId = 225;
     }
@@ -478,4 +450,5 @@ namespace Photon.Chat
         /// <summary>(32753) The Authentication ticket expired. Usually, this is refreshed behind the scenes. Connect (and authorize) again.</summary>
         public const int AuthenticationTicketExpired = 0x7FF1;
     }
+
 }

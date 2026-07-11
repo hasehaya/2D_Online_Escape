@@ -12,31 +12,29 @@
 
 namespace Photon.Chat
 {
-#if SUPPORTED_UNITY
+    #if SUPPORTED_UNITY
     using UnityEngine;
-#endif
+    #endif
 
     public class ChannelCreationOptions
     {
         /// <summary>Default values of channel creation options.</summary>
         public static ChannelCreationOptions Default = new ChannelCreationOptions();
-
         /// <summary>Whether or not the channel to be created will allow client to keep a list of users.</summary>
         public bool PublishSubscribers { get; set; }
-
         /// <summary>Limit of the number of users subscribed to the channel to be created.</summary>
         public int MaxSubscribers { get; set; }
 
-#if SUPPORTED_UNITY
+        #if SUPPORTED_UNITY
         [RuntimeInitializeOnLoadMethod]
         private static void Init()
         {
             Default = new ChannelCreationOptions();
         }
-#endif
+        #endif
 
-#if CHAT_EXTENDED
+        #if CHAT_EXTENDED
         public System.Collections.Generic.Dictionary<string, object> CustomProperties { get; set; }
-#endif
+        #endif
     }
 }
