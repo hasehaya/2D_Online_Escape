@@ -1,5 +1,4 @@
 ﻿using System;
-using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -116,10 +115,9 @@ namespace Escape.SceneObject.Elias.Dungeon
         private int ReadBoardBits()
         {
             if (string.IsNullOrEmpty(_boardBitsKey)) return 0;
-            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null) return 0;
-            if (!PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue(_boardBitsKey, out object value)) return 0;
+            if (GameStateService.Instance == null || !GameStateService.Instance.HasInt(_boardBitsKey)) return 0;
 
-            return TryConvertToInt(value, out int boardBits) ? boardBits : 0;
+            return GameStateService.Instance.GetInt(_boardBitsKey);
         }
 
         private bool IsCompleted()

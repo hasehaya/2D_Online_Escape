@@ -122,10 +122,7 @@ namespace Save
             ApplyInventory(roleData);
             ApplySaveables(roleData);
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                ApplySharedProgress(pairData.sharedProgress);
-            }
+            ApplySharedProgress(pairData.sharedProgress);
 
             if (InventoryManager.Instance != null)
             {
@@ -173,10 +170,7 @@ namespace Save
             CaptureInventory(roleData);
             CaptureSaveables(roleData);
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                CaptureSharedProgress(pairData.sharedProgress);
-            }
+            CaptureSharedProgress(pairData.sharedProgress);
 
             PairSaveRepository.Save(slotKey, pairData);
         }

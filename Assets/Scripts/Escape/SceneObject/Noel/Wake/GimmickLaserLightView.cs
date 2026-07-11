@@ -1,4 +1,5 @@
 ﻿using System;
+using Escape.SceneObject.Wake;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,12 +11,7 @@ namespace Escape.SceneObject.Noel.Wake
     [DisallowMultipleComponent]
     public class GimmickLaserLightView : MonoBehaviour
     {
-        private static readonly FlagType[] TargetFlags =
-        {
-            FlagType.Wake_LaserTarget1,
-            FlagType.Wake_LaserTarget2,
-            FlagType.Wake_LaserTarget3
-        };
+        private static readonly FlagType[] TargetFlags = WakeLaserProgress.TargetFlags;
 
         [Header("Light Images")] [SerializeField]
         private Image[] _lightImages = new Image[3];

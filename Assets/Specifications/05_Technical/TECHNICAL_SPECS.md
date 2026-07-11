@@ -12,7 +12,8 @@
 - `PhotonNetwork` を用いて接続・ルーム作成・参加・シーン遷移を実装
 - ルーム状態同期:
   - `GameStateService` で Room Custom Properties を管理
-  - `Float` / `Bool` / `Enum` / `FlagType` の同期に対応
+  - `Float` / `Int` / `Bool` / `Enum` / `FlagType` の同期に対応
+  - 共有状態の書き込みは MasterClient に限定しない。各ギミックの操作元が `GameStateService` 経由で Room Custom Properties を更新する
   - MagicSack の共有インベントリ枠は `InventoryManager` が Room Custom Properties を直接監視して同期する
   - 共有枠の状態は `PhotonRoomPropertyKeys.InventorySharedSlotUnlocked` と `PhotonRoomPropertyKeys.InventorySharedSlotItem` で管理する
   - 共有枠の受信反映時は再送信しない。中身を変更するローカル操作だけが Room Custom Properties を更新し、同期ループを避ける

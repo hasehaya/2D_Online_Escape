@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Escape.SceneObject.Wake;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
@@ -38,8 +39,8 @@ namespace Escape.SceneObject.Elias.Wake
         [Header("Debug (Editor Only)")] [SerializeField]
         private Button _clearAllTargetsButton;
 
-        private FlagType[] _targetFlags;
-        private FlagType _completedFlag;
+        private readonly FlagType[] _targetFlags = WakeLaserProgress.TargetFlags;
+        private const FlagType CompletedFlag = WakeLaserProgress.CompletedFlag;
         private bool[] _isCorrect;
         private bool _isCompleted;
         private float _distanceUpdateTimer;
@@ -47,13 +48,6 @@ namespace Escape.SceneObject.Elias.Wake
 
         private void Awake()
         {
-            _targetFlags = new FlagType[]
-            {
-                FlagType.Wake_LaserTarget1,
-                FlagType.Wake_LaserTarget2,
-                FlagType.Wake_LaserTarget3
-            };
-            _completedFlag = FlagType.Wake_LaserCompleted;
             _isCorrect = new bool[3];
             _nextTargetIndex = 0; // 最初のターゲット（インデックス0）から開始
         }
@@ -87,8 +81,8 @@ namespace Escape.SceneObject.Elias.Wake
 
             CheckAllTargets();
 
-            // MasterClientのみが距離割合を計算してRoom Custom Propertiesに設定
-            if (PhotonNetwork.IsMasterClient && PhotonNetwork.InRoom)
+            // Elias側のレーザー操作元が現在値を送る。MasterClientかどうかには依存しない。
+            if (PhotonNetwork.InRoom)
             {
                 _distanceUpdateTimer += Time.deltaTime;
 
@@ -149,9 +143,9 @@ namespace Escape.SceneObject.Elias.Wake
                     _isCompleted = true;
 
                     // 完了フラグを設定
-                    if (_completedFlag != FlagType.None && GameStateService.Instance != null)
+                    if (CompletedFlag != FlagType.None && GameStateService.Instance != null)
                     {
-                        GameStateService.Instance.SetFlag(_completedFlag, true);
+                        GameStateService.Instance.SetFlag(CompletedFlag, true);
                     }
 
                     StartCoroutine(TriggerCompletionEvent());
@@ -213,7 +207,7 @@ namespace Escape.SceneObject.Elias.Wake
         }
 
         /// <summary>
-        /// 距離割合を計算してRoom Custom Propertiesに設定（MasterClientのみ）
+        /// 距離割合を計算してRoom Custom Propertiesに設定
         /// </summary>
         private void UpdateDistanceRatioProperty()
         {
@@ -287,9 +281,9 @@ namespace Escape.SceneObject.Elias.Wake
             _isCompleted = true;
 
             // 完了フラグを設定
-            if (_completedFlag != FlagType.None && GameStateService.Instance != null)
+            if (CompletedFlag != FlagType.None && GameStateService.Instance != null)
             {
-                GameStateService.Instance.SetFlag(_completedFlag, true);
+                GameStateService.Instance.SetFlag(CompletedFlag, true);
             }
 
             StartCoroutine(TriggerCompletionEvent());

@@ -59,13 +59,6 @@ public class GameStateService : IInRoomCallbacks
             return;
         }
 
-        // MasterClientのみ設定可能
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogWarning($"[GameStateService] MasterClientではありません。Float値 '{key}' を設定できません。");
-            return;
-        }
-
         var properties = new Hashtable { { key, value } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
     }
@@ -126,13 +119,6 @@ public class GameStateService : IInRoomCallbacks
             return;
         }
 
-        // MasterClientのみ設定可能
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogWarning($"[GameStateService] MasterClientではありません。Bool値 '{key}' を設定できません。");
-            return;
-        }
-
         var properties = new Hashtable { { key, value } };
         PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
     }
@@ -170,6 +156,65 @@ public class GameStateService : IInRoomCallbacks
 
     #endregion
 
+    #region Int値の管理
+
+    /// <summary>
+    /// Int値を設定してネットワーク同期
+    /// </summary>
+    /// <param name="key">プロパティキー</param>
+    /// <param name="value">設定する値</param>
+    public void SetInt(string key, int value)
+    {
+        if (!PhotonNetwork.InRoom)
+        {
+            Debug.LogWarning($"[GameStateService] Room内ではありません。Int値 '{key}' を設定できません。");
+            return;
+        }
+
+        var properties = new Hashtable { { key, value } };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+    }
+
+    /// <summary>
+    /// Int値を取得
+    /// </summary>
+    /// <param name="key">プロパティキー</param>
+    /// <param name="defaultValue">キーが存在しない場合のデフォルト値</param>
+    /// <returns>取得した値</returns>
+    public int GetInt(string key, int defaultValue = 0)
+    {
+        if (!PhotonNetwork.InRoom || !PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key))
+        {
+            return defaultValue;
+        }
+
+        object value = PhotonNetwork.CurrentRoom.CustomProperties[key];
+        if (value is int intValue)
+        {
+            return intValue;
+        }
+
+        try
+        {
+            return Convert.ToInt32(value);
+        }
+        catch
+        {
+            Debug.LogWarning($"[GameStateService] キー '{key}' の値をIntに変換できません。デフォルト値を返します。");
+            return defaultValue;
+        }
+    }
+
+    /// <summary>
+    /// Int値が存在するかチェック
+    /// </summary>
+    public bool HasInt(string key)
+    {
+        return PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(key);
+    }
+
+    #endregion
+
     #region Enum値の管理
 
     /// <summary>
@@ -183,13 +228,6 @@ public class GameStateService : IInRoomCallbacks
         if (!PhotonNetwork.InRoom)
         {
             Debug.LogWarning($"[GameStateService] Room内ではありません。Enum値 '{key}' を設定できません。");
-            return;
-        }
-
-        // MasterClientのみ設定可能
-        if (!PhotonNetwork.IsMasterClient)
-        {
-            Debug.LogWarning($"[GameStateService] MasterClientではありません。Enum値 '{key}' を設定できません。");
             return;
         }
 
@@ -280,15 +318,11 @@ public class GameStateService : IInRoomCallbacks
             // 汎用イベント
             OnPropertyChanged?.Invoke(keyString, value);
 
-            // フラグイベント（Flag_で始まるキー）
-            if (keyString.StartsWith(PhotonRoomPropertyKeys.FlagPrefix) && value is bool boolValue)
+            // フラグイベント
+            if (PhotonRoomPropertyKeys.TryParseFlagKey(keyString, out FlagType flagType) && value is bool boolValue)
             {
-                string flagName = keyString.Substring(PhotonRoomPropertyKeys.FlagPrefix.Length);
-                if (Enum.TryParse(flagName, out FlagType flagType))
-                {
-                    OnFlagChanged?.Invoke(flagType, boolValue);
-                    Debug.Log($"[GameStateService] Flag Changed: {flagType} = {boolValue}");
-                }
+                OnFlagChanged?.Invoke(flagType, boolValue);
+                Debug.Log($"[GameStateService] Flag Changed: {flagType} = {boolValue}");
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
-using Photon.Pun;
 using UnityEngine;
 using UnityEngine.Events;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Escape.SceneObject.Noel.Dungeon
 {
@@ -195,14 +193,9 @@ namespace Escape.SceneObject.Noel.Dungeon
         private void PublishBoardState()
         {
             if (string.IsNullOrEmpty(_boardBitsKey)) return;
-            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null) return;
+            if (GameStateService.Instance == null) return;
 
-            Hashtable properties = new Hashtable
-            {
-                { _boardBitsKey, EncodeBoardBits() }
-            };
-
-            PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+            GameStateService.Instance.SetInt(_boardBitsKey, EncodeBoardBits());
         }
 
         private bool IsSolved()
@@ -238,14 +231,9 @@ namespace Escape.SceneObject.Noel.Dungeon
         private void PublishCompletedFlag()
         {
             if (_completedFlag == FlagType.None) return;
-            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null) return;
+            if (GameStateService.Instance == null) return;
 
-            Hashtable properties = new Hashtable
-            {
-                { PhotonRoomPropertyKeys.BuildFlagKey(_completedFlag), true }
-            };
-
-            PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+            GameStateService.Instance.SetFlag(_completedFlag, true);
         }
 
         private bool IsCompletedFlagSet()

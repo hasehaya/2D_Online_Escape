@@ -21,6 +21,24 @@ public static class PhotonRoomPropertyKeys
         return $"{FlagPrefix}{flag}";
     }
 
+    public static bool IsFlagKey(string key)
+    {
+        return !string.IsNullOrEmpty(key)
+               && key.StartsWith(FlagPrefix, StringComparison.Ordinal);
+    }
+
+    public static bool TryParseFlagKey(string key, out FlagType flag)
+    {
+        flag = FlagType.None;
+        if (!IsFlagKey(key))
+        {
+            return false;
+        }
+
+        string flagName = key.Substring(FlagPrefix.Length);
+        return Enum.TryParse(flagName, out flag);
+    }
+
     public static bool IsTransientKey(string key)
     {
         return !string.IsNullOrEmpty(key)
