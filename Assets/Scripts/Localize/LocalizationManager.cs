@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using RunconaLib.Localization;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>言語選択とローカライズテーブル参照を管理するプロジェクト側の窓口。</summary>
 public sealed class LocalizationManager : MonoBehaviour
@@ -40,6 +42,8 @@ public sealed class LocalizationManager : MonoBehaviour
         ["matching.ready_ok"] = new[] { "OK", "OK" }, ["matching.ready_cancel"] = new[] { "キャンセル", "Cancel" }
     };
 
+    private readonly Dictionary<TMP_Text, string> _autoLocalizedTexts = new Dictionary<TMP_Text, string>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -51,6 +55,14 @@ public sealed class LocalizationManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         CurrentLanguageIndex = Mathf.Clamp(PlayerPrefs.GetInt(LanguageKey, 0), 0, 1);
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void Start() => RefreshAllTexts();
+
+    private void OnDestroy()
+    {
+        if (Instance == this) SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
 
     public void SetLanguage(int index)
@@ -60,6 +72,7 @@ public sealed class LocalizationManager : MonoBehaviour
         CurrentLanguageIndex = index;
         PlayerPrefs.SetInt(LanguageKey, index);
         PlayerPrefs.Save();
+        RefreshAllTexts();
         OnLanguageChanged?.Invoke(index);
     }
 
@@ -76,5 +89,45 @@ public sealed class LocalizationManager : MonoBehaviour
         if (Defaults.TryGetValue(key, out string[] values)) return values[CurrentLanguageIndex];
         string fallback = CurrentLanguageIndex == 1 ? englishFallback : japaneseFallback;
         return string.IsNullOrEmpty(fallback) ? key : fallback;
+    }
+
+    private void HandleSceneLoaded(Scene _, LoadSceneMode __) => RefreshAllTexts();
+
+    private void RefreshAllTexts()
+    {
+        TMP_Text[] texts = Resources.FindObjectsOfTypeAll<TMP_Text>();
+        foreach (TMP_Text text in texts)
+        {
+            if (text == null || !text.gameObject.scene.IsValid()) continue;
+            if (!_autoLocalizedTexts.TryGetValue(text, out string key))
+            {
+                if (!TryResolveKey(text.text, out key)) continue;
+                _autoLocalizedTexts[text] = key;
+            }
+
+            text.text = Get(key);
+        }
+
+        var destroyed = new List<TMP_Text>();
+        foreach (TMP_Text text in _autoLocalizedTexts.Keys)
+            if (text == null)
+                destroyed.Add(text);
+        foreach (TMP_Text text in destroyed) _autoLocalizedTexts.Remove(text);
+    }
+
+    private bool TryResolveKey(string text, out string key)
+    {
+        if (_table != null && _table.TryGetKey(text, out key)) return true;
+        foreach (KeyValuePair<string, string[]> pair in Defaults)
+        {
+            if (pair.Key == text || pair.Value[0] == text || pair.Value[1] == text)
+            {
+                key = pair.Key;
+                return true;
+            }
+        }
+
+        key = null;
+        return false;
     }
 }

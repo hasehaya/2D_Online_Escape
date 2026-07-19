@@ -17,6 +17,7 @@ namespace RunconaLib.Localization
 
         [SerializeField] private List<Entry> _entries = new List<Entry>();
         private Dictionary<string, Entry> _lookup;
+        private Dictionary<string, string> _keyByText;
 
         public IReadOnlyList<Entry> Entries => _entries;
 
@@ -28,21 +29,38 @@ namespace RunconaLib.Localization
             return string.IsNullOrEmpty(value) ? entry.japanese : value;
         }
 
+        public bool TryGetKey(string text, out string key)
+        {
+            EnsureLookup();
+            return _keyByText.TryGetValue(text ?? string.Empty, out key);
+        }
+
         public void ReplaceEntries(IEnumerable<Entry> entries)
         {
             _entries = new List<Entry>(entries);
             _lookup = null;
+            _keyByText = null;
         }
 
-        private void OnEnable() => _lookup = null;
+        private void OnEnable()
+        {
+            _lookup = null;
+            _keyByText = null;
+        }
 
         private void EnsureLookup()
         {
             if (_lookup != null) return;
             _lookup = new Dictionary<string, Entry>(StringComparer.Ordinal);
+            _keyByText = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (Entry entry in _entries)
                 if (entry != null && !string.IsNullOrWhiteSpace(entry.key))
+                {
                     _lookup[entry.key] = entry;
+                    _keyByText[entry.key] = entry.key;
+                    if (!string.IsNullOrEmpty(entry.japanese)) _keyByText[entry.japanese] = entry.key;
+                    if (!string.IsNullOrEmpty(entry.english)) _keyByText[entry.english] = entry.key;
+                }
         }
     }
 }

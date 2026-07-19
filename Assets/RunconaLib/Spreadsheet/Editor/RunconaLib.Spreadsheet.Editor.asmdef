@@ -2,7 +2,6 @@
   "name": "RunconaLib.Spreadsheet.Editor",
   "rootNamespace": "RunconaLib.Spreadsheet.Editor",
   "references": [
-    "RunconaLib.Localization",
     "RunconaLib.Spreadsheet"
   ],
   "includePlatforms": [

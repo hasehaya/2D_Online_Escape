@@ -1041,8 +1041,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -514}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchoredPosition: {x: 0, y: 3}
+  m_SizeDelta: {x: 982, y: 523}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &117737814
 MonoBehaviour:
@@ -1064,7 +1064,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3f26a87fb4ebd8f45b44093fea9be656, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8be49c6af620b164dbf2cc6fcd3f3572, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3854,8 +3854,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchoredPosition: {x: 0, y: 5}
+  m_SizeDelta: {x: 982, y: 523}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &606731838
 MonoBehaviour:
@@ -3877,8 +3877,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3f26a87fb4ebd8f45b44093fea9be656, type: 3}
-  m_Type: 3
+  m_Sprite: {fileID: 21300000, guid: 58524e62cb0fee949a6b0457e2bade96, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 1
@@ -6426,11 +6426,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StillNode
   stillName: 
+  dialogueCatalog: {fileID: 0}
   dialogues:
   - _character: 0
     _text: "\u30C6\u30B9\u30C8\u30FB\u30C6\u30B9\u30C8"
+    _localizationKey: 
+    _englishFallback: 
   - _character: 2
     _text: "\u30DD\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u308D\u3046"
+    _localizationKey: 
+    _englishFallback: 
   nextViewNode: {fileID: 1256320318}
   nextStillNode: {fileID: 0}
 --- !u!114 &1045319942
@@ -6766,6 +6771,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 606731837}
+  - {fileID: 1601226054}
   m_Father: {fileID: 1018962774}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -8087,11 +8093,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StillNode
   stillName: 
+  dialogueCatalog: {fileID: 0}
   dialogues:
   - _character: 0
     _text: "\u30C6\u30B9\u30C8\u30FB\u30C6\u30B9\u30C8"
+    _localizationKey: 
+    _englishFallback: 
   - _character: 2
     _text: "\u30DD\u30FC\u30B7\u30E7\u30F3\u3092\u4F5C\u308D\u3046"
+    _localizationKey: 
+    _englishFallback: 
   nextViewNode: {fileID: 1256320318}
   nextStillNode: {fileID: 0}
 --- !u!114 &1426838730
@@ -8752,6 +8763,101 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1554584619}
+  m_CullTransparentMesh: 1
+--- !u!1 &1601226053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1601226054}
+  - component: {fileID: 1601226057}
+  - component: {fileID: 1601226056}
+  - component: {fileID: 1601226055}
+  m_Layer: 5
+  m_Name: Paper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1601226054
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601226053}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1094469630}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 5}
+  m_SizeDelta: {x: 982, y: 523}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1601226055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601226053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.PickupObject
+  _clickAreaSize: {x: 357.37, y: 251.6}
+  _clickAreaOffset: {x: -114.56, y: -37.4}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 0
+  _saveId: fd894bf8b94046d4b2b198808def4741
+--- !u!114 &1601226056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601226053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 8a8fdb05fef7de048910c711988a83c6, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 1
+  m_FillAmount: 0.551
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1601226057
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1601226053}
   m_CullTransparentMesh: 1
 --- !u!1 &1601922507
 GameObject:

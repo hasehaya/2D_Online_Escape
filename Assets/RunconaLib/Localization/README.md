@@ -2,24 +2,9 @@
 
 キーに対応する日本語・英語を保持する汎用ローカライズテーブルです。
 
-## フォルダ
+## LocalizationTable
 
-```text
-Localization/
-├─ Runtime/
-│  └─ LocalizationTable.cs
-└─ README.md
-```
-
-名前空間は `RunconaLib.Localization` です。
-
-`RunconaLib.Localization.asmdef`により独立したRuntimeアセンブリとしてコンパイルされます。
-
-## LocalizationTableの作成
-
-UnityのProjectウィンドウから次を選択します。
-
-`Create > Escape > Localization > Table`
+`Create > Escape > Localization > Table`から作成できます。
 
 ```csharp
 using RunconaLib.Localization;
@@ -28,13 +13,11 @@ string japanese = table.Get("ui.create", 0);
 string english = table.Get("ui.create", 1);
 ```
 
-言語番号は `0 = 日本語`、`1 = English` です。キーが存在しない場合はキー自身を返します。
+`TryGetKey`では、キー・日本語・英語のいずれからでもキーを逆引きできます。これにより、プロジェクト側の管理クラスからシーン内テキストを自動ローカライズできます。
 
-このプロジェクトでは、シーン間の言語選択と `PlayerPrefs` 保存をゲーム側の `LocalizationManager` が担当します。
+## CSVインポート
 
-## Spreadsheetとの連携
-
-`RunconaLib.Spreadsheet` のLocalization CSV Importerから、このテーブルを更新できます。
+`Tools > RunconaLib > ローカライズCSVをインポート`から、Google SheetまたはローカルCSVを`LocalizationTable`へ取り込めます。
 
 ```csv
 key,ja,en
@@ -42,6 +25,4 @@ ui.create,部屋を作る,Create
 ui.close,閉じる,Close
 ```
 
-## 単独移植
-
-`Assets/RunconaLib/Localization` をフォルダ単位でコピーしてください。Spreadsheet取込機能を使わない場合、このライブラリ単独で利用できます。
+CSVの取得処理は`RunconaLib.Spreadsheet`の共通基底を利用しますが、列の意味とテーブル更新処理はLocalization側にあります。
