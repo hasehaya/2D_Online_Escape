@@ -1,0 +1,20 @@
+{
+  "name": "RunconaLib.Localization.Editor",
+  "rootNamespace": "RunconaLib.Localization.Editor",
+  "references": [
+    "RunconaLib.Localization",
+    "RunconaLib.Spreadsheet",
+    "RunconaLib.Spreadsheet.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
