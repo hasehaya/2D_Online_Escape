@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -84,7 +85,7 @@ public class RoomLayoutTool
         Debug.Log($"<color=cyan><b>[Room Layout Tool]</b></color> '{mapRoot.name}' を整列しました。");
     }
 
-    [MenuItem("Tools/Prepareの左右遷移を設定")]
+    [MenuItem("Tools/PrepareのViewNodeを設定")]
     public static void SetPrepareNavigation()
     {
         Scene activeScene = SceneManager.GetActiveScene();
@@ -122,7 +123,17 @@ public class RoomLayoutTool
             }
         }
 
-        Undo.RecordObjects(views, "Set Prepare Navigation");
+        List<ViewNode> zoomViews = new List<ViewNode>();
+        foreach (Transform child in prepare)
+        {
+            if (!IsZoomViewName(child.name)) continue;
+
+            ViewNode zoomView = child.GetComponent<ViewNode>();
+            if (zoomView != null) zoomViews.Add(zoomView);
+        }
+
+        Undo.RecordObjects(views, "Set Prepare View Nodes");
+        Undo.RecordObjects(zoomViews.ToArray(), "Set Prepare View Nodes");
 
         for (int i = 0; i < views.Length; i++)
         {
@@ -131,8 +142,20 @@ public class RoomLayoutTool
             EditorUtility.SetDirty(views[i]);
         }
 
+        foreach (ViewNode zoomView in zoomViews)
+        {
+            zoomView.isZoomView = true;
+            EditorUtility.SetDirty(zoomView);
+        }
+
         Debug.Log(
-            $"<color=cyan><b>[Room Layout Tool]</b></color> '{activeScene.name}/Map/Prepare' の左右遷移を時計回りで設定しました。");
+            $"<color=cyan><b>[Room Layout Tool]</b></color> '{activeScene.name}/Map/Prepare' の左右遷移と拡大View {zoomViews.Count} 件を設定しました。");
+    }
+
+    private static bool IsZoomViewName(string objectName)
+    {
+        string[] parts = objectName.Split('_');
+        return parts.Length == 2 && int.TryParse(parts[0], out _) && int.TryParse(parts[1], out _);
     }
 
     private static void OnSceneGUI(SceneView sceneView)
