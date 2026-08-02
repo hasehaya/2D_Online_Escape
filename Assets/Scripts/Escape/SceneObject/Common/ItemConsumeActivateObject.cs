@@ -2,12 +2,13 @@
 using Save;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace Escape.SceneObject.Common
 {
     /// <summary>
-    /// 選択中の必要アイテムを消費し、対象のGameObjectを有効化する。
-    /// 有効化状態はペアセーブシステムで保存・復元される。
+    /// 選択中の必要アイテムを消費し、対象のImageを表示する。
+    /// 表示状態はペアセーブシステムで保存・復元される。
     /// </summary>
     public class ItemConsumeActivateObject : InteractableObject, ISaveable
     {
@@ -17,7 +18,7 @@ namespace Escape.SceneObject.Common
         [SerializeField] private bool _consumeItemOnUse = true;
 
         [Header("Activation")] [SerializeField]
-        private GameObject[] _targetObjects;
+        private Image[] _targetImages;
 
         [Header("Events")] [SerializeField] private UnityEvent _onActivated;
         [SerializeField] private UnityEvent _onWrongItemUsed;
@@ -93,17 +94,20 @@ namespace Escape.SceneObject.Common
 
         private void ApplyState()
         {
-            if (_targetObjects == null)
+            if (_targetImages == null)
             {
                 return;
             }
 
-            for (int i = 0; i < _targetObjects.Length; i++)
+            for (int i = 0; i < _targetImages.Length; i++)
             {
-                GameObject targetObject = _targetObjects[i];
-                if (targetObject != null)
+                Image targetImage = _targetImages[i];
+                if (targetImage != null)
                 {
-                    targetObject.SetActive(_isActivated);
+                    targetImage.gameObject.SetActive(true);
+                    Color color = targetImage.color;
+                    color.a = _isActivated ? 1f : 0f;
+                    targetImage.color = color;
                 }
             }
         }
