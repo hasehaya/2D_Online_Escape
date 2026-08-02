@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 [InitializeOnLoad]
 public class RoomLayoutTool
@@ -81,6 +82,57 @@ public class RoomLayoutTool
 
         cachedMapRoot = mapRoot;
         Debug.Log($"<color=cyan><b>[Room Layout Tool]</b></color> '{mapRoot.name}' を整列しました。");
+    }
+
+    [MenuItem("Tools/Prepareの左右遷移を設定")]
+    public static void SetPrepareNavigation()
+    {
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name != "Game_Noel" && activeScene.name != "Game_Elias")
+        {
+            EditorUtility.DisplayDialog(
+                "エラー",
+                "Game_Noel または Game_Elias シーンを開いて実行してください。",
+                "OK");
+            return;
+        }
+
+        GameObject mapRoot = GameObject.Find("Map") ?? GameObject.Find("Canvas")?.transform.Find("Map")?.gameObject;
+        Transform prepare = mapRoot != null ? mapRoot.transform.Find("Prepare") : null;
+        if (prepare == null)
+        {
+            EditorUtility.DisplayDialog("エラー", "シーン内に 'Map/Prepare' が見つかりません。", "OK");
+            return;
+        }
+
+        ViewNode[] views = new ViewNode[4];
+        for (int i = 0; i < views.Length; i++)
+        {
+            string viewName = (i + 1).ToString();
+            Transform viewTransform = prepare.Find(viewName);
+            views[i] = viewTransform != null ? viewTransform.GetComponent<ViewNode>() : null;
+
+            if (views[i] == null)
+            {
+                EditorUtility.DisplayDialog(
+                    "エラー",
+                    $"'Map/Prepare/{viewName}' または ViewNode が見つかりません。",
+                    "OK");
+                return;
+            }
+        }
+
+        Undo.RecordObjects(views, "Set Prepare Navigation");
+
+        for (int i = 0; i < views.Length; i++)
+        {
+            views[i].rightView = views[(i + 1) % views.Length];
+            views[i].leftView = views[(i + views.Length - 1) % views.Length];
+            EditorUtility.SetDirty(views[i]);
+        }
+
+        Debug.Log(
+            $"<color=cyan><b>[Room Layout Tool]</b></color> '{activeScene.name}/Map/Prepare' の左右遷移を時計回りで設定しました。");
     }
 
     private static void OnSceneGUI(SceneView sceneView)
