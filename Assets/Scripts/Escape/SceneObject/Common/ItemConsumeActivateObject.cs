@@ -17,7 +17,7 @@ namespace Escape.SceneObject.Common
         [SerializeField] private bool _consumeItemOnUse = true;
 
         [Header("Activation")] [SerializeField]
-        private GameObject _targetObject;
+        private GameObject[] _targetObjects;
 
         [Header("Events")] [SerializeField] private UnityEvent _onActivated;
         [SerializeField] private UnityEvent _onWrongItemUsed;
@@ -93,9 +93,18 @@ namespace Escape.SceneObject.Common
 
         private void ApplyState()
         {
-            if (_targetObject != null)
+            if (_targetObjects == null)
             {
-                _targetObject.SetActive(_isActivated);
+                return;
+            }
+
+            for (int i = 0; i < _targetObjects.Length; i++)
+            {
+                GameObject targetObject = _targetObjects[i];
+                if (targetObject != null)
+                {
+                    targetObject.SetActive(_isActivated);
+                }
             }
         }
 
