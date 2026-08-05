@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Escape.SceneObject.Common;
 using UnityEditor;
@@ -17,12 +16,9 @@ public sealed class ViewConnectionDebugTool : EditorWindow
     private const string StillEnabledKey = "ViewConnectionDebugTool.StillEnabled";
     private const double CacheLifetime = 0.5d;
 
-    private static readonly Color ZoomColor = new Color(0.1f, 0.85f, 1f, 1f);
-    private static readonly Color StillColor = new Color(1f, 0.35f, 0.75f, 1f);
-    private static readonly Color StillNextColor = new Color(1f, 0.72f, 0.15f, 1f);
+    private static readonly Color ConnectionColor = Color.red;
     private static readonly List<Connection> Connections = new List<Connection>();
 
-    private static GUIStyle labelStyle;
     private static double nextCacheUpdate;
     private static bool cacheDirty = true;
 
@@ -56,8 +52,8 @@ public sealed class ViewConnectionDebugTool : EditorWindow
         DrawPreferenceToggle(EnabledKey, "矢印を表示", true);
         using (new EditorGUI.DisabledScope(!EditorPrefs.GetBool(EnabledKey, true)))
         {
-            DrawPreferenceToggle(ZoomEnabledKey, "ZoomObject → ViewNode", true, ZoomColor);
-            DrawPreferenceToggle(StillEnabledKey, "Still 関連", true, StillColor);
+            DrawPreferenceToggle(ZoomEnabledKey, "ZoomObject → ViewNode", true);
+            DrawPreferenceToggle(StillEnabledKey, "Still 関連", true);
         }
 
         EditorGUILayout.Space();
@@ -65,13 +61,10 @@ public sealed class ViewConnectionDebugTool : EditorWindow
         EditorGUILayout.LabelField("StillNode から次の ViewNode / StillNode への接続を表示します。");
     }
 
-    private static void DrawPreferenceToggle(string key, string label, bool defaultValue, Color? color = null)
+    private static void DrawPreferenceToggle(string key, string label, bool defaultValue)
     {
         bool current = EditorPrefs.GetBool(key, defaultValue);
-        Color previousColor = GUI.color;
-        if (color.HasValue) GUI.color = color.Value;
         bool updated = EditorGUILayout.ToggleLeft(label, current);
-        GUI.color = previousColor;
 
         if (updated == current) return;
 
@@ -121,7 +114,7 @@ public sealed class ViewConnectionDebugTool : EditorWindow
             SerializedProperty property = new SerializedObject(zoomObject).FindProperty("_zoomViewNode");
             if (property?.objectReferenceValue is ViewNode target)
             {
-                Connections.Add(new Connection(zoomObject.transform, target.transform, ZoomColor, "Zoom"));
+                Connections.Add(new Connection(zoomObject.transform, target.transform));
             }
         }
     }
@@ -143,9 +136,7 @@ public sealed class ViewConnectionDebugTool : EditorWindow
 
                 Connections.Add(new Connection(
                     behaviour.transform,
-                    target.transform,
-                    StillColor,
-                    property.displayName));
+                    target.transform));
             }
         }
 
@@ -156,9 +147,7 @@ public sealed class ViewConnectionDebugTool : EditorWindow
 
             Connections.Add(new Connection(
                 stillNode.transform,
-                stillNode.nextViewNode.transform,
-                StillNextColor,
-                "Next View"));
+                stillNode.nextViewNode.transform));
         }
     }
 
@@ -174,7 +163,7 @@ public sealed class ViewConnectionDebugTool : EditorWindow
         Vector3 direction = end - start;
         if (direction.sqrMagnitude < 0.0001f) return;
 
-        Handles.color = connection.Color;
+        Handles.color = ConnectionColor;
         Handles.DrawAAPolyLine(4f, start, end);
 
         float arrowSize = Mathf.Min(HandleUtility.GetHandleSize(end) * 0.18f, direction.magnitude * 0.25f);
@@ -189,9 +178,6 @@ public sealed class ViewConnectionDebugTool : EditorWindow
             arrowBase + side * arrowSize * 0.45f,
             arrowBase - side * arrowSize * 0.45f);
 
-        EnsureLabelStyle();
-        string label = $"{connection.Source.name} → {connection.Target.name}  [{connection.Label}]";
-        Handles.Label(Vector3.Lerp(start, end, 0.5f), label, labelStyle);
     }
 
     private static Vector3 GetCenter(Transform target)
@@ -206,32 +192,15 @@ public sealed class ViewConnectionDebugTool : EditorWindow
         return target.position;
     }
 
-    private static void EnsureLabelStyle()
-    {
-        if (labelStyle != null) return;
-
-        labelStyle = new GUIStyle(EditorStyles.boldLabel)
-        {
-            fontSize = 12,
-            padding = new RectOffset(4, 4, 2, 2)
-        };
-        labelStyle.normal.textColor = Color.white;
-        labelStyle.normal.background = Texture2D.grayTexture;
-    }
-
     private readonly struct Connection
     {
-        public Connection(Transform source, Transform target, Color color, string label)
+        public Connection(Transform source, Transform target)
         {
             Source = source;
             Target = target;
-            Color = color;
-            Label = label;
         }
 
         public Transform Source { get; }
         public Transform Target { get; }
-        public Color Color { get; }
-        public string Label { get; }
     }
 }
