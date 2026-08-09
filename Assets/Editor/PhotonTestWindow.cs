@@ -71,6 +71,10 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
             EditorStyles.boldLabel);
         EditorGUILayout.Space(5);
 
+        DrawControlButtons();
+
+        EditorGUILayout.Space(10);
+
         // Photon接続状態
         EditorGUILayout.LabelField("Photon状態", PhotonNetwork.NetworkClientState.ToString());
 
@@ -96,8 +100,21 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
             }
         }
 
-        EditorGUILayout.Space(10);
+        EditorGUILayout.Space(5);
 
+        if (_isJoining)
+        {
+            EditorGUILayout.HelpBox("JoinRoom試行中... 2秒おきにリトライします", MessageType.Info);
+        }
+
+        if (_isConnecting)
+        {
+            EditorGUILayout.HelpBox("Photonに接続中...", MessageType.Info);
+        }
+    }
+
+    private void DrawControlButtons()
+    {
         // 再生中またはマッチング処理中はボタンを無効化
         GUI.enabled = !EditorApplication.isPlaying && !_isConnecting && !_isJoining && !_waitingForPlayMode;
 
@@ -126,16 +143,6 @@ public class PhotonTestWindow : EditorWindow, ILobbyCallbacks, IConnectionCallba
         if (GUILayout.Button("接続をリセット"))
         {
             ResetConnection();
-        }
-
-        if (_isJoining)
-        {
-            EditorGUILayout.HelpBox("JoinRoom試行中... 2秒おきにリトライします", MessageType.Info);
-        }
-
-        if (_isConnecting)
-        {
-            EditorGUILayout.HelpBox("Photonに接続中...", MessageType.Info);
         }
     }
 
