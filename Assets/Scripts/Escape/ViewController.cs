@@ -24,6 +24,8 @@ public class ViewController : MonoBehaviour
     private ViewNode _currentViewNode; // ViewNode固有の操作用
     private Camera _mainCamera;
 
+    public bool IsShowingStill => _currentViewable is StillNode;
+
     private void Awake()
     {
         if (Instance == null)
@@ -145,6 +147,11 @@ public class ViewController : MonoBehaviour
         // 今回は仕様通り「拡大中は戻るボタン」とする。
 
         bool isZoomed = _currentViewNode != null && _currentViewNode.isZoomView;
+
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.SetVisible(!IsShowingStill);
+        }
 
         if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewNode?.leftView != null);
         if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewNode?.rightView != null);

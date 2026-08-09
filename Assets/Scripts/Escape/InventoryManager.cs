@@ -266,6 +266,16 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         _itemZoomPanel.Close();
     }
 
+    public void SetVisible(bool isVisible)
+    {
+        _itemSlotContainer.gameObject.SetActive(isVisible);
+
+        if (!isVisible)
+        {
+            CloseItemZoom();
+        }
+    }
+
     private void RefreshUI()
     {
         _slotViews.Clear();

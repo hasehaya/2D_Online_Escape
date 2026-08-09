@@ -140,18 +140,33 @@ namespace Escape.SceneObject.Common
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            if (IsInteractionBlocked())
+            {
+                return;
+            }
+
             Interact();
         }
 
         // コライダーを持つオブジェクト（非UI）でもクリックを検知できるようにする
         private void OnMouseDown()
         {
+            if (IsInteractionBlocked())
+            {
+                return;
+            }
+
             // UI越しのクリックでない場合のみ反応させる
             EventSystem eventSystem = EventSystem.current;
             if (eventSystem == null || !eventSystem.IsPointerOverGameObject())
             {
                 Interact();
             }
+        }
+
+        private static bool IsInteractionBlocked()
+        {
+            return ViewController.Instance != null && ViewController.Instance.IsShowingStill;
         }
 
         protected virtual void Interact()
