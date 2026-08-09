@@ -13,7 +13,8 @@ using UnityEngine.UI;
 /// </summary>
 public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 {
-    private const int MaxItemCount = 4;
+    private const int MaxLocalItemCount = 3;
+    private const int SharedSlotIndex = 0;
 
     public static InventoryManager Instance { get; private set; }
 
@@ -39,6 +40,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
     private int _selectedIndex = -1;
     private bool _sharedSlotUnlocked;
     private ItemType _sharedSlotItem = ItemType.None;
+    private ItemType _pendingSharedTransferItem = ItemType.None;
 
     public event Action OnStateChanged;
     public event Action<int> OnSelectionChanged;
@@ -63,6 +65,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
     private void OnEnable()
     {
         PhotonNetwork.AddCallbackTarget(this);
+        PhotonNetwork.NetworkingClient.OpResponseReceived += OnOperationResponseReceived;
     }
 
     private void Start()
@@ -75,6 +78,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
     private void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
+        PhotonNetwork.NetworkingClient.OpResponseReceived -= OnOperationResponseReceived;
     }
 
     public bool TryAddItem(ItemType item)
@@ -84,21 +88,16 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return false;
         }
 
-        if (item != ItemType.MagicSack && IsSharedSlotEnabled && _sharedSlotItem == ItemType.None)
+        if (item == ItemType.MagicSack)
         {
-            return TrySetSharedSlotItem(item);
+            return TryUnlockSharedSlot();
         }
 
-        if (_items.Count < MaxItemCount)
+        if (_items.Count < MaxLocalItemCount)
         {
             _items.Add(item);
             RefreshUI();
-            NotifyStateChanged(_items.Count - 1, item);
-
-            if (item == ItemType.MagicSack)
-            {
-                EnsureSharedSlotUnlocked();
-            }
+            NotifyStateChanged(ToSlotIndex(_items.Count - 1), item);
 
             PairSaveCoordinator.RequestSaveIfAvailable();
             return true;
@@ -119,13 +118,14 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return TrySetSharedSlotItem(ItemType.None);
         }
 
-        if (index < 0 || index >= _items.Count)
+        int localItemIndex = ToLocalItemIndex(index);
+        if (localItemIndex < 0 || localItemIndex >= _items.Count)
         {
             return false;
         }
 
-        ItemType removedItem = _items[index];
-        _items.RemoveAt(index);
+        ItemType removedItem = _items[localItemIndex];
+        _items.RemoveAt(localItemIndex);
 
         if (_selectedIndex == index)
         {
@@ -168,7 +168,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return false;
         }
 
-        return TryRemoveItemAt(index);
+        return TryRemoveItemAt(ToSlotIndex(index));
     }
 
     public bool HasItem(ItemType item)
@@ -249,6 +249,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         index = _items.FindIndex(x => x == item);
         if (index >= 0)
         {
+            index = ToSlotIndex(index);
             return true;
         }
 
@@ -330,7 +331,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             else
             {
                 slotView.ClearItemIcon();
-                slotButton.interactable = false;
+                slotButton.interactable = IsSharedSlotIndex(i);
             }
         }
 
@@ -352,6 +353,12 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private void OnSlotTapped(InventorySlot tappedSlot)
     {
+        if (IsSharedSlotIndex(tappedSlot.Index) && _sharedSlotItem == ItemType.None)
+        {
+            TryMoveSelectedItemToSharedSlot();
+            return;
+        }
+
         if (_selectedIndex == tappedSlot.Index)
         {
             OpenSelectedItemZoom();
@@ -395,10 +402,19 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
     {
         _items.Clear();
 
-        int count = Mathf.Min(items.Count, MaxItemCount);
-        for (int i = 0; i < count; i++)
+        bool containedLegacyMagicSack = false;
+        for (int i = 0; i < items.Count; i++)
         {
-            _items.Add(items[i]);
+            if (items[i] == ItemType.MagicSack)
+            {
+                containedLegacyMagicSack = true;
+                continue;
+            }
+
+            if (_items.Count < MaxLocalItemCount)
+            {
+                _items.Add(items[i]);
+            }
         }
 
         _selectedIndex = -1;
@@ -406,7 +422,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         NotifySelectionChanged();
         CloseItemZoom();
 
-        if (publishSharedUnlock && _items.Contains(ItemType.MagicSack))
+        if (publishSharedUnlock && containedLegacyMagicSack)
         {
             EnsureSharedSlotUnlocked();
         }
@@ -414,14 +430,20 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     public void ReconcileSharedSlotUnlock()
     {
-        if (_items.Contains(ItemType.MagicSack))
+        if (_sharedSlotUnlocked)
         {
             EnsureSharedSlotUnlocked();
         }
     }
 
-    private bool IsSharedSlotEnabled => _sharedSlotUnlocked || _items.Contains(ItemType.MagicSack);
-    private int SharedSlotIndex => _items.Count;
+    public bool TryUnlockSharedSlot()
+    {
+        EnsureSharedSlotUnlocked();
+        PairSaveCoordinator.RequestSaveIfAvailable();
+        return true;
+    }
+
+    private bool IsSharedSlotEnabled => _sharedSlotUnlocked;
 
     private bool IsSharedSlotIndex(int index)
     {
@@ -435,15 +457,16 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private bool TryGetItemAt(int index, out ItemType item)
     {
-        if (index >= 0 && index < _items.Count)
-        {
-            item = _items[index];
-            return true;
-        }
-
         if (IsSharedSlotIndex(index))
         {
             item = _sharedSlotItem;
+            return true;
+        }
+
+        int localItemIndex = ToLocalItemIndex(index);
+        if (localItemIndex >= 0 && localItemIndex < _items.Count)
+        {
+            item = _items[localItemIndex];
             return true;
         }
 
@@ -451,10 +474,26 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         return false;
     }
 
+    private int ToLocalItemIndex(int slotIndex)
+    {
+        return IsSharedSlotEnabled ? slotIndex - 1 : slotIndex;
+    }
+
+    private int ToSlotIndex(int localItemIndex)
+    {
+        return IsSharedSlotEnabled ? localItemIndex + 1 : localItemIndex;
+    }
+
     private void EnsureSharedSlotUnlocked()
     {
         if (!_sharedSlotUnlocked)
         {
+            if (_selectedIndex >= 0)
+            {
+                _selectedIndex++;
+                NotifySelectionChanged();
+            }
+
             _sharedSlotUnlocked = true;
             RefreshUI();
         }
@@ -464,8 +503,47 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return;
         }
 
-        Hashtable properties = new Hashtable { { PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, true } };
+        Hashtable properties = new Hashtable
+        {
+            { PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, true },
+            { PhotonRoomPropertyKeys.InventorySharedSlotItem, (int)_sharedSlotItem }
+        };
         PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+    }
+
+    private bool TryMoveSelectedItemToSharedSlot()
+    {
+        if (!IsSharedSlotEnabled || _sharedSlotItem != ItemType.None || IsSharedSlotIndex(_selectedIndex) ||
+            !TryGetItemAt(_selectedIndex, out ItemType item) || item == ItemType.None)
+        {
+            return false;
+        }
+
+        if (!PhotonNetwork.InRoom)
+        {
+            int sourceIndex = _selectedIndex;
+            ApplySharedSlotState(true, item);
+            return TryRemoveItemAt(sourceIndex);
+        }
+
+        _pendingSharedTransferItem = item;
+        Hashtable properties = new Hashtable
+        {
+            { PhotonRoomPropertyKeys.InventorySharedSlotUnlocked, true },
+            { PhotonRoomPropertyKeys.InventorySharedSlotItem, (int)item }
+        };
+        Hashtable expectedProperties = new Hashtable
+        {
+            { PhotonRoomPropertyKeys.InventorySharedSlotItem, (int)ItemType.None }
+        };
+
+        bool requested = PhotonNetwork.CurrentRoom.SetCustomProperties(properties, expectedProperties);
+        if (!requested)
+        {
+            _pendingSharedTransferItem = ItemType.None;
+        }
+
+        return requested;
     }
 
     private bool TrySetSharedSlotItem(ItemType item)
@@ -530,6 +608,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private void ApplySharedSlotState(bool unlocked, ItemType item)
     {
+        bool sharedSlotWasUnlocked = _sharedSlotUnlocked;
         bool changed = _sharedSlotUnlocked != unlocked || _sharedSlotItem != item;
         _sharedSlotUnlocked = unlocked;
         _sharedSlotItem = item;
@@ -537,6 +616,12 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         if (!changed)
         {
             return;
+        }
+
+        if (!sharedSlotWasUnlocked && unlocked && _selectedIndex >= 0)
+        {
+            _selectedIndex++;
+            NotifySelectionChanged();
         }
 
         if (_selectedIndex == SharedSlotIndex)
@@ -566,6 +651,30 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         ReadSharedSlotProperties(propertiesThatChanged, ref unlocked, ref item);
         ApplySharedSlotState(unlocked, item);
         NotifyStateChanged(SharedSlotIndex, item);
+
+        if (_pendingSharedTransferItem != ItemType.None && item == _pendingSharedTransferItem)
+        {
+            ItemType transferredItem = _pendingSharedTransferItem;
+            _pendingSharedTransferItem = ItemType.None;
+            int localItemIndex = _items.FindIndex(x => x == transferredItem);
+            if (localItemIndex >= 0)
+            {
+                TryRemoveItemAt(ToSlotIndex(localItemIndex));
+            }
+        }
+    }
+
+    private void OnOperationResponseReceived(OperationResponse response)
+    {
+        if (_pendingSharedTransferItem == ItemType.None || response.OperationCode != OperationCode.SetProperties ||
+            response.ReturnCode != ErrorCode.InvalidOperation)
+        {
+            return;
+        }
+
+        _pendingSharedTransferItem = ItemType.None;
+        ReadSharedSlotFromRoom();
+        Debug.Log("Shared inventory slot was already occupied; local item was not moved.");
     }
 
     public void OnPlayerEnteredRoom(Player newPlayer)
