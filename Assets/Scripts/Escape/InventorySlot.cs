@@ -7,7 +7,10 @@ using UnityEngine.UI;
 /// </summary>
 public class InventorySlot : MonoBehaviour
 {
+    private static readonly Color SharedSlotColor = new Color(1f, 0.96f, 0.72f, 1f);
+
     [SerializeField] private int _index;
+    [SerializeField] private Image _backgroundImage;
     [SerializeField] private Image _selectedImage;
     [SerializeField] private Button _button;
     [NonSerialized] private Action<InventorySlot> _onTapped;
@@ -25,6 +28,11 @@ public class InventorySlot : MonoBehaviour
         _selectedImage.enabled = false;
         _selectedImage.raycastTarget = false;
         _onTapped = onTapped;
+    }
+
+    public void SetShared(bool isShared)
+    {
+        _backgroundImage.color = isShared ? SharedSlotColor : Color.white;
     }
 
     public void SetItemIcon(Sprite icon)

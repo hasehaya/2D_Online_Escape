@@ -3780,7 +3780,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _itemToPickup: 0
+  _itemToPickup: 14
   _saveId: f48181e5ac52455c87df5d1ec3938eff
 --- !u!1 &688089246
 GameObject:

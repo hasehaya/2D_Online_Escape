@@ -84,6 +84,11 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             return false;
         }
 
+        if (item != ItemType.MagicSack && IsSharedSlotEnabled && _sharedSlotItem == ItemType.None)
+        {
+            return TrySetSharedSlotItem(item);
+        }
+
         if (_items.Count < MaxItemCount)
         {
             _items.Add(item);
@@ -97,11 +102,6 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
             PairSaveCoordinator.RequestSaveIfAvailable();
             return true;
-        }
-
-        if (IsSharedSlotEnabled && _sharedSlotItem == ItemType.None)
-        {
-            return TrySetSharedSlotItem(item);
         }
 
         return false;
@@ -297,6 +297,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             InventorySlot slotView = _slotViews[i];
             slotView.SetIndex(i);
             slotView.BindUI(OnSlotTapped);
+            slotView.SetShared(IsSharedSlotIndex(i));
 
             Button slotButton = slotView.Button;
             slotButton.onClick.RemoveAllListeners();

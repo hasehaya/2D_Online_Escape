@@ -136,6 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventorySlot
   _index: 1
+  _backgroundImage: {fileID: 5699843136814358083}
   _selectedImage: {fileID: 778900000000000004}
   _button: {fileID: 4847919210885689869}
 --- !u!1 &5380762681764213670
