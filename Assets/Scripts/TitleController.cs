@@ -34,6 +34,10 @@ public class TitleController : MonoBehaviourPunCallbacks
 
         EnsureLanguageDropdown();
 
+#if UNITY_EDITOR
+        CreateDeleteSaveDataButton();
+#endif
+
         _createRoomButton.onClick.AddListener(OnCreateRoomClicked);
         _joinRoomButton.onClick.AddListener(OnJoinRoomClicked);
 
@@ -81,6 +85,55 @@ public class TitleController : MonoBehaviourPunCallbacks
             : PlayerPrefs.GetInt(LocalizationManager.LanguageKey, 0);
         _languageDropdown.SetValueWithoutNotify(language);
     }
+
+#if UNITY_EDITOR
+    private void CreateDeleteSaveDataButton()
+    {
+        Canvas canvas = FindFirstObjectByType<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogWarning("[TitleController] セーブデータ削除ボタンを配置するCanvasが見つかりません。");
+            return;
+        }
+
+        GameObject buttonObject = TMP_DefaultControls.CreateButton(new TMP_DefaultControls.Resources());
+        buttonObject.name = "DeleteSaveDataDebugButton";
+        buttonObject.transform.SetParent(canvas.transform, false);
+
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0f, 0f);
+        rect.pivot = new Vector2(0f, 0f);
+        rect.anchoredPosition = new Vector2(24f, 24f);
+        rect.sizeDelta = new Vector2(240f, 52f);
+
+        Image image = buttonObject.GetComponent<Image>();
+        image.color = new Color(0.65f, 0.12f, 0.12f, 1f);
+
+        TextMeshProUGUI label = buttonObject.GetComponentInChildren<TextMeshProUGUI>();
+        label.text = "セーブデータ削除";
+        label.color = Color.white;
+
+        buttonObject.GetComponent<Button>().onClick.AddListener(OnDeleteSaveDataClicked);
+    }
+
+    private void OnDeleteSaveDataClicked()
+    {
+        bool confirmed = UnityEditor.EditorUtility.DisplayDialog(
+            "セーブデータ削除",
+            "ローカルのセーブデータと設定をすべて削除します。元に戻せません。削除しますか？",
+            "削除",
+            "キャンセル");
+        if (!confirmed)
+        {
+            return;
+        }
+
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("[TitleController] ローカルのセーブデータをすべて削除しました。");
+        SetStatus("セーブデータを削除しました。");
+    }
+#endif
 
     private void OnLanguageChanged(int index)
     {
