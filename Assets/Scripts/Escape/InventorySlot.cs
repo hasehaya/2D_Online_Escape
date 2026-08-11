@@ -32,7 +32,7 @@ public class InventorySlot : MonoBehaviour
 
     public void BindUI(Action<InventorySlot> onTapped)
     {
-        _selectedImage.enabled = false;
+        _selectedImage.gameObject.SetActive(false);
         _selectedImage.raycastTarget = false;
         _onTapped = onTapped;
     }
@@ -58,7 +58,7 @@ public class InventorySlot : MonoBehaviour
 
     public void SetSelected(bool isSelected)
     {
-        _selectedImage.enabled = isSelected;
+        _selectedImage.gameObject.SetActive(isSelected);
     }
 
     public void Tap()
