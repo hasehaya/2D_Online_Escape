@@ -12,6 +12,7 @@ public static class PhotonRoomPropertyKeys
 
     public const string InventorySharedSlotUnlocked = "Inventory.SharedSlot.Unlocked";
     public const string InventorySharedSlotItem = "Inventory.SharedSlot.Item";
+    public const string InventoryHasMagicSack = "Inventory.HasMagicSack";
 
     public const string WakeLaserDistanceRatio = "LaserDistanceRatio";
     public const string DungeonLightsOutPuzzleBoardBits = TransientPrefix + "DungeonLightsOutPuzzle.BoardBits";
