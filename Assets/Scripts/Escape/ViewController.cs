@@ -26,6 +26,8 @@ public class ViewController : MonoBehaviour
 
     public bool IsShowingStill => _currentViewable is StillNode;
 
+    private bool IsWakeCompleted => GameStateService.Instance.GetFlag(FlagType.Wake_LaserCompleted);
+
     private void Awake()
     {
         if (Instance == null)
@@ -50,6 +52,16 @@ public class ViewController : MonoBehaviour
         {
             ShowView(_initialView);
         }
+    }
+
+    private void OnEnable()
+    {
+        GameStateService.Instance.OnFlagChanged += OnFlagChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameStateService.Instance.OnFlagChanged -= OnFlagChanged;
     }
 
     public void ShowView(ViewNode viewNode)
@@ -150,11 +162,19 @@ public class ViewController : MonoBehaviour
 
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.SetVisible(!IsShowingStill);
+            InventoryManager.Instance.SetVisible(IsWakeCompleted && !IsShowingStill);
         }
 
         if (_leftButton != null) _leftButton.gameObject.SetActive(!isZoomed && _currentViewNode?.leftView != null);
         if (_rightButton != null) _rightButton.gameObject.SetActive(!isZoomed && _currentViewNode?.rightView != null);
         if (_backButton != null) _backButton.gameObject.SetActive(isZoomed);
+    }
+
+    private void OnFlagChanged(FlagType flag, bool value)
+    {
+        if (flag == FlagType.Wake_LaserCompleted)
+        {
+            UpdateUI();
+        }
     }
 }
