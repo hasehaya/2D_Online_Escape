@@ -341,6 +341,11 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
         }
 
         UpdateSelectionVisual();
+
+        if (_itemSlotContainer is RectTransform containerRect)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+        }
     }
 
     private void UpdateSelectionVisual()
@@ -495,8 +500,12 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
             }
 
             _sharedSlotUnlocked = true;
-            RefreshUI();
         }
+
+        // MagicSack can be picked up after the inventory UI has already been rebuilt
+        // (for example, after a scene transition). Always resync the visible slot
+        // count even when the shared-slot state was already known.
+        RefreshUI();
 
         if (!PhotonNetwork.InRoom)
         {
