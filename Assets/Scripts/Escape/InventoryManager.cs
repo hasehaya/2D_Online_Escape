@@ -26,6 +26,8 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     [SerializeField] private GameObject _itemSlotPrefab;
 
+    [SerializeField] private Transform _magicSackItemSlot;
+
     [Header("Item Zoom UI")] [SerializeField]
     private ItemZoomPanel _itemZoomPanel;
 
@@ -279,6 +281,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private void RefreshUI()
     {
+        _magicSackItemSlot.gameObject.SetActive(IsSharedSlotEnabled);
         _slotViews.Clear();
 
         foreach (Transform child in _itemSlotContainer)
@@ -457,7 +460,7 @@ public class InventoryManager : MonoBehaviour, IInRoomCallbacks
 
     private int GetVisibleSlotCount()
     {
-        return _items.Count + (IsSharedSlotEnabled ? 1 : 0);
+        return MaxLocalItemCount + (IsSharedSlotEnabled ? 1 : 0);
     }
 
     private bool TryGetItemAt(int index, out ItemType item)
