@@ -1465,7 +1465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6210, y: -1230}
+  m_AnchoredPosition: {x: 0, y: -1230}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &171863545
@@ -1707,7 +1707,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1230}
+  m_AnchoredPosition: {x: 2070, y: -1230}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &190041421
@@ -1995,6 +1995,7 @@ GameObject:
   - component: {fileID: 292250976}
   - component: {fileID: 292250975}
   - component: {fileID: 292250974}
+  - component: {fileID: 292250977}
   m_Layer: 5
   m_Name: Record
   m_TagString: Untagged
@@ -2038,7 +2039,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 0}
+  _zoomViewNode: {fileID: 1739583565}
 --- !u!114 &292250975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2077,6 +2078,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 292250972}
   m_CullTransparentMesh: 1
+--- !u!114 &292250977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292250972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1c6793b9508ec446b2bdab22811e61c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.GramophoneObject
+  _saveId: 
+  _allowSharedSaveId: 0
+  _noteSprites:
+  - {fileID: 21300000, guid: 540240b12ae697a419fc05d0b06adf91, type: 3}
+  - {fileID: 21300000, guid: d02556c7e8780f641bd7fadac74c2e1d, type: 3}
+  - {fileID: 21300000, guid: c50f2a8dda019c2459bd1616f546a209, type: 3}
+  - {fileID: 21300000, guid: 57cc6380f6a143e45a7a4714bb4eb206, type: 3}
+  - {fileID: 21300000, guid: 99067f40cccba324c9330fd9fe63141f, type: 3}
+  _noteContainer: {fileID: 292250973}
+  _noteSize: {x: 32, y: 32}
+  _preserveAspect: 1
+  _offset: {x: 200, y: 0}
+  _moveDuration: 2
+  _waveAmplitude: 20
+  _waveCount: 1.5
+  _phaseOffset: 45
+  _noteInterval: 0.3
+  _fadeOutDuration: 0.5
+  _loopInterval: 1
 --- !u!1 &332803647
 GameObject:
   m_ObjectHideFlags: 0
@@ -2309,7 +2341,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 412677611}
-        m_TargetAssemblyTypeName: Escape.SceneObject.Noel.Prepare.BookShelfObject, Assembly-CSharp
+        m_TargetAssemblyTypeName: Escape.SceneObject.Noel.Prepare.BookShelfObject,
+          Assembly-CSharp
         m_MethodName: RequestSlide
         m_Mode: 1
         m_Arguments:
@@ -2317,7 +2350,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   _onWrongItemUsed:
@@ -2917,7 +2950,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 0}
+  _zoomViewNode: {fileID: 1932335455}
 --- !u!1 &570730542
 GameObject:
   m_ObjectHideFlags: 0
@@ -3245,7 +3278,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 0}
+  _zoomViewNode: {fileID: 2127799747}
 --- !u!1001 &656247814
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3494,7 +3527,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -2460}
+  m_AnchoredPosition: {x: 2070, y: -2460}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &688954027
@@ -3588,7 +3621,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2070, y: -1230}
+  m_AnchoredPosition: {x: 4140, y: -1230}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &698274020
@@ -3674,7 +3707,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2096102249}
   m_Father: {fileID: 1522570835}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -4021,6 +4055,7 @@ MonoBehaviour:
   _fadeDuration: 0.2
   _fadeEase: 1
   _openSEType: 1
+  _openFlag: 0
 --- !u!114 &774707307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5069,7 +5104,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3685d36075e81c94fb0e00ac64de5f89, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.TreasureBoxObject
   _saveId: NoelPrepareWoodBox
   _allowSharedSaveId: 0
@@ -5078,6 +5113,7 @@ MonoBehaviour:
   _fadeDuration: 0.2
   _fadeEase: 1
   _openSEType: 1
+  _openFlag: 0
 --- !u!1 &1094469629
 GameObject:
   m_ObjectHideFlags: 0
@@ -6236,7 +6272,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _discardableItems: 
+  _discardableItems: 010000000200000003000000
   _onItemDiscarded:
     m_PersistentCalls:
       m_Calls: []
@@ -6283,7 +6319,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4140, y: -1230}
+  m_AnchoredPosition: {x: 6210, y: -1230}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1522570836
@@ -7154,7 +7190,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4140, y: -1230}
+  m_AnchoredPosition: {x: 0, y: -2460}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1739583565
@@ -7193,7 +7229,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2c48f263d4a20114d9f15c988ccb4a30, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1fe8f3d00d4733e42b05432151a19e74, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7386,7 +7422,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 0}
+  _zoomViewNode: {fileID: 1094469631}
 --- !u!1 &1787084224
 GameObject:
   m_ObjectHideFlags: 0
@@ -7859,7 +7895,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2070, y: -2460}
+  m_AnchoredPosition: {x: 4140, y: -2460}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1932335455
@@ -8046,7 +8082,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 1522570836}
+  _zoomViewNode: {fileID: 698274020}
 --- !u!1 &1998662559
 GameObject:
   m_ObjectHideFlags: 0
@@ -8081,7 +8117,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 67, y: 13}
+  m_AnchoredPosition: {x: -65, y: 11}
   m_SizeDelta: {x: 1051, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1998662561
@@ -8334,6 +8370,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 258392767589719182, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -8677,7 +8729,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 67, y: 13}
+  m_AnchoredPosition: {x: -65, y: 11}
   m_SizeDelta: {x: 1051, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2095740705
@@ -8704,29 +8756,17 @@ MonoBehaviour:
   _onActivated:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 165491368}
-        m_TargetAssemblyTypeName: Escape.SceneObject.Common.TreasureBoxObject, Assembly-CSharp
-        m_MethodName: Open
-        m_Mode: 1
+      - m_Target: {fileID: 292250977}
+        m_TargetAssemblyTypeName: Escape.SceneObject.Common.GramophoneObject, Assembly-CSharp
+        m_MethodName: SetPlaying
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1999315831}
-        m_TargetAssemblyTypeName: Escape.SceneObject.Common.TreasureBoxObject, Assembly-CSharp
-        m_MethodName: Open
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
   _onWrongItemUsed:
     m_PersistentCalls:
@@ -8772,6 +8812,101 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2095740703}
+  m_CullTransparentMesh: 1
+--- !u!1 &2096102248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2096102249}
+  - component: {fileID: 2096102252}
+  - component: {fileID: 2096102251}
+  - component: {fileID: 2096102250}
+  m_Layer: 5
+  m_Name: WaterCan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2096102249
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096102248}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.86, y: 1.86, z: 1.86}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 705065821}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -232, y: -183}
+  m_SizeDelta: {x: 265, y: 209}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2096102250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096102248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f0bc1f1fa441de97a0936aab1c7b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.PickupObject
+  _clickAreaSize: {x: 100, y: 100}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _itemToPickup: 15
+  _saveId: 0282d2df50f24eb6a7e6346aa5947325
+--- !u!114 &2096102251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096102248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 373ed4bee0471984aa850bd5ab4e52f9, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2096102252
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096102248}
   m_CullTransparentMesh: 1
 --- !u!1 &2105670152
 GameObject:

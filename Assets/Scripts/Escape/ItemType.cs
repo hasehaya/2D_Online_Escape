@@ -20,6 +20,7 @@ public enum ItemType
     Pendant = 12,
     Match = 13,
     MagicSack = 14,
+    WaterCan = 15,
     Book = 16,
 
     KeyEliasPrepareWoodBox = 101,

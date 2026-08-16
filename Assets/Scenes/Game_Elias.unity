@@ -817,6 +817,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 241272131}
+  - {fileID: 464841322}
   - {fileID: 310363348}
   m_Father: {fileID: 399978751}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1395,7 +1396,7 @@ GameObject:
   - component: {fileID: 241272132}
   - component: {fileID: 241272134}
   m_Layer: 5
-  m_Name: WoodBox
+  m_Name: WoodBox_Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1758,7 +1759,7 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _requiredItem: 0
+  _requiredItem: 4
   _consumeItemOnUse: 1
   _targetImages:
   - {fileID: 282233874}
@@ -2192,7 +2193,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 795, y: 31}
+  m_AnchoredPosition: {x: -777, y: 31}
   m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &382628908
@@ -2569,6 +2570,100 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &464841321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 464841322}
+  - component: {fileID: 464841325}
+  - component: {fileID: 464841324}
+  - component: {fileID: 464841323}
+  m_Layer: 5
+  m_Name: WoodBox_Open
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &464841322
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464841321}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 158065147}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 650, y: -241}
+  m_SizeDelta: {x: 724.4, y: 523.6}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &464841323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464841321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb9a4f8d4fa469544b9721aa223b517c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZoomObject
+  _clickAreaSize: {x: 605.1, y: 639}
+  _clickAreaOffset: {x: -155.7, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _zoomViewNode: {fileID: 1357973611}
+--- !u!114 &464841324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464841321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 28a08a8e7dad1fa4eab57f031282b731, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &464841325
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464841321}
+  m_CullTransparentMesh: 1
 --- !u!1 &470696651
 GameObject:
   m_ObjectHideFlags: 0
@@ -3253,6 +3348,7 @@ GameObject:
   - component: {fileID: 601655362}
   - component: {fileID: 601655361}
   - component: {fileID: 601655363}
+  - component: {fileID: 601655364}
   m_Layer: 5
   m_Name: Potion1
   m_TagString: Untagged
@@ -3338,6 +3434,37 @@ MonoBehaviour:
   _moveDuration: 0.3
   _actionDuration: 0.5
   _actionOffset: {x: 0, y: 100, z: 0}
+--- !u!114 &601655364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601655359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986db8487e05bae4187abedd3181aaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.ItemConsumeActivateObject
+  _clickAreaSize: {x: 120, y: 119}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _requiredItem: 5
+  _consumeItemOnUse: 1
+  _targetImages:
+  - {fileID: 601655361}
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _onWrongItemUsed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onAlreadyActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _saveId: 0bd4f6a3347a4ee0ab308b8a4f9f3b49
 --- !u!1 &610801791
 GameObject:
   m_ObjectHideFlags: 0
@@ -3663,7 +3790,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4384,6 +4511,7 @@ GameObject:
   - component: {fileID: 806348988}
   - component: {fileID: 806348987}
   - component: {fileID: 806348989}
+  - component: {fileID: 806348990}
   m_Layer: 5
   m_Name: Watering
   m_TagString: Untagged
@@ -4469,6 +4597,37 @@ MonoBehaviour:
   _moveDuration: 0.3
   _actionDuration: 0.5
   _actionOffset: {x: 0, y: 100, z: 0}
+--- !u!114 &806348990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806348985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986db8487e05bae4187abedd3181aaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.ItemConsumeActivateObject
+  _clickAreaSize: {x: 265, y: 209}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _requiredItem: 15
+  _consumeItemOnUse: 1
+  _targetImages:
+  - {fileID: 806348987}
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _onWrongItemUsed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onAlreadyActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _saveId: f1dfeca7df3b47d4a500e0c9dcd27626
 --- !u!1 &834335819
 GameObject:
   m_ObjectHideFlags: 0
@@ -6268,6 +6427,7 @@ GameObject:
   - component: {fileID: 1251741307}
   - component: {fileID: 1251741306}
   - component: {fileID: 1251741305}
+  - component: {fileID: 1251741308}
   m_Layer: 5
   m_Name: WoodBox_Close
   m_TagString: Untagged
@@ -6351,6 +6511,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251741303}
   m_CullTransparentMesh: 1
+--- !u!114 &1251741308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1251741303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 986db8487e05bae4187abedd3181aaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Escape.SceneObject.Common.ItemConsumeActivateObject
+  _clickAreaSize: {x: 1143.3, y: 901.7}
+  _clickAreaOffset: {x: 0, y: 0}
+  _clickAreaInitialized: 1
+  _showClickArea: 1
+  _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
+  _requiredItem: 101
+  _consumeItemOnUse: 1
+  _targetImages:
+  - {fileID: 2073301325}
+  - {fileID: 464841324}
+  - {fileID: 751559253}
+  _onActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _onWrongItemUsed:
+    m_PersistentCalls:
+      m_Calls: []
+  _onAlreadyActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  _saveId: c6e51871a5364c848084282e2fecf3cd
 --- !u!1 &1293750182
 GameObject:
   m_ObjectHideFlags: 0
@@ -7401,10 +7594,10 @@ MonoBehaviour:
   _clickAreaInitialized: 1
   _showClickArea: 1
   _gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
-  _zoomViewNode: {fileID: 1723229840}
   _itemToPickup: 16
   _saveId: EliasPrepareBook
   _pickupUnlockFlag: 6
+  _zoomViewNode: {fileID: 1723229840}
 --- !u!1 &1593356954
 GameObject:
   m_ObjectHideFlags: 0
@@ -7745,11 +7938,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0df54af43ea840ae86f93cf5c0086f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Map.Elias.Prepare.GimmickPiano
-  _correctSequence: 010000000200000003000000040000000500000006000000
+  _correctSequence: 0100000006000000040000000300000007000000
   _resetOnWrongKey: 1
   _onUnlocked:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1657321195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9557,6 +9762,22 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 258392767589719182, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2260338657522927553, guid: 67b1230e5333e0c4baa0d51a278c1a2e, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
