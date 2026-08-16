@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using DG.Tweening;
-using RunconaLib.Audio;
+using Escape.SceneObject.Common;
 using UnityEngine;
 
 namespace Escape.SceneObject.Noel.Prepare
@@ -10,16 +10,7 @@ namespace Escape.SceneObject.Noel.Prepare
     /// </summary>
     public class GimmickSlidePazzle : MonoBehaviour
     {
-        [SerializeField] private GameObject _woodBoxClose;
-        [SerializeField] private GameObject _woodBoxOpen;
-
-        [Header("Solve Fade")] [SerializeField]
-        private Component _woodBoxCloseFadeTarget;
-
-        [SerializeField] private Component _woodBoxOpenFadeTarget;
-        [SerializeField] private float _solveFadeOutDuration = 0.2f;
-        [SerializeField] private float _solveFadeInDuration = 0.2f;
-        [SerializeField] private Ease _solveFadeEase = Ease.Linear;
+        [SerializeField] private TreasureBoxObject _treasureBox;
 
         [Header("Tween")] [SerializeField] private float _moveDuration = 0.2f;
         [SerializeField, Range(0f, 1f)] private float _sideHideTiming = 0.5f;
@@ -39,8 +30,10 @@ namespace Escape.SceneObject.Noel.Prepare
         private readonly Dictionary<int, int> _piecePositionByIndex = new Dictionary<int, int>();
 
         private int[] _board;
-        private bool _isSolved;
+        private bool _isCleared;
         private bool _hasAppliedOnce;
+
+        public bool IsCleared => _isCleared;
 
         private void Start()
         {
@@ -49,7 +42,7 @@ namespace Escape.SceneObject.Noel.Prepare
 
         public void OnPieceClicked(SlidePazzlePiece clickedPiece)
         {
-            if (_isSolved || clickedPiece == null) return;
+            if (_isCleared || clickedPiece == null) return;
 
             int clickedPosition = FindPositionByPieceIndex(clickedPiece.PieceIndex);
             int blankPosition = FindPositionByPieceIndex(_blankPieceIndex);
@@ -264,10 +257,8 @@ namespace Escape.SceneObject.Noel.Prepare
 
         private void UnlockWoodBox()
         {
-            _isSolved = true;
-            AudioManager.Instance.PlaySE(SESoundType.Correct);
-            FadeSwitchService.Switch(_woodBoxCloseFadeTarget, _woodBoxOpenFadeTarget, _solveFadeOutDuration,
-                _solveFadeInDuration, _solveFadeEase);
+            _isCleared = true;
+            _treasureBox?.Open();
         }
     }
 }
