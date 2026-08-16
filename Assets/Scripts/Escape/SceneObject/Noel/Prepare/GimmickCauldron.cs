@@ -172,6 +172,8 @@ namespace Escape.SceneObject.Noel.Prepare
                     InventoryManager.Instance.TryRemoveItem(selectedItem);
                     InventoryManager.Instance.TryAddItem(completedRecipe.ResultItem);
 
+                    PublishCompletedFlagIfAllResultsAcquired();
+
                     Debug.Log(
                         $"[GimmickCauldron] Successfully bottled! Generated: {completedRecipe.ResultItem}. Resetting state.");
 
@@ -204,6 +206,25 @@ namespace Escape.SceneObject.Noel.Prepare
                 AudioManager.Instance.PlaySE(SESoundType.CauldronFail);
                 ResetCauldron(true, true);
             }
+        }
+
+        private void PublishCompletedFlagIfAllResultsAcquired()
+        {
+            if (GameStateService.Instance == null || _recipes == null || _recipes.Count == 0)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _recipes.Count; i++)
+            {
+                ItemType resultItem = _recipes[i].ResultItem;
+                if (resultItem == ItemType.None || !InventoryManager.Instance.HasItem(resultItem))
+                {
+                    return;
+                }
+            }
+
+            GameStateService.Instance.SetFlag(FlagType.Prepare_CauldronCompleted, true);
         }
 
         private void TryIgnite(ItemType selectedItem)
