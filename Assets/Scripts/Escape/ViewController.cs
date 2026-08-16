@@ -57,11 +57,13 @@ public class ViewController : MonoBehaviour
     private void OnEnable()
     {
         GameStateService.Instance.OnFlagChanged += OnFlagChanged;
+        GameStateService.Instance.OnPropertyChanged += OnPropertyChanged;
     }
 
     private void OnDisable()
     {
         GameStateService.Instance.OnFlagChanged -= OnFlagChanged;
+        GameStateService.Instance.OnPropertyChanged -= OnPropertyChanged;
     }
 
     public void ShowView(ViewNode viewNode)
@@ -133,6 +135,27 @@ public class ViewController : MonoBehaviour
         ShowViewable(stillNode);
     }
 
+    public void ShowStillForAll(StillNode stillNode)
+    {
+        if (stillNode == null)
+        {
+            Debug.LogWarning("[ViewController] 遷移先のStillNodeが設定されていません。");
+            return;
+        }
+
+        string stillGroup = stillNode.transform.parent != null
+            ? stillNode.transform.parent.name
+            : stillNode.name;
+        if (Photon.Pun.PhotonNetwork.InRoom)
+        {
+            string request = $"{stillGroup}|{System.Guid.NewGuid():N}";
+            GameStateService.Instance.SetString(PhotonRoomPropertyKeys.SharedStillTransition, request);
+            return;
+        }
+
+        ShowStill(stillNode);
+    }
+
     private void Return()
     {
         if (_viewStack.Count > 0)
@@ -176,5 +199,33 @@ public class ViewController : MonoBehaviour
         {
             UpdateUI();
         }
+    }
+
+    private void OnPropertyChanged(string key, object value)
+    {
+        if (key != PhotonRoomPropertyKeys.SharedStillTransition || !(value is string request))
+        {
+            return;
+        }
+
+        string stillGroup = request.Split('|')[0];
+        StillNode stillNode = null;
+        StillNode[] candidates = FindObjectsByType<StillNode>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (StillNode candidate in candidates)
+        {
+            if (candidate.transform.parent != null && candidate.transform.parent.name == stillGroup)
+            {
+                stillNode = candidate;
+                break;
+            }
+        }
+
+        if (stillNode == null)
+        {
+            Debug.LogWarning($"[ViewController] 共有Stillグループ '{stillGroup}' が見つかりません。");
+            return;
+        }
+
+        ShowStill(stillNode);
     }
 }

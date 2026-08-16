@@ -16,6 +16,7 @@ public static class PhotonRoomPropertyKeys
 
     public const string WakeLaserDistanceRatio = "LaserDistanceRatio";
     public const string DungeonLightsOutPuzzleBoardBits = TransientPrefix + "DungeonLightsOutPuzzle.BoardBits";
+    public const string SharedStillTransition = TransientPrefix + "View.SharedStillTransition";
 
     public static string BuildFlagKey(FlagType flag)
     {

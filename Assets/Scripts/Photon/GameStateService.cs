@@ -273,6 +273,22 @@ public class GameStateService : IInRoomCallbacks
 
     #endregion
 
+    #region String値の管理
+
+    public void SetString(string key, string value)
+    {
+        if (!PhotonNetwork.InRoom)
+        {
+            Debug.LogWarning($"[GameStateService] Room内ではありません。String値 '{key}' を設定できません。");
+            return;
+        }
+
+        var properties = new Hashtable { { key, value } };
+        PhotonNetwork.CurrentRoom.SetCustomProperties(properties);
+    }
+
+    #endregion
+
     #region Flag管理（旧FlagManager機能）
 
     /// <summary>
