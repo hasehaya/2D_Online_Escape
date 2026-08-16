@@ -40,6 +40,21 @@ namespace Escape.SceneObject.Noel.Prepare
         private void Start()
         {
             ApplySlideState();
+
+            if (GameStateService.Instance.GetFlag(FlagType.Prepare_PianoCompleted))
+            {
+                RequestSlide();
+            }
+        }
+
+        private void OnEnable()
+        {
+            GameStateService.Instance.OnFlagChanged += OnFlagChanged;
+        }
+
+        private void OnDisable()
+        {
+            GameStateService.Instance.OnFlagChanged -= OnFlagChanged;
         }
 
         private void OnDestroy()
@@ -82,6 +97,14 @@ namespace Escape.SceneObject.Noel.Prepare
             _slideTween
                 .SetEase(_slideEase)
                 .OnComplete(() => { PairSaveCoordinator.RequestSaveIfAvailable(); });
+        }
+
+        private void OnFlagChanged(FlagType flag, bool value)
+        {
+            if (flag == FlagType.Prepare_PianoCompleted && value)
+            {
+                RequestSlide();
+            }
         }
 
         private void Initialize()

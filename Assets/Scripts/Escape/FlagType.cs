@@ -11,6 +11,7 @@ public enum FlagType
     Wake_LaserTarget2,
     Wake_LaserTarget3,
     Wake_LaserCompleted,
+    Prepare_PianoCompleted,
 
     // Dungeon - ライツアウトパズル
     Dungeon_LightsOutPuzzleCompleted,

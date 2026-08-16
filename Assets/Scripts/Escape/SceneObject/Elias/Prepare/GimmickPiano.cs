@@ -42,6 +42,7 @@ namespace Escape.SceneObject.Elias.Prepare
             if (_pressedSequence.Count == _correctSequence.Length)
             {
                 Debug.Log($"[GimmickPiano] 正しい順序で全て押されました！ロック解除。");
+                GameStateService.Instance.SetFlag(FlagType.Prepare_PianoCompleted, true);
                 _onUnlocked?.Invoke();
                 ResetSequence();
             }
