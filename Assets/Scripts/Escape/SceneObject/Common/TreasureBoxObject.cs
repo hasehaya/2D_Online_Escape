@@ -24,6 +24,9 @@ namespace Escape.SceneObject.Common
 
         [Header("Open SE")] [SerializeField] private SESoundType _openSEType = SESoundType.CorrectBoxOpen;
 
+        [Header("Shared Progress")] [SerializeField]
+        private FlagType _openFlag = FlagType.None;
+
         private bool _isOpen;
 
         public bool IsOpen => _isOpen;
@@ -31,6 +34,21 @@ namespace Escape.SceneObject.Common
         private void Start()
         {
             ApplyImageState();
+
+            if (_openFlag != FlagType.None && GameStateService.Instance.GetFlag(_openFlag))
+            {
+                Open();
+            }
+        }
+
+        private void OnEnable()
+        {
+            GameStateService.Instance.OnFlagChanged += OnFlagChanged;
+        }
+
+        private void OnDisable()
+        {
+            GameStateService.Instance.OnFlagChanged -= OnFlagChanged;
         }
 
         /// <summary>
@@ -47,6 +65,14 @@ namespace Escape.SceneObject.Common
 
             PlayOpenAnimation();
             PairSaveCoordinator.RequestSaveIfAvailable();
+        }
+
+        private void OnFlagChanged(FlagType flag, bool value)
+        {
+            if (flag == _openFlag && value)
+            {
+                Open();
+            }
         }
 
         private void PlayOpenAnimation()

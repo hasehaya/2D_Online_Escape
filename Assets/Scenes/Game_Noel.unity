@@ -1409,6 +1409,7 @@ MonoBehaviour:
   _fadeDuration: 0.2
   _fadeEase: 1
   _openSEType: 1
+  _openFlag: 5
 --- !u!114 &165491369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2306,7 +2307,19 @@ MonoBehaviour:
   _targetImages: []
   _onActivated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 412677611}
+        m_TargetAssemblyTypeName: Escape.SceneObject.Noel.Prepare.BookShelfObject, Assembly-CSharp
+        m_MethodName: RequestSlide
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument:
+          m_BoolArgument: 0
+        m_CallState: 2
   _onWrongItemUsed:
     m_PersistentCalls:
       m_Calls: []
@@ -8071,6 +8084,7 @@ MonoBehaviour:
   _fadeDuration: 0.2
   _fadeEase: 1
   _openSEType: 1
+  _openFlag: 5
 --- !u!114 &1999315832
 MonoBehaviour:
   m_ObjectHideFlags: 0
