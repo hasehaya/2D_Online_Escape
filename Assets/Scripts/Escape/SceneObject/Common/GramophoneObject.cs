@@ -11,7 +11,13 @@ namespace Escape.SceneObject.Common
     /// </summary>
     public class GramophoneObject : SaveableBehaviour
     {
-        [Header("Notes")] [SerializeField] private Image[] _noteImages;
+        [Header("Notes")] [SerializeField] private Sprite[] _noteSprites;
+
+        [Tooltip("生成した音符Imageの親。未指定の場合はこのオブジェクトの子に生成する。")]
+        [SerializeField] private RectTransform _noteContainer;
+
+        [SerializeField] private Vector2 _noteSize = new Vector2(32f, 32f);
+        [SerializeField] private bool _preserveAspect = true;
 
         [Header("Movement")] [Tooltip("各音符を元の位置から移動させる距離。")]
         [SerializeField] private Vector2 _offset = new Vector2(200f, 0f);
@@ -37,6 +43,7 @@ namespace Escape.SceneObject.Common
         [Tooltip("すべての音符を流し終えてから、次のループを開始するまでの秒数。")]
         [Min(0f)] [SerializeField] private float _loopInterval = 1f;
 
+        private Image[] _noteImages;
         private RectTransform[] _noteRects;
         private Vector2[] _initialPositions;
         private Color[] _initialColors;
@@ -47,7 +54,7 @@ namespace Escape.SceneObject.Common
 
         private void Awake()
         {
-            CacheInitialState();
+            CreateNoteImages();
             HideAllNotes();
         }
 
@@ -101,7 +108,7 @@ namespace Escape.SceneObject.Common
         {
             while (_isPlaying)
             {
-                float sequenceDuration = _moveDuration + Mathf.Max(0, _noteImages.Length - 1) * _noteInterval;
+                float sequenceDuration = _moveDuration + Mathf.Max(0, _noteSprites.Length - 1) * _noteInterval;
                 float elapsed = 0f;
 
                 while (elapsed < sequenceDuration && _isPlaying)
@@ -172,22 +179,38 @@ namespace Escape.SceneObject.Common
             return new Vector2(-direction.y, direction.x);
         }
 
-        private void CacheInitialState()
+        private void CreateNoteImages()
         {
-            int count = _noteImages?.Length ?? 0;
+            int count = _noteSprites?.Length ?? 0;
+            _noteImages = new Image[count];
             _noteRects = new RectTransform[count];
             _initialPositions = new Vector2[count];
             _initialColors = new Color[count];
 
             for (int i = 0; i < count; i++)
             {
-                Image image = _noteImages[i];
-                if (image == null)
+                Sprite sprite = _noteSprites[i];
+                if (sprite == null)
                 {
                     continue;
                 }
 
+                GameObject noteObject = new GameObject($"[Generated]Note_{i}", typeof(RectTransform), typeof(Image));
+                noteObject.transform.SetParent(_noteContainer != null ? _noteContainer : transform, false);
+
+                Image image = noteObject.GetComponent<Image>();
+                image.sprite = sprite;
+                image.preserveAspect = _preserveAspect;
+                image.raycastTarget = false;
+
                 RectTransform rect = image.rectTransform;
+                rect.anchorMin = new Vector2(0.5f, 0.5f);
+                rect.anchorMax = new Vector2(0.5f, 0.5f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.anchoredPosition = Vector2.zero;
+                rect.sizeDelta = _noteSize;
+
+                _noteImages[i] = image;
                 _noteRects[i] = rect;
                 _initialPositions[i] = rect.anchoredPosition;
                 _initialColors[i] = image.color;
@@ -196,14 +219,14 @@ namespace Escape.SceneObject.Common
 
         private bool HasValidNote()
         {
-            if (_noteImages == null)
+            if (_noteSprites == null)
             {
                 return false;
             }
 
-            for (int i = 0; i < _noteImages.Length; i++)
+            for (int i = 0; i < _noteSprites.Length; i++)
             {
-                if (_noteImages[i] != null)
+                if (_noteSprites[i] != null)
                 {
                     return true;
                 }
