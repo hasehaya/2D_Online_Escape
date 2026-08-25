@@ -155,7 +155,10 @@ namespace Escape.SceneObject.Common
                 float phase = i * _phaseOffset * Mathf.Deg2Rad;
                 float wave = Mathf.Sin(progress * _waveCount * Mathf.PI * 2f + phase);
                 float waveEnvelope = Mathf.Sin(progress * Mathf.PI);
-                rect.anchoredPosition = _initialPositions[i] + _offset * (1f - progress)
+                Vector2 leftwardPosition = _initialPositions[i]
+                                           + new Vector2(_offset.x - Mathf.Abs(_offset.x) * progress,
+                                               _offset.y);
+                rect.anchoredPosition = leftwardPosition
                                         + waveDirection * (wave * waveEnvelope * _waveAmplitude);
 
                 float alpha = _initialColors[i].a;
@@ -170,13 +173,7 @@ namespace Escape.SceneObject.Common
 
         private Vector2 GetWaveDirection()
         {
-            if (_offset.sqrMagnitude <= Mathf.Epsilon)
-            {
-                return Vector2.up;
-            }
-
-            Vector2 direction = _offset.normalized;
-            return new Vector2(-direction.y, direction.x);
+            return Vector2.up;
         }
 
         private void CreateNoteImages()
