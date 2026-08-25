@@ -36,7 +36,7 @@ namespace Escape.SceneObject.Elias.Wake
         [SerializeField]
         private string _distanceRatioKey = PhotonRoomPropertyKeys.WakeLaserDistanceRatio; // Room Custom Propertyのキー
 
-        [Header("Debug (Editor Only)")] [SerializeField]
+        [Header("Clear All Targets Button")] [SerializeField]
         private Button _clearAllTargetsButton;
 
         private readonly FlagType[] _targetFlags = WakeLaserProgress.TargetFlags;
@@ -60,19 +60,11 @@ namespace Escape.SceneObject.Elias.Wake
                 _isCorrect[i] = false;
             }
 
-            // Editorモード以外ではデバッグボタンを破棄
-#if !UNITY_EDITOR
-            if (_clearAllTargetsButton != null)
-            {
-                Destroy(_clearAllTargetsButton.gameObject);
-            }
-#else
-            // Editorモードではボタンのイベントを設定
+            // エディターとビルドの両方でボタンのイベントを設定
             if (_clearAllTargetsButton != null)
             {
                 _clearAllTargetsButton.onClick.AddListener(DebugClearAllTargets);
             }
-#endif
         }
 
         private void Update()
@@ -242,9 +234,8 @@ namespace Escape.SceneObject.Elias.Wake
             _onAllCorrect?.Invoke();
         }
 
-#if UNITY_EDITOR
         /// <summary>
-        /// デバッグ用：全てのターゲットを強制的にクリア（Editorのみ）
+        /// デバッグ用：全てのターゲットを強制的にクリア
         /// </summary>
         private void DebugClearAllTargets()
         {
@@ -288,6 +279,5 @@ namespace Escape.SceneObject.Elias.Wake
 
             StartCoroutine(TriggerCompletionEvent());
         }
-#endif
     }
 }
