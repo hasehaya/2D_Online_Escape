@@ -16,11 +16,11 @@ namespace Escape.SceneObject.Common
         [Tooltip("生成した音符Imageの親。未指定の場合はこのオブジェクトの子に生成する。")]
         [SerializeField] private RectTransform _noteContainer;
 
-        [SerializeField] private Vector2 _noteSize = new Vector2(32f, 32f);
+        [SerializeField] private Vector2 _noteSize = new Vector2(96f, 96f);
         [SerializeField] private bool _preserveAspect = true;
 
-        [Header("Movement")] [Tooltip("各音符を元の位置から移動させる距離。")]
-        [SerializeField] private Vector2 _offset = new Vector2(200f, 0f);
+        [Header("Movement")] [Tooltip("各音符が最初に出る位置のオフセット。")]
+        [SerializeField] private Vector2 _offset = new Vector2(-200f, 400f);
 
         [Tooltip("1つの音符が開始位置から終端まで流れる秒数。")]
         [Min(0.01f)] [SerializeField] private float _moveDuration = 2f;
@@ -155,7 +155,7 @@ namespace Escape.SceneObject.Common
                 float phase = i * _phaseOffset * Mathf.Deg2Rad;
                 float wave = Mathf.Sin(progress * _waveCount * Mathf.PI * 2f + phase);
                 float waveEnvelope = Mathf.Sin(progress * Mathf.PI);
-                rect.anchoredPosition = _initialPositions[i] + _offset * progress
+                rect.anchoredPosition = _initialPositions[i] + _offset * (1f - progress)
                                         + waveDirection * (wave * waveEnvelope * _waveAmplitude);
 
                 float alpha = _initialColors[i].a;
